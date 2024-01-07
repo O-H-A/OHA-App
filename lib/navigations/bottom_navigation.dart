@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:oha/pages/diary_page.dart';
-import 'package:oha/pages/home_page.dart';
-import 'package:oha/pages/my_page.dart';
-import 'package:oha/pages/upload_page.dart';
 
 import '../statics/images.dart';
+import '../view/pages/diary_page.dart';
+import '../view/pages/home_page.dart';
+import '../view/pages/my_page.dart';
+import '../view/pages/upload_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -74,12 +72,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey,
           selectedLabelStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+              color: Colors.blue,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 12),
           unselectedLabelStyle: const TextStyle(
-            fontSize: 12,
-          ),
+              color: Colors.white,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 12),
         ),
       ),
     );
