@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oha/view/pages/splash_page.dart';
 
 import 'app.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const App(),
+      home: const SplashPage(),
     );
   }
 }
