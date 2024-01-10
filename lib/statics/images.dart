@@ -10,4 +10,5 @@ class Images {
   static const String splashBg = "assets/images/splash_bg.svg";
   static const String check = "assets/images/check.svg";
   static const String uncheck = "assets/images/uncheck.svg";
+  static const String loginFinishBg = "assets/images/login_finish_bg.svg";
 }

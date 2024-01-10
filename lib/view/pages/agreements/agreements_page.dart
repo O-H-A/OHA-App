@@ -5,6 +5,7 @@ import 'package:oha/statics/Colors.dart';
 import 'package:oha/view/pages/agreements/location_agreements_page.dart';
 import 'package:oha/view/pages/agreements/privacy_agreements_page.dart';
 import 'package:oha/view/pages/agreements/service_agreements_page.dart';
+import 'package:oha/view/pages/login_finish_page.dart';
 
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
@@ -203,18 +204,27 @@ class _AgreementsPageState extends State<AgreementsPage> {
             ),
             Padding(
               padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(44)),
-              child: InfinityButton(
-                height: ScreenUtil().setHeight(50.0),
-                radius: 8.0,
-                backgroundColor: _getAllAgreements()
-                    ? const Color(UserColors.primaryColor)
-                    : const Color(UserColors.ui10),
-                text: Strings.signUpComplete,
-                textSize: 16,
-                textWeight: FontWeight.w600,
-                textColor: _getAllAgreements()
-                    ? Colors.white
-                    : const Color(UserColors.ui06),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginFinishPage()),
+                  );
+                },
+                child: InfinityButton(
+                  height: ScreenUtil().setHeight(50.0),
+                  radius: 8.0,
+                  backgroundColor: _getAllAgreements()
+                      ? const Color(UserColors.primaryColor)
+                      : const Color(UserColors.ui10),
+                  text: Strings.signUpComplete,
+                  textSize: 16,
+                  textWeight: FontWeight.w600,
+                  textColor: _getAllAgreements()
+                      ? Colors.white
+                      : const Color(UserColors.ui06),
+                ),
               ),
             ),
           ],
