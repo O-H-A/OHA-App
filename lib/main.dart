@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/pages/agreements/agreements_page.dart';
+import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
 
 import 'app.dart';
@@ -12,12 +15,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      builder: (BuildContext context, child) => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const AgreementsPage(),
       ),
-      home: const SplashPage(),
     );
   }
 }

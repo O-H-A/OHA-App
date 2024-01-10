@@ -7,6 +7,7 @@ class Images {
   static const String diaryDisable = "assets/images/diary_disable.png";
   static const String myPageEnable = "assets/images/mypage_enable.png";
   static const String myPageDisable = "assets/images/mypage_disable.png";
-
   static const String splashBg = "assets/images/splash_bg.svg";
+  static const String check = "assets/images/check.svg";
+  static const String uncheck = "assets/images/uncheck.svg";
 }
