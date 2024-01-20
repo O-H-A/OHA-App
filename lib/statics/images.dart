@@ -16,4 +16,5 @@ class Images {
   static const String loginGoogle = "assets/images/login_google.svg";
   static const String loginApple = "assets/images/login_apple.svg";
   static const String loginBg = "assets/images/login_bg.svg";
+  static const String notification = "assets/images/notification.svg";
 }

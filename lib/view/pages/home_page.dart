@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
 import 'package:oha/view/pages/home/tab/popularity_tab.dart';
 
+import '../../statics/images.dart';
 import '../../statics/strings.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,11 +41,6 @@ class _HomePageState extends State<HomePage>
         Tab(text: Strings.popularity),
         Tab(text: Strings.imageVideo),
         Tab(text: Strings.nowWeather),
-
-        // HomeTab(),
-        // PopularityTab(),
-        // ImageVideoTab(),
-        // NowWeatherTab(),
       ],
       labelColor: const Color(0xFF333333),
       labelStyle: const TextStyle(
@@ -70,23 +67,26 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        elevation: 0,
+        titleSpacing: ScreenUtil().setWidth(22.0),
         title: Row(
-          children: [
+          children: const [
             Text(
-              "Test",
-              style: const TextStyle(
+              "논현동",
+              style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w600,
                   fontSize: 16),
             ),
-            SizedBox(width: 4.0),
             Icon(Icons.expand_more, color: Colors.black),
           ],
         ),
         actions: [
-          IconButton(icon: Icon(Icons.image), onPressed: null),
-          IconButton(icon: Icon(Icons.search), onPressed: null),
+          Padding(
+            padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
+            child: SvgPicture.asset(Images.notification),
+          ),
         ],
       ),
       body: Padding(
