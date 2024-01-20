@@ -23,4 +23,5 @@ class Images {
   static const String sunsetSunriseCategory = "assets/images/sunset_sunrise_category.svg";
   static const String nightSkyCategory = "assets/images/night_sky_category.svg";
   static const String sunnyCategory = "assets/images/sunny_sky_category.svg";
+  static const String defaultProfile= "assets/images/default_profile.svg";
 }
