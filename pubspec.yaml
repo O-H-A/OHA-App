@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.5
   flutter_screenutil: ^5.7.0
+  http: ^0.13.6
+  kakao_flutter_sdk: ^1.8.0
 
 dev_dependencies:
   flutter_test:

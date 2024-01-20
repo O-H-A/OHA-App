@@ -3,13 +3,56 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:oha/network/network_manager.dart';
 import 'package:oha/statics/colors.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
 
+enum LoginType {
+  kakao,
+  apple,
+  google,
+  naver,
+}
+
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
+
+  Widget _buildLoginWidget(LoginType type) {
+    return GestureDetector(
+      onTap: () {
+        switch (type) {
+          case LoginType.kakao:
+            break;
+          case LoginType.apple:
+            break;
+          case LoginType.google:
+            break;
+          case LoginType.naver:
+            break;
+        }
+      },
+      child: SvgPicture.asset(
+        _getLoginImage(type),
+        height: ScreenUtil().setHeight(50.0),
+        width: ScreenUtil().setWidth(50.0),
+      ),
+    );
+  }
+
+  String _getLoginImage(LoginType type) {
+    switch (type) {
+      case LoginType.kakao:
+        return Images.loginKakao;
+      case LoginType.apple:
+        return Images.loginApple;
+      case LoginType.google:
+        return Images.loginGoogle;
+      case LoginType.naver:
+        return Images.loginNaver;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +104,13 @@ class LoginPage extends StatelessWidget {
           )),
           SvgPicture.asset(Images.loginBg),
           SizedBox(height: ScreenUtil().setHeight(28.0)),
-          SvgPicture.asset(Images.loginKakao),
+          _buildLoginWidget(LoginType.kakao),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          SvgPicture.asset(Images.loginApple),
+          _buildLoginWidget(LoginType.apple),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          SvgPicture.asset(Images.loginGoogle),
+          _buildLoginWidget(LoginType.google),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          SvgPicture.asset(Images.loginNaver),
+          _buildLoginWidget(LoginType.naver),
           SizedBox(height: ScreenUtil().setHeight(166.0)),
         ],
       ),
