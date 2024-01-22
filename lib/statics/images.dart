@@ -23,5 +23,11 @@ class Images {
   static const String sunsetSunriseCategory = "assets/images/sunset_sunrise_category.svg";
   static const String nightSkyCategory = "assets/images/night_sky_category.svg";
   static const String sunnyCategory = "assets/images/sunny_sky_category.svg";
-  static const String defaultProfile= "assets/images/default_profile.svg";
+  static const String defaultProfile = "assets/images/default_profile.svg";
+  static const String bgRectangle = "assets/images/bg_rectangle.svg";
+  static const String cloudyIcon = "assets/images/cloudy_icon.svg";
+  static const String litteCloudIcon = "assets/images/litte_cloud_icon.svg";
+  static const String veryColdIcon = "assets/images/very_cold_icon.svg";
+  static const String weatherRegistedBg = "assets/images/weather_registed_bg.svg";
+  
 }
