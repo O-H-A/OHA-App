@@ -5,6 +5,7 @@ import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
 import 'package:oha/view/pages/home/tab/popularity_tab.dart';
+import 'package:oha/view/pages/home/weather/windy_widget.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
@@ -93,6 +94,9 @@ class _HomePageState extends State<HomePage>
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
         child: Column(
           children: [
+            SizedBox(height: ScreenUtil().setHeight(12.0)),
+            const WindyWidget(),
+            SizedBox(height: ScreenUtil().setHeight(43.0)),
             _buildTabBarWidget(),
             Expanded(
               child: TabBarView(

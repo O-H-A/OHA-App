@@ -29,5 +29,5 @@ class Images {
   static const String litteCloudIcon = "assets/images/litte_cloud_icon.svg";
   static const String veryColdIcon = "assets/images/very_cold_icon.svg";
   static const String weatherRegistedBg = "assets/images/weather_registed_bg.svg";
-  
+  static const String windy = "assets/images/windy.svg";
 }
