@@ -3,6 +3,7 @@ class UserColors {
   static const int ui01 = 0xFF333333;
   static const int ui04 = 0xFF858585;
   static const int ui06 = 0xFFADADAD;
+  static const int ui08 = 0xFFD6D6D6;
   static const int ui10 = 0xFFEBEBEB;
   static const int ui11 = 0xFFF5F5F5;
 }
