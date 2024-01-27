@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../statics/images.dart';
-import '../view/pages/diary_page.dart';
+import '../view/pages/diary/diary_page.dart';
 import '../view/pages/home_page.dart';
 import '../view/pages/my_page.dart';
 import '../view/pages/upload/upload_page.dart';

@@ -39,6 +39,10 @@ dependencies:
   flutter_screenutil: ^5.7.0
   http: ^0.13.6
   kakao_flutter_sdk: ^1.8.0
+  image_picker: ^1.0.7
+  path_provider: ^2.1.2
+  permission_handler: ^11.2.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
