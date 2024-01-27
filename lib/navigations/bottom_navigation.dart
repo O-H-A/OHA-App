@@ -4,7 +4,7 @@ import '../statics/images.dart';
 import '../view/pages/diary_page.dart';
 import '../view/pages/home_page.dart';
 import '../view/pages/my_page.dart';
-import '../view/pages/upload_page.dart';
+import '../view/pages/upload/upload_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
