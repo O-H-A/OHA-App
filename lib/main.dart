@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
@@ -8,7 +9,9 @@ import 'package:oha/view/pages/upload/upload_agreements_page.dart';
 import 'app.dart';
 
 void main() {
-  runApp(const MyApp());
+    WidgetsFlutterBinding.ensureInitialized();
+
+  initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
