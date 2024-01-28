@@ -30,4 +30,13 @@ class Images {
   static const String veryColdIcon = "assets/images/very_cold_icon.svg";
   static const String weatherRegistedBg = "assets/images/weather_registed_bg.svg";
   static const String windy = "assets/images/windy.svg";
+  static const String recordEnable = "assets/images/recorded_enable.svg";
+  static const String recordDisable = "assets/images/recorded_disable.svg";
+  static const String diaryCalendarEnable = "assets/images/diary_calendar_enable.svg";
+  static const String diaryCalendarDisable = "assets/images/diary_calendar_disable.svg";
+  static const String diaryFeedEnable = "assets/images/diary_feed_enable.svg";
+  static const String diaryFeedDisable = "assets/images/diary_feed_disable.svg";
+  static const String location = "assets/images/location.svg";
+  static const String heart = "assets/images/heart.svg";
+  static const String views = "assets/images/views.svg";
 }
