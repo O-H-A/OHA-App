@@ -39,4 +39,6 @@ class Images {
   static const String location = "assets/images/location.svg";
   static const String heart = "assets/images/heart.svg";
   static const String views = "assets/images/views.svg";
+  static const String myPageDefaultProfile = "assets/images/mypage_default_profile.svg";
+  static const String edit = "assets/images/edit.svg";
 }
