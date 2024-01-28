@@ -5,20 +5,21 @@ import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 
-class CalendarWidget extends StatelessWidget {
+class WeekCalendarWidget extends StatelessWidget {
   final DateTime currentDate;
 
-  const CalendarWidget({Key? key, required this.currentDate}) : super(key: key);
+  const WeekCalendarWidget({Key? key, required this.currentDate})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DateTime firstDayOfMonth = DateTime(currentDate.year, currentDate.month, 1);
-    int firstWeekday = firstDayOfMonth.weekday;
+    DateTime firstDayOfWeek =
+        currentDate.subtract(Duration(days: currentDate.weekday - 1));
 
-    int daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
-
-    final List<int> daysList =
-        List<int>.generate(daysInMonth, (index) => index + 1);
+    final List<int> daysList = List<int>.generate(7, (index) {
+      DateTime day = firstDayOfWeek.add(Duration(days: index));
+      return day.day;
+    });
 
     List<String> weekDays = [
       Strings.monday,
@@ -57,7 +58,7 @@ class CalendarWidget extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: ScreenUtil().setHeight(389.0),
+      height: ScreenUtil().setHeight(129.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
         color: Colors.white,
@@ -89,14 +90,10 @@ class CalendarWidget extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7, childAspectRatio: 0.9),
-                itemCount: daysList.length + firstWeekday - 1,
+                itemCount: 7,
                 itemBuilder: (context, index) {
-                  if (index < firstWeekday - 1) {
-                    return Container();
-                  } else {
-                    int day = index - firstWeekday + 2;
-                    return _buildDayWidget(day, true);
-                  }
+                  int day = daysList[index];
+                  return _buildDayWidget(day, true);
                 },
               ),
             ),

@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/view/pages/diary/calendar_widget.dart';
+import 'package:oha/view/pages/diary/month_calendar_widget.dart';
+import 'package:oha/view/pages/diary/week_calendar_widget.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
 
 class DiaryPage extends StatefulWidget {
@@ -209,7 +210,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 ],
               ),
               SizedBox(height: ScreenUtil().setHeight(18.0)),
-              CalendarWidget(currentDate: currentTime),
+              (viewMonth) ? MonthCalendarWidget(currentDate: currentTime) : WeekCalendarWidget(currentDate: currentTime),
               SizedBox(height: ScreenUtil().setHeight(22.0)),
               const Text(
                 Strings.posting,
