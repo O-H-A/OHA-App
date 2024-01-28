@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
+import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
 import 'package:oha/view/pages/upload/upload_agreements_page.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const App(),
+        home: const DiaryRegisterPage(),
       ),
     );
   }
