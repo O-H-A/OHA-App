@@ -106,9 +106,9 @@ class _DiaryPageState extends State<DiaryPage> {
                     ),
                   ),
                   SizedBox(width: ScreenUtil().setWidth(14.0)),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: const [
                       Text(
                         "User Name",
                         style: TextStyle(
