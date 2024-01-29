@@ -7,6 +7,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
+import 'package:oha/view/widgets/location_info_dialog.dart';
 
 class DiaryRegisterPage extends StatefulWidget {
   const DiaryRegisterPage({super.key});
@@ -70,9 +71,9 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                     width: double.infinity,
                     height: ScreenUtil().setHeight(390.0),
                     color: const Color(UserColors.ui10),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         Icon(Icons.add, color: Color(UserColors.ui04)),
                         Text(
                           Strings.add,
@@ -239,16 +240,26 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                           ],
                         ),
                         SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              Strings.location,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return LocationInfoDialog();
+                                  },
+                                );
+                              },
+                              child: const Text(
+                                Strings.location,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                             Icon(Icons.arrow_forward_ios, color: Colors.black),
