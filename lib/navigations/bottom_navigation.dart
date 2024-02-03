@@ -25,8 +25,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   void _onBottomTapped(int index) {
     setState(() {
-      _selectIndex = index;
+      if (index != 1) {
+        _selectIndex = index;
+      }
     });
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UploadPage()),
+      );
+    }
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
 import 'package:oha/view/pages/upload/upload_agreements_page.dart';
+import 'package:oha/view/pages/upload/upload_page.dart';
 
 import 'app.dart';
 
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const DiaryRegisterPage(),
+        home: const App(),
       ),
     );
   }
