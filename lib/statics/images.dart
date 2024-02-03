@@ -41,4 +41,6 @@ class Images {
   static const String views = "assets/images/views.svg";
   static const String myPageDefaultProfile = "assets/images/mypage_default_profile.svg";
   static const String edit = "assets/images/edit.svg";
+  static const String imageSelect = "assets/images/image_select.svg";
+  static const String imageNotSelect = "assets/images/image_not_select.svg";
 }
