@@ -15,30 +15,15 @@ class LocationSettingPage extends StatefulWidget {
 
 class _LocationSettingPageState extends State<LocationSettingPage> {
   final _controller = TextEditingController();
-  final List<String> _locationList = [];
+  final List<String> _allLocationList = [];
+  List<String> _displayLocationList = [];
 
   @override
   void initState() {
     super.initState();
 
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
-    _locationList.add("서울시 성북구 하월곡동");
+    _allLocationList.add("서울시 성북구 하월곡동");
+    _allLocationList.add("서울시 성북구 하월곡동");
   }
 
   @override
@@ -76,6 +61,13 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                 ),
               ),
               maxLines: null,
+              onChanged: (value) {
+                setState(() {
+                  _displayLocationList = _allLocationList
+                      .where((location) => location.contains(value))
+                      .toList();
+                });
+              },
             ),
             SizedBox(height: ScreenUtil().setHeight(14.0)),
             const LocationFindButton(),
@@ -92,13 +84,17 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
             SizedBox(height: ScreenUtil().setHeight(12.0)),
             Expanded(
               child: ListView.builder(
-                  itemCount: _locationList.length,
+                  itemCount: (_displayLocationList.isEmpty)
+                      ? _allLocationList.length
+                      : _displayLocationList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding:
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: Text(
-                        _locationList[index],
+                        (_displayLocationList.isEmpty)
+                            ? _allLocationList[index]
+                            : _displayLocationList[index],
                         style: const TextStyle(
                           fontFamily: "Pretendard",
                           fontSize: 16,
