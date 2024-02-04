@@ -5,6 +5,7 @@ import 'package:oha/view/pages/home/category/category_grid_widget.dart';
 
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
+import '../../../widgets/feed_widget.dart';
 
 enum ViewType {
   gridView,
@@ -131,7 +132,25 @@ class _CategoryPageState extends State<CategoryPage>
             ),
             (viewType == ViewType.gridView)
                 ? CategoryGridWidget(imageList: imageS)
-                : SvgPicture.asset(Images.viewListDisable),
+                : const FeedWidget(
+                    length: 6,
+                    nickName: "고독한 사진작가",
+                    locationInfo: "2023년 10월 21일 논현동 거리",
+                    likesCount: 3,
+                    description:
+                        "지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요!",
+                    hashTag: [
+                      "구름",
+                      "같은 하늘",
+                      "노을",
+                      "구름",
+                      "같은 하늘",
+                      "노을",
+                      "구름",
+                      "같은 하늘",
+                      "노을"
+                    ],
+                  ),
           ],
         ),
       ),
