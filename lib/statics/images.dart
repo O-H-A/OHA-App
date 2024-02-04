@@ -43,4 +43,5 @@ class Images {
   static const String edit = "assets/images/edit.svg";
   static const String imageSelect = "assets/images/image_select.svg";
   static const String imageNotSelect = "assets/images/image_not_select.svg";
+  static const String marker = "assets/images/marker.png";
 }

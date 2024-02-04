@@ -29,7 +29,8 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const LocationAppBarWidget(title: Strings.locationSetting),
+      appBar: const LocationAppBarWidget(
+          title: Strings.locationSetting, backIcon: Icons.close),
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class LocationAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
+  final IconData backIcon;
 
-  const LocationAppBarWidget({Key? key, required this.title}) : super(key: key);
+  const LocationAppBarWidget({Key? key, required this.title, required this.backIcon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,8 @@ class LocationAppBarWidget extends StatelessWidget
       elevation: 0,
       leading: IconButton(
         onPressed: () {},
-        icon: const Icon(
-          Icons.close,
+        icon: Icon(
+          backIcon,
           color: Colors.black,
         ),
       ),
