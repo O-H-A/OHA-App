@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/widgets/more_dialog.dart';
+import 'package:oha/view/widgets/report_dialog.dart';
 
 class CategoryDetailAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
@@ -21,9 +23,14 @@ class CategoryDetailAppBarWidget extends StatelessWidget
       actions: [
         Padding(
           padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
-          child: const Icon(
-            Icons.more_horiz,
-            color: Colors.white,
+          child: IconButton(
+            onPressed: () {
+              MoreDialog.show(context);
+            },
+            icon: const Icon(
+              Icons.more_horiz,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
