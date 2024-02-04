@@ -6,6 +6,7 @@ import 'package:oha/utils/secret_key.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/home/category/category_detail_page.dart';
+import 'package:oha/view/pages/home/category/category_page.dart';
 import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/location/location_setting_page.dart';
 import 'package:oha/view/pages/location/map_setting_page.dart';
@@ -16,13 +17,12 @@ import 'package:oha/view/pages/upload/upload_page.dart';
 import 'app.dart';
 
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-      await NaverMapSdk.instance.initialize(
-      clientId: SecretKey.naverMapClientId,
-      //FonAuthFailed: (ex) => 
-      );
-
+  await NaverMapSdk.instance.initialize(
+    clientId: SecretKey.naverMapClientId,
+    //FonAuthFailed: (ex) =>
+  );
 
   initializeDateFormatting().then((_) => runApp(MyApp()));
 }
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //home: const App(),
-        home: const CategoryPage(categoryIndex: 3,),
+        home: const CategoryDetailPage(),
       ),
     );
   }

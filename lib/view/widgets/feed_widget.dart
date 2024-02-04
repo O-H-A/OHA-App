@@ -111,6 +111,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                               color: Color(UserColors.ui01),
                             ),
                           ),
+                          SizedBox(height: ScreenUtil().setHeight(3.0)),
                           Text(
                             widget.locationInfo,
                             style: const TextStyle(
