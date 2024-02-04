@@ -14,6 +14,11 @@ import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
 import '../../widgets/infinity_button.dart';
 
+enum AddressType {
+  streetNumber,
+  roadNameAddress,
+}
+
 class MapSettingPage extends StatefulWidget {
   const MapSettingPage({super.key});
 
@@ -25,6 +30,7 @@ class _MapSettingPageState extends State<MapSettingPage> {
   late NaverMapController _mapController;
   final Completer<NaverMapController> _mapControllerCompleter = Completer();
   late Position _currentPosition;
+  AddressType type = AddressType.streetNumber;
 
   @override
   void initState() {
@@ -53,6 +59,7 @@ class _MapSettingPageState extends State<MapSettingPage> {
               consumeSymbolTapEvents: false,
               locale: const Locale('ko'),
               logoClickEnable: false,
+              
               // initialCameraPosition: NCameraPosition(
               //   target: NLatLng(
               //   _currentPosition.latitude,
@@ -102,24 +109,56 @@ class _MapSettingPageState extends State<MapSettingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: _loadNaverMap()),
-          Container(
-            width: ScreenUtil().setWidth(119.0),
-            height: ScreenUtil().setHeight(35.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
-              color: Colors.white,
-              border: Border.all(color: const Color(UserColors.ui08)),
-            ),
-            child: const Center(
-              child: Text(
-                Strings.viewAddress,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                ),
-              ),
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: ScreenUtil().setHeight(22.0)),
+                    const Text(
+                      "논현동",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
+                    ),
+                    SizedBox(height: ScreenUtil().setHeight(12.0)),
+                    GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          (type == AddressType.streetNumber) ? type = AddressType.roadNameAddress : type = AddressType.streetNumber;
+                        });
+                      },
+                      child: Container(
+                        width: ScreenUtil().setWidth(147.0),
+                        height: ScreenUtil().setHeight(35.0),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil().radius(22.0)),
+                          color: Colors.white,
+                          border: Border.all(color: const Color(UserColors.ui08)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            (type == AddressType.streetNumber) ? Strings.viewStreetNumber : Strings.viewRoadNameNumber,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
             ),
           ),
           Padding(
