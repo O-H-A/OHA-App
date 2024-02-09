@@ -9,9 +9,9 @@ class ApiUrl {
   static const String specificusers = "/api/user/specificusers";
 
   // Auth
-  static const String googleLogin = "/api/auth/google/login";
-  static const String kakaoLogin = "/api/auth/kakao/login";
-  static const String naverLogin = "/api/auth/naver/login";
+  static const String googleLogin = "http://152.67.219.168/api/auth/google/login";
+  static const String kakaoLogin = "http://152.67.219.168/api/auth/kakao/login";
+  static const String naverLogin = "http://152.67.219.168/api/auth/naver/login";
   static const String refresh = "/api/auth/refresh";
   static const String login = "/api/auth/logout";
   static const String withDraw = "/api/auth/withdraw";

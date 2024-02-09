@@ -33,13 +33,36 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> post(String serverUrl, Map<String, dynamic> userData) async {
+    try {
+      String jsonData = jsonEncode(userData);
+
+      final response = await http.post(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+        body: jsonData,
+      );
+
+      if (response.statusCode == 200) {
+        print("POST 성공: ${response.body}");
+      } else {
+        print("POST 실패: ${response.statusCode}");
+      }
+
+      return response;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 0:
       case 200:
         return response.body;
       default:
-      return ApiResponse.error;
+        return ApiResponse.error;
     }
   }
 }
