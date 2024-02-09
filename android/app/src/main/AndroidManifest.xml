@@ -6,10 +6,25 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+        <!-- Provide required visibility configuration for API level 30 and above -->
+    <queries>
+        <!-- If your app checks for SMS support -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sms" />
+        </intent>
+        <!-- If your app checks for call support -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
    <application
         android:label="oha"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
@@ -37,5 +52,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <provider
+           android:name="androidx.core.content.FileProvider"
+           android:authorities="com.example.webview_model_flutter.flutter_inappwebview.fileprovider"
+       android:exported="false"
+       android:grantUriPermissions="true">
+       <meta-data
+           android:name="android.support.FILE_PROVIDER_PATHS"
+           android:resource="@xml/provider_paths"/>
+   </provider>
     </application>
 </manifest>
