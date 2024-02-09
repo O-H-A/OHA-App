@@ -44,4 +44,8 @@ class Images {
   static const String imageSelect = "assets/images/image_select.svg";
   static const String imageNotSelect = "assets/images/image_not_select.svg";
   static const String marker = "assets/images/marker.png";
+  static const String viewGridEnable = "assets/images/view_grid_enable.svg";
+  static const String viewGridDisable = "assets/images/view_grid_disable.svg";
+  static const String viewListEnable = "assets/images/view_list_enable.svg";
+  static const String viewListDisable = "assets/images/view_list_disable.svg";
 }
