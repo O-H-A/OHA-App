@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:oha/network/api_url.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+
+import '../../network/network_manager.dart';
+import '../widgets/notification_app_bar.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -13,6 +20,66 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _getProfileImage;
+  XFile? _getBackgroundImage;
+
+  Future getProfileImage(ImageSource imageSource) async {
+    final XFile? pickedFile =
+        await _imagePicker.pickImage(source: imageSource, imageQuality: 30);
+
+    if (pickedFile != null) {
+      setState(() {
+        _getProfileImage = XFile(pickedFile.path);
+
+        NetworkManager.instance
+            .imagePut(ApiUrl.profileImageUpdate, _getProfileImage);
+      });
+    }
+  }
+
+  Future getBackgroundImage(ImageSource imageSource) async {
+    final XFile? pickedFile =
+        await _imagePicker.pickImage(source: imageSource, imageQuality: 30);
+
+    if (pickedFile != null) {
+      setState(() {
+        _getBackgroundImage = XFile(pickedFile.path);
+
+        NetworkManager.instance
+            .imagePut(ApiUrl.backgroundImageUpdate, _getBackgroundImage);
+      });
+    }
+  }
+
+  Widget _buildProfileImage() {
+    return _getProfileImage == null
+        ? SvgPicture.asset(Images.myPageDefaultProfile)
+        : Container(
+            width: ScreenUtil().setWidth(100.0),
+            height: ScreenUtil().setHeight(100.0),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: ClipOval(
+              child: Image.file(File(_getProfileImage!.path)),
+            ),
+          );
+  }
+
+  Widget _buildBackgroundImage() {
+    return _getBackgroundImage == null
+        ? Image.asset(Images.myImageDefault,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: ScreenUtil().setHeight(380.0))
+        : SizedBox(
+            width: double.infinity,
+            height: ScreenUtil().setHeight(380.0),
+            child: Image.file(File(_getBackgroundImage!.path)),
+          );
+  }
+
   Widget _buildContentsWidget(String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,96 +101,106 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: ScreenUtil().statusBarHeight),
-          SizedBox(
-            width: double.infinity,
-            height: ScreenUtil().setHeight(380.0),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.network(
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzXZT2D5aAY4xFSPf-VkK02mgELw4JG7OYp6Y6Alq5DbZmUE2DVOAwIBmR-uoByD9sie4&usqp=CAU",
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: ScreenUtil().setHeight(380.0)),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(Images.myPageDefaultProfile),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "User A",
+      appBar: const NotificationAppBar(
+        title: Strings.myPage,
+      ),
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: ScreenUtil().setHeight(295.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  _buildBackgroundImage(),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            getProfileImage(ImageSource.gallery);
+                          },
+                          child: _buildProfileImage()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "User A",
+                            style: TextStyle(
+                              fontFamily: "Pretendard",
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SvgPicture.asset(Images.edit),
+                        ],
+                      ),
+                      SizedBox(height: ScreenUtil().setHeight(19.0)),
+                      GestureDetector(
+                        onTap: () {
+                          getBackgroundImage(ImageSource.gallery);
+                        },
+                        child: const Text(
+                          Strings.editBackgroundImage,
                           style: TextStyle(
                             fontFamily: "Pretendard",
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.white,
                           ),
                         ),
-                        SvgPicture.asset(Images.edit),
-                      ],
-                    ),
-                    SizedBox(height: ScreenUtil().setHeight(19.0)),
-                    const Text(
-                      Strings.editBackgroundImage,
-                      style: TextStyle(
-                        fontFamily: "Pretendard",
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
                       ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: ScreenUtil().setHeight(26.0),
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    Strings.updateHistory,
+                    style: TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: ScreenUtil().setHeight(26.0),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  Strings.updateHistory,
-                  style: TextStyle(
-                    fontFamily: "Pretendard",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
                   ),
-                ),
-                const Text(
-                  Strings.noUpdateHistory,
-                  style: TextStyle(
-                    fontFamily: "Pretendard",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(UserColors.ui06),
+                  const Text(
+                    Strings.noUpdateHistory,
+                    style: TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(UserColors.ui06),
+                    ),
                   ),
-                ),
-                SizedBox(height: ScreenUtil().setHeight(28.0)),
-                _buildContentsWidget(Strings.termsAndPolicies),
-                SizedBox(height: ScreenUtil().setHeight(26.0)),
-                _buildContentsWidget(Strings.sendCommentsInquiries),
-                SizedBox(height: ScreenUtil().setHeight(26.0)),
-                _buildContentsWidget(Strings.accountCancel),
-                SizedBox(height: ScreenUtil().setHeight(26.0)),
-                _buildContentsWidget(Strings.logout),
-              ],
+                  SizedBox(height: ScreenUtil().setHeight(28.0)),
+                  _buildContentsWidget(Strings.termsAndPolicies),
+                  SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  _buildContentsWidget(Strings.sendCommentsInquiries),
+                  SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  _buildContentsWidget(Strings.accountCancel),
+                  SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  _buildContentsWidget(Strings.logout),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

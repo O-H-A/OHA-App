@@ -1,8 +1,8 @@
 class ApiUrl {
   // User
   static const String nickNameUpdate = "/api/user/name";
-  static const String profileImageUpdate = "/api/user/image/profile";
-  static const String backgroundImageUpdate = "/api/user/image/background";
+  static const String profileImageUpdate = "http://152.67.219.168/api/user/image/profile";
+  static const String backgroundImageUpdate = "http://152.67.219.168/api/user/image/background";
   static const String imageUpload = "/api/user/";
   static const String myInfo = "/api/user/myinfo";
   static const String allUsers = "/api/user/allusers";

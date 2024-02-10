@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
 import 'api_response.dart';
@@ -53,6 +56,32 @@ class NetworkManager {
     } catch (error) {
       print("에러 발생: $error");
       return "";
+    }
+  }
+
+  Future<http.Response> imagePut(String serverUrl, XFile? imageFile) async {
+    try {
+      if (imageFile == null) {
+        return http.Response('No image file provided', 400);
+      }
+
+      List<int> imageBytes = await imageFile.readAsBytes();
+      final response = await http.put(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+        body: imageBytes,
+      );
+
+      if (response.statusCode == 200) {
+        print("Image uploaded successfully: ${response.body}");
+      } else {
+        print("Failed to upload image: ${response.statusCode}");
+      }
+
+      return response;
+    } catch (e) {
+      print("An error occurred while uploading the image: $e");
+      throw e;
     }
   }
 
