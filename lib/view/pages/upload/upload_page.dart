@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/upload/upload_image_widget.dart';
+import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../../../statics/Colors.dart';
@@ -23,6 +24,7 @@ class _UploadPageState extends State<UploadPage> {
   late List<AssetEntity> _images;
   int _currentPage = 0;
   late Album _currentAlbum;
+  int _selectedIndex = 0;
 
   Future<void> checkPermission() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
@@ -79,6 +81,10 @@ class _UploadPageState extends State<UploadPage> {
     checkPermission();
   }
 
+  void _setSelectedIndex(int index) {
+    _selectedIndex = index;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,21 +129,36 @@ class _UploadPageState extends State<UploadPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                Expanded(child: UploadImageWidget(images: _images)),
+                Expanded(
+                    child: UploadImageWidget(
+                  images: _images,
+                  onSelectedIndexChanged: _setSelectedIndex,
+                )),
                 Padding(
                   padding: EdgeInsets.only(
                       top: ScreenUtil().setHeight(40.0),
                       bottom: ScreenUtil().setHeight(20.0),
                       left: ScreenUtil().setWidth(22.0),
                       right: ScreenUtil().setWidth(22.0)),
-                  child: InfinityButton(
-                    height: ScreenUtil().setHeight(50.0),
-                    radius: 8.0,
-                    backgroundColor: const Color(UserColors.primaryColor),
-                    text: Strings.next,
-                    textSize: 16,
-                    textWeight: FontWeight.w600,
-                    textColor: Colors.white,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UploadWritePage(
+                                  selectImage: _images[_selectedIndex],
+                                )),
+                      );
+                    },
+                    child: InfinityButton(
+                      height: ScreenUtil().setHeight(50.0),
+                      radius: 8.0,
+                      backgroundColor: const Color(UserColors.primaryColor),
+                      text: Strings.next,
+                      textSize: 16,
+                      textWeight: FontWeight.w600,
+                      textColor: Colors.white,
+                    ),
                   ),
                 ),
               ],

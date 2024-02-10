@@ -18,6 +18,7 @@ import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
 import 'package:oha/view/pages/upload/upload_agreements_page.dart';
 import 'package:oha/view/pages/upload/upload_page.dart';
+import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
