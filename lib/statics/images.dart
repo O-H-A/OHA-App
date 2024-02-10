@@ -48,4 +48,5 @@ class Images {
   static const String viewGridDisable = "assets/images/view_grid_disable.svg";
   static const String viewListEnable = "assets/images/view_list_enable.svg";
   static const String viewListDisable = "assets/images/view_list_disable.svg";
+  static const String myImageDefault = "assets/images/my_image_default.png";
 }
