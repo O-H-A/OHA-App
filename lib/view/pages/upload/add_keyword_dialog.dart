@@ -56,7 +56,7 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
     );
   }
 
-  Widget _buildKeywordWidget(String text) {
+  Widget _buildKeywordWidget(String text, int index) {
     final textSpan = _buildTextSpan(text);
     final textPainter = _getTextPainter(textSpan);
 
@@ -90,7 +90,14 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                   fontSize: 16,
                 ),
               ),
-              const Icon(Icons.cancel, color: Color(UserColors.ui07)),
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _keywordList.removeAt(index);
+                    });
+                  },
+                  child:
+                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
             ],
           ),
         ),
@@ -166,7 +173,8 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                                   width: ScreenUtil().setWidth(8.0));
                             },
                             itemBuilder: (BuildContext context, int index) {
-                              return _buildKeywordWidget(_keywordList[index]);
+                              return _buildKeywordWidget(
+                                  _keywordList[index], index);
                             },
                           ),
                         ),
