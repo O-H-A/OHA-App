@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/pages/upload/add_keyword_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../../../app.dart';
@@ -24,6 +25,7 @@ class UploadWritePage extends StatefulWidget {
 class _UploadWritePageState extends State<UploadWritePage> {
   int _selectIndex = 0;
   final _textController = TextEditingController();
+  List<String> _keywordList = [];
 
   TextSpan _buildTextSpan(String text) {
     return TextSpan(
@@ -98,6 +100,43 @@ class _UploadWritePageState extends State<UploadWritePage> {
               color: (_selectIndex == index)
                   ? Colors.white
                   : const Color(UserColors.ui01),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKeywordDefaultWidget() {
+    String text = Strings.keywordDefault;
+
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AddKeywordDialog();
+          },
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(right: ScreenUtil().setWidth(8.0)),
+        child: Container(
+          height: ScreenUtil().setHeight(35.0),
+          width: ScreenUtil().setWidth(115.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
+            border: Border.all(color: const Color(UserColors.ui08)),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Color(UserColors.ui06),
             ),
           ),
         ),
@@ -316,9 +355,9 @@ class _UploadWritePageState extends State<UploadWritePage> {
                             fontSize: 16,
                           ),
                         ),
-                        const Text(
-                          "0/3",
-                          style: TextStyle(
+                        Text(
+                          _keywordList.length.toString() + Strings.keywordCount,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontFamily: "Pretendard",
                             fontWeight: FontWeight.w600,
@@ -328,12 +367,23 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    _buildKeywordWidget("ex) 가을하늘"),
+                    (_keywordList.isEmpty)
+                        ? _buildKeywordDefaultWidget()
+                        : SizedBox(
+                            height: ScreenUtil().setHeight(35.0),
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _keywordList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _buildKeywordWidget("가을 하늘");
+                              },
+                            ),
+                          ),
                     SizedBox(height: ScreenUtil().setHeight(22.0)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
+                      children: const [
+                        Text(
                           Strings.location,
                           style: TextStyle(
                             color: Colors.black,
@@ -342,8 +392,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                             fontSize: 16,
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios,
-                            color: Colors.black),
+                        Icon(Icons.arrow_forward_ios, color: Colors.black),
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
