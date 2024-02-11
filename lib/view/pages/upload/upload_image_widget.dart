@@ -7,10 +7,12 @@ import '../../../statics/images.dart';
 
 class UploadImageWidget extends StatefulWidget {
   final List<AssetEntity> images;
+  final ValueChanged<int> onSelectedIndexChanged;
 
   const UploadImageWidget({
     required this.images,
     Key? key,
+    required this.onSelectedIndexChanged,
   }) : super(key: key);
 
   @override
@@ -32,6 +34,8 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
             setState(() {
               _selectIndex = index;
             });
+
+            widget.onSelectedIndexChanged(_selectIndex);
           },
           child: Stack(
             children: [
