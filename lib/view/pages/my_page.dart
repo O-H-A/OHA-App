@@ -8,8 +8,11 @@ import 'package:oha/network/api_url.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/pages/login_page.dart';
+import 'package:provider/provider.dart';
 
 import '../../network/network_manager.dart';
+import '../../vidw_model/login_view_model.dart';
 import '../widgets/notification_app_bar.dart';
 
 class MyPage extends StatefulWidget {
@@ -23,6 +26,30 @@ class _MyPageState extends State<MyPage> {
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _getProfileImage;
   XFile? _getBackgroundImage;
+  LoginViewModel _loginViewModel = LoginViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+  }
+
+  void onLogout() async {
+    print("Jehee");
+
+    await _loginViewModel.logout().then((value) {
+      if (value == 200) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (Route<dynamic> route) => false,
+        );
+      }
+    }).onError((error, stackTrace) {
+      // Handle error navigation here
+    });
+  }
 
   Future getProfileImage(ImageSource imageSource) async {
     final XFile? pickedFile =
@@ -80,21 +107,24 @@ class _MyPageState extends State<MyPage> {
           );
   }
 
-  Widget _buildContentsWidget(String title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: "Pretendard",
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
+  Widget _buildContentsWidget(String title, VoidCallback callback) {
+    return GestureDetector(
+      onTap: callback,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
           ),
-        ),
-        const Icon(Icons.arrow_forward_ios, color: Colors.black),
-      ],
+          const Icon(Icons.arrow_forward_ios, color: Colors.black),
+        ],
+      ),
     );
   }
 
@@ -188,14 +218,14 @@ class _MyPageState extends State<MyPage> {
                       color: Color(UserColors.ui06),
                     ),
                   ),
-                  SizedBox(height: ScreenUtil().setHeight(28.0)),
-                  _buildContentsWidget(Strings.termsAndPolicies),
-                  SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  _buildContentsWidget(Strings.sendCommentsInquiries),
-                  SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  _buildContentsWidget(Strings.accountCancel),
-                  SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  _buildContentsWidget(Strings.logout),
+                  // SizedBox(height: ScreenUtil().setHeight(28.0)),
+                  // _buildContentsWidget(Strings.termsAndPolicies),
+                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  // _buildContentsWidget(Strings.sendCommentsInquiries),
+                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  // _buildContentsWidget(Strings.accountCancel),
+                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  _buildContentsWidget(Strings.logout, onLogout),
                 ],
               ),
             ),

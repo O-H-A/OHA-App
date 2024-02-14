@@ -26,63 +26,74 @@ class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   Future<void> _login(
-  BuildContext context,
-  LoginViewModel data,
-  LoginType type,
-) async {
-  InAppWebViewController? webViewCtrl;
-  try {
-    final navigator = Navigator.of(context);
+    BuildContext context,
+    LoginViewModel data,
+    LoginType type,
+  ) async {
+    InAppWebViewController? webViewCtrl;
+    try {
+      final navigator = Navigator.of(context);
 
-    await navigator.push(
-      MaterialPageRoute(
-        builder: (context) => InAppWebView(
-          onWebViewCreated: (controller) {
-            webViewCtrl = controller;
-          },
-          initialUrlRequest: URLRequest(url: Uri.parse(_getLoginUrl(type))),
-          initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(),
-          ),
-          onLoadStop: (controller, url) async {
-            String javascriptCode = 'document.body.innerHTML';
-            final result = await webViewCtrl?.evaluateJavascript(source: javascriptCode);
+      await navigator.push(
+        MaterialPageRoute(
+          builder: (context) => InAppWebView(
+            onWebViewCreated: (controller) {
+              webViewCtrl = controller;
+            },
+            initialUrlRequest: URLRequest(url: Uri.parse(_getLoginUrl(type))),
+            initialOptions: InAppWebViewGroupOptions(
+              crossPlatform: InAppWebViewOptions(),
+              android: AndroidInAppWebViewOptions(
+                useHybridComposition: true,
+              ),
+            ),
+            onLoadStop: (controller, url) async {
+              String javascriptCode = 'document.body.innerHTML';
+              final result =
+                  await webViewCtrl?.evaluateJavascript(source: javascriptCode);
 
-            if (result != null && result.isNotEmpty) {
-              String cleanedResult = result.replaceAll(RegExp(r'<[^>]*>'), '');
+              print("Jehee 789 : ${result} ");
 
-              try {
-                Map<String, dynamic> jsonResult = json.decode(cleanedResult);
-                data.setLoginData(json.encode(jsonResult));
+              if (result != null && result.isNotEmpty) {
+                String cleanedResult =
+                    result.replaceAll(RegExp(r'<[^>]*>'), '');
 
-                if (data.loginData.data?.data.type == "new") {
-                  navigator.push(
-                    MaterialPageRoute(
-                      builder: (context) => const AgreementsPage(),
-                    ),
-                  );
-                } else {
-                  navigator.pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const App()),
-                    (Route<dynamic> route) => false,
-                  );
+                print("Jehee 123 : ${result} ${cleanedResult}");
+
+                try {
+                  // Map<String, dynamic> jsonResult = json.decode(cleanedResult);
+                  // data.setLoginData(json.encode(jsonResult));
+
+                  // if (data.loginData.data?.data.type == "new") {
+                  //   navigator.push(
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const AgreementsPage(),
+                  //     ),
+                  //   );
+                  // } else {
+                  //   navigator.pushAndRemoveUntil(
+                  //     MaterialPageRoute(builder: (context) => const App()),
+                  //     (Route<dynamic> route) => false,
+                  //   );
+                  // }
+
+                  // await webViewCtrl?.loadUrl(
+                  //   urlRequest: URLRequest(url: Uri.parse("about:blank")),
+                  // );
+
+                  print("Jehee 456 : ${result} ${cleanedResult}");
+                } catch (e) {
+                  print("Error decoding JSON or accessing accessToken: $e");
                 }
-              } catch (e) {
-                print("Error decoding JSON or accessing accessToken: $e");
               }
-            }
-
-            await webViewCtrl?.loadUrl(
-              urlRequest: URLRequest(url: Uri.parse("about:blank")),
-            );
-          },
+            },
+          ),
         ),
-      ),
-    );
-  } catch (e) {
-    print("Error during login: $e");
+      );
+    } catch (e) {
+      print("Error during login: $e");
+    }
   }
-}
 
   String _getLoginUrl(LoginType type) {
     switch (type) {
