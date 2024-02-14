@@ -1,20 +1,24 @@
 class ApiUrl {
   // User
   static const String nickNameUpdate = "/api/user/name";
-  static const String profileImageUpdate = "http://152.67.219.168/api/user/image/profile";
-  static const String backgroundImageUpdate = "http://152.67.219.168/api/user/image/background";
+  static const String profileImageUpdate =
+      "http://152.67.219.168/api/user/image/profile";
+  static const String backgroundImageUpdate =
+      "http://152.67.219.168/api/user/image/background";
   static const String imageUpload = "/api/user/";
   static const String myInfo = "/api/user/myinfo";
   static const String allUsers = "/api/user/allusers";
   static const String specificusers = "/api/user/specificusers";
 
   // Auth
-  static const String googleLogin = "http://152.67.219.168/api/auth/google/login";
+  static const String googleLogin =
+      "http://152.67.219.168/api/auth/google/login";
   static const String kakaoLogin = "http://152.67.219.168/api/auth/kakao/login";
   static const String naverLogin = "http://152.67.219.168/api/auth/naver/login";
   static const String refresh = "/api/auth/refresh";
-  static const String login = "/api/auth/logout";
+  static const String logout = "http://152.67.219.168/api/auth/logout";
   static const String withDraw = "/api/auth/withdraw";
+  static const String termsagree = "/api/auth/termsagree";
 
   // Location
   static const String getCode = "/api/common/location/getCode";
