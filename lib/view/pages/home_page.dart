@@ -9,6 +9,7 @@ import 'package:oha/view/pages/home/weather/windy_widget.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
+import 'location/location_setting_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,18 +71,23 @@ class _HomePageState extends State<HomePage>
         backgroundColor: Colors.white,
         elevation: 0,
         titleSpacing: ScreenUtil().setWidth(22.0),
-        title: Row(
-          children: const [
-            Text(
-              "논현동",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16),
-            ),
-            Icon(Icons.expand_more, color: Colors.black),
-          ],
+        title: GestureDetector(
+          onTap: (){
+            LocationSettingBottomSheet.show(context);
+          },
+          child: Row(
+            children: const [
+              Text(
+                "논현동",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16),
+              ),
+              Icon(Icons.expand_more, color: Colors.black),
+            ],
+          ),
         ),
         actions: [
           Padding(
