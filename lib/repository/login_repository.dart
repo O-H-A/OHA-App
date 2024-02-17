@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:oha/models/login_model.dart';
 
-import '../models/logout_model.dart';
+import '../models/login/login_model.dart';
+import '../models/login/logout_model.dart';
 import '../network/api_url.dart';
 import '../network/network_manager.dart';
 

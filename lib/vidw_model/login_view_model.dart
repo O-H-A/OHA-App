@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:oha/models/login_model.dart';
+
 import 'package:oha/network/api_response.dart';
 import 'package:oha/repository/login_repository.dart';
 
-import '../models/logout_model.dart';
+import '../models/login/login_model.dart';
+import '../models/login/logout_model.dart';
+
 
 class LoginViewModel with ChangeNotifier {
   final _loginRepository = LoginRepository();

@@ -1,4 +1,5 @@
-import 'package:oha/models/login_data.dart';
+
+import 'login_data.dart';
 
 class LoginModel {
   int statusCode;

@@ -28,6 +28,7 @@ class ApiUrl {
   static const String freqDisrict = "/api/common/location/freqdistrict";
   static const String locationDefault = "/api/common/location/default";
   static const String sameGrid = "/api/common/location/samegrid/";
+  static const String allDistricts = "http://152.67.219.168/api/common/location/alldistricts";
 
   // Weather
   static const String insert = "/api/common/weather/insert";
