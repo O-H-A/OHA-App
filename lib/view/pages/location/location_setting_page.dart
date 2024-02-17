@@ -22,6 +22,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
   List<String> _allLocationList = [];
   List<String> _displayLocationList = [];
   LocationViewModel _locationViewModel = LocationViewModel();
+  String _selectedLocation = "";
 
   @override
   void initState() {
@@ -124,15 +125,31 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                     return Padding(
                       padding:
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
-                      child: Text(
-                        (_displayLocationList.isEmpty)
-                            ? _allLocationList[index]
-                            : _displayLocationList[index],
-                        style: const TextStyle(
-                          fontFamily: "Pretendard",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(UserColors.ui01),
+                      child: GestureDetector(
+                        onTap: () {
+                          String _selectedLocation =
+                              (_displayLocationList.isEmpty)
+                                  ? _allLocationList[index]
+                                  : _displayLocationList[index];
+
+                          List<String> locationParts =
+                              _selectedLocation.split(' ');
+                          String address = locationParts.isNotEmpty
+                              ? locationParts.last
+                              : '';
+
+                          Navigator.pop(context, address);
+                        },
+                        child: Text(
+                          (_displayLocationList.isEmpty)
+                              ? _allLocationList[index]
+                              : _displayLocationList[index],
+                          style: const TextStyle(
+                            fontFamily: "Pretendard",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(UserColors.ui01),
+                          ),
                         ),
                       ),
                     );
