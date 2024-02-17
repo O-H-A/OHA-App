@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/location/location_app_bar_widget.dart';
 import 'package:oha/view/pages/location/location_find_button.dart';
+import 'package:provider/provider.dart';
 
+import '../../../network/api_response.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
@@ -15,15 +19,43 @@ class LocationSettingPage extends StatefulWidget {
 
 class _LocationSettingPageState extends State<LocationSettingPage> {
   final _controller = TextEditingController();
-  final List<String> _allLocationList = [];
+  List<String> _allLocationList = [];
   List<String> _displayLocationList = [];
+  LocationViewModel _locationViewModel = LocationViewModel();
 
   @override
   void initState() {
     super.initState();
 
-    _allLocationList.add("서울시 성북구 하월곡동");
-    _allLocationList.add("서울시 성북구 하월곡동");
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+
+    _allLocationList = _getAllLocations();
+  }
+
+  List<String> _getAllLocations() {
+    List<String> locations = [];
+    final data = _locationViewModel.getLocationData.data?.data.locations;
+
+    if (data != null) {
+      for (final province in data.keys) {
+        final cityMap = data[province];
+
+        if (cityMap != null) {
+          for (final city in cityMap.keys) {
+            final districts = cityMap[city];
+
+            if (districts != null) {
+              for (final district in districts) {
+                String location = "$province $city $district";
+                locations.add(location);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return locations;
   }
 
   @override

@@ -4,12 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
+import '../utils/secret_key.dart';
 import 'api_response.dart';
 
 class NetworkManager {
   Map<String, String> commonHeaders = {
     "Content-Type": "application/json",
     "Accept": "application/json",
+    "AUTHORIZATION": SecretKey.kakaoJWTKey,
   };
 
   static final NetworkManager _instance = NetworkManager._internal();
@@ -22,7 +24,11 @@ class NetworkManager {
     dynamic responseJson;
 
     try {
-      final response = await http.get(Uri.parse(serverUrl));
+      final response = await http.get(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+      );
+
       responseJson = returnResponse(response);
 
       responseJson = utf8.decode(response.bodyBytes);
