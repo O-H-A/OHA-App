@@ -5,9 +5,23 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/images.dart';
 
 import '../../app.dart';
+import '../../vidw_model/location_view_model.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  final LocationViewModel _locationViewModel = LocationViewModel();
+
+  @override
+  void initState() {
+    _locationViewModel.fetchAllDistricts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
