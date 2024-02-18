@@ -25,7 +25,7 @@ class ApiUrl {
   static const String getNameByCodes = "/api/common/location/getnamebycodes";
   static const String getNameByCode = "/api/common/location/getnamebycode/";
   static const String getGrid = "/api/common/location/getgrid/";
-  static const String freqDisrict = "/api/common/location/freqdistrict";
+  static const String freqDisrict = "http://152.67.219.168/api/common/location/freqdistrict";
   static const String locationDefault = "/api/common/location/default";
   static const String sameGrid = "/api/common/location/samegrid/";
   static const String allDistricts = "http://152.67.219.168/api/common/location/alldistricts";

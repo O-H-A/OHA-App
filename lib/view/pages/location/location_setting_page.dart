@@ -127,18 +127,18 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: GestureDetector(
                         onTap: () {
-                          String _selectedLocation =
+                          String selectedLocation =
                               (_displayLocationList.isEmpty)
                                   ? _allLocationList[index]
                                   : _displayLocationList[index];
 
                           List<String> locationParts =
-                              _selectedLocation.split(' ');
+                              selectedLocation.split(' ');
                           String address = locationParts.isNotEmpty
                               ? locationParts.last
                               : '';
 
-                          Navigator.pop(context, address);
+                          Navigator.pop(context, {'fullAddress': selectedLocation, 'lastAddress': address});
                         },
                         child: Text(
                           (_displayLocationList.isEmpty)

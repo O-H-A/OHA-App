@@ -55,7 +55,7 @@ class NetworkManager {
       if (response.statusCode == 200) {
         print("POST 성공: ${response.body}");
       } else {
-        print("POST 실패: ${response.statusCode}");
+        print("POST 실패: ${response.statusCode}    ${response.body}");
       }
 
       return response;

@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/location/location_setting_page.dart';
+import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
+import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/button_icon.dart';
 
 class LocationSettingBottomSheet extends StatelessWidget {
@@ -23,6 +27,15 @@ class _LocationSettingBottomSheetContentState
     extends State<_LocationSettingBottomSheetContent> {
   final List<String> _selectedLocations = ["", "", "", ""];
 
+  LocationViewModel _locationViewModel = LocationViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+  }
+
   void _removeLocation(int index) {
     setState(() {
       _selectedLocations[index] = "";
@@ -30,12 +43,22 @@ class _LocationSettingBottomSheetContentState
   }
 
   void _showLocationPage(int index) async {
-    _selectedLocations[index] = await Navigator.push(
+    Map<String, String?>? result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LocationSettingPage()),
     );
-    
-    setState(() {});
+
+    if (result != null) {
+      String fullAddress = result['fullAddress'] ?? "";
+      String lastAddress = result['lastAddress'] ?? "";
+      setState(() {
+        _selectedLocations[index] = lastAddress;
+      });
+
+      Map<String, dynamic> sendData = {"address": fullAddress};
+
+      _locationViewModel.addFrequentDistricts(sendData);
+    }
   }
 
   Widget _buildLocationWidget(BuildContext context, int index) {
@@ -88,7 +111,9 @@ class _LocationSettingBottomSheetContentState
                     iconColor: (_selectedLocations[index] == "")
                         ? const Color(UserColors.ui01)
                         : Colors.white,
-                    callback: () => (_selectedLocations[index] == "") ? _showLocationPage(index) : _removeLocation(index),
+                    callback: () => (_selectedLocations[index] == "")
+                        ? _showLocationPage(index)
+                        : _removeLocation(index),
                   ),
                 ],
               ),
@@ -166,6 +191,17 @@ class _LocationSettingBottomSheetContentState
                   _buildLocationWidget(context, 2),
                   _buildLocationWidget(context, 3),
                 ],
+              ),
+            ),
+            SizedBox(height: ScreenUtil().setHeight(16.0)),
+            const Center(
+              child: Text(
+                Strings.frequentlyVistedAreaGuide,
+                style: TextStyle(
+                    color: Color(UserColors.ui06),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14),
               ),
             ),
           ],
