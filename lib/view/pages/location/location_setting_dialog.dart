@@ -34,6 +34,8 @@ class _LocationSettingBottomSheetContentState
     super.initState();
 
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+
+    getFrequentLocation();
   }
 
   void _removeLocation(int index) {
@@ -58,6 +60,17 @@ class _LocationSettingBottomSheetContentState
       Map<String, dynamic> sendData = {"address": fullAddress};
 
       _locationViewModel.addFrequentDistricts(sendData);
+    }
+  }
+
+  void getFrequentLocation() {
+    int length =
+        _locationViewModel.getFrequentLocationData.data?.data.length ?? 0;
+
+    for (int i = 0; i < length; i++) {
+      _selectedLocations[i] = _locationViewModel
+              .getFrequentLocationData.data?.data[i].thirdAddress ??
+          "";
     }
   }
 

@@ -23,4 +23,13 @@ class LocationRepository {
       rethrow;
     }
   }
+
+    Future<FrequentLocationModel> getFrequentlyDistricts() async {
+    try {
+      dynamic response = await NetworkManager.instance.get(ApiUrl.freqDisrict);
+      return FrequentLocationModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

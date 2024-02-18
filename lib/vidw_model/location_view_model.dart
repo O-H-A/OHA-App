@@ -11,9 +11,11 @@ class LocationViewModel with ChangeNotifier {
   final _locationRepository = LocationRepository();
 
   ApiResponse<LocationModel> _locationData = ApiResponse.loading();
-  ApiResponse<FrequentLocationModel> _frequentLocationData = ApiResponse.loading();
+  ApiResponse<FrequentLocationModel> _frequentLocationData =
+      ApiResponse.loading();
 
   ApiResponse<LocationModel> get getLocationData => _locationData;
+  ApiResponse<FrequentLocationModel> get getFrequentLocationData => _frequentLocationData;
 
   void setLocationData(ApiResponse<LocationModel> response) {
     _locationData = response;
@@ -21,7 +23,7 @@ class LocationViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-    void setFrequentLocationData(ApiResponse<FrequentLocationModel> response) {
+  void setFrequentLocationData(ApiResponse<FrequentLocationModel> response) {
     _frequentLocationData = response;
 
     notifyListeners();
@@ -49,5 +51,17 @@ class LocationViewModel with ChangeNotifier {
       statusCode = 400;
     });
     //return statusCode;
+  }
+
+  Future<int> fetchFrequentDistricts() async {
+    int statusCode = 400;
+    await _locationRepository.getFrequentlyDistricts().then((value) {
+      setFrequentLocationData(ApiResponse.complete(value));
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      setFrequentLocationData(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
   }
 }
