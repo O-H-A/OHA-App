@@ -43,8 +43,6 @@ class _LocationSettingBottomSheetContentState
     Map<String, dynamic> sendData = {"address": _fullLocations[index]};
     _locationViewModel.deleteFrequentDistricts(sendData);
 
-    print("SendData : ${sendData}");
-
     setState(() {
       _selectedLocations[index] = "";
       _fullLocations[index] = "";
@@ -74,8 +72,6 @@ class _LocationSettingBottomSheetContentState
   void getFrequentLocation() {
     int length =
         _locationViewModel.getFrequentLocationData.data?.data.length ?? 0;
-
-    print("Jehee : ${_locationViewModel.getFrequentLocationData.data?.data}");
 
     String firstAddress = "";
     String secondAddress = "";
