@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/utils/secret_key.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/vidw_model/login_view_model.dart';
+import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/home/category/category_detail_page.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => LocationViewModel()),
+        ChangeNotifierProvider(create: (_) => WeatherViewModel()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 840),
