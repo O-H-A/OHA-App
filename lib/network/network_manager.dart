@@ -65,6 +65,34 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> delete(
+      String serverUrl, Map<String, dynamic> userData) async {
+    dynamic responseJson;
+
+    print("Jehe delete : ");
+
+    try {
+      String jsonData = jsonEncode(userData);
+
+      final response = await http.delete(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+        body: jsonData,
+      );
+
+      responseJson = returnResponse(response);
+
+      responseJson = utf8.decode(response.bodyBytes);
+
+      print("DELETE 성공: ${responseJson}");
+
+      return responseJson;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   Future<http.Response> imagePut(String serverUrl, XFile? imageFile) async {
     try {
       if (imageFile == null) {

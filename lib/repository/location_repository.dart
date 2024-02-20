@@ -15,18 +15,31 @@ class LocationRepository {
     }
   }
 
-  Future<FrequentLocationModel> addFrequentlyDistricts(Map<String, dynamic> data) async {
+  Future<FrequentLocationModel> addFrequentlyDistricts(
+      Map<String, dynamic> data) async {
     try {
-      dynamic response = await NetworkManager.instance.post(ApiUrl.freqDisrict, data);
+      dynamic response =
+          await NetworkManager.instance.post(ApiUrl.freqDisrict, data);
       return FrequentLocationModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }
   }
 
-    Future<FrequentLocationModel> getFrequentlyDistricts() async {
+  Future<FrequentLocationModel> getFrequentlyDistricts() async {
     try {
       dynamic response = await NetworkManager.instance.get(ApiUrl.freqDisrict);
+      return FrequentLocationModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<FrequentLocationModel> deleteFrequentlyDistricts(
+      Map<String, dynamic> data) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.delete(ApiUrl.freqDisrict, data);
       return FrequentLocationModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

@@ -26,6 +26,7 @@ class _LocationSettingBottomSheetContent extends StatefulWidget {
 class _LocationSettingBottomSheetContentState
     extends State<_LocationSettingBottomSheetContent> {
   final List<String> _selectedLocations = ["", "", "", ""];
+  final List<String> _fullLocations = ["", "", "", ""];
 
   LocationViewModel _locationViewModel = LocationViewModel();
 
@@ -39,8 +40,14 @@ class _LocationSettingBottomSheetContentState
   }
 
   void _removeLocation(int index) {
+    Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+    _locationViewModel.deleteFrequentDistricts(sendData);
+
+    print("SendData : ${sendData}");
+
     setState(() {
       _selectedLocations[index] = "";
+      _fullLocations[index] = "";
     });
   }
 
@@ -55,6 +62,7 @@ class _LocationSettingBottomSheetContentState
       String lastAddress = result['lastAddress'] ?? "";
       setState(() {
         _selectedLocations[index] = lastAddress;
+        _fullLocations[index] = fullAddress;
       });
 
       Map<String, dynamic> sendData = {"address": fullAddress};
@@ -67,10 +75,32 @@ class _LocationSettingBottomSheetContentState
     int length =
         _locationViewModel.getFrequentLocationData.data?.data.length ?? 0;
 
+    print("Jehee : ${_locationViewModel.getFrequentLocationData.data?.data}");
+
+    String firstAddress = "";
+    String secondAddress = "";
+    String thirdAddress = "";
+
     for (int i = 0; i < length; i++) {
-      _selectedLocations[i] = _locationViewModel
+      if (i > 3) {
+        return;
+      }
+
+      firstAddress = _locationViewModel
+              .getFrequentLocationData.data?.data[i].firstAddress ??
+          "";
+
+      secondAddress = _locationViewModel
+              .getFrequentLocationData.data?.data[i].secondAddress ??
+          "";
+
+      thirdAddress = _locationViewModel
               .getFrequentLocationData.data?.data[i].thirdAddress ??
           "";
+
+      _selectedLocations[i] = thirdAddress;
+
+      _fullLocations[i] = "$firstAddress $secondAddress $thirdAddress";
     }
   }
 
