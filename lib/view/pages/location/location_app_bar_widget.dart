@@ -5,7 +5,9 @@ class LocationAppBarWidget extends StatelessWidget
   final String title;
   final IconData backIcon;
 
-  const LocationAppBarWidget({Key? key, required this.title, required this.backIcon}) : super(key: key);
+  const LocationAppBarWidget(
+      {Key? key, required this.title, required this.backIcon})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,9 @@ class LocationAppBarWidget extends StatelessWidget
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pop(context);
+        },
         icon: Icon(
           backIcon,
           color: Colors.black,

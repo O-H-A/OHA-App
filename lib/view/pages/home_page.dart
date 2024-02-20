@@ -66,14 +66,25 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(  
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         titleSpacing: ScreenUtil().setWidth(22.0),
         title: GestureDetector(
-          onTap: (){
-            LocationSettingBottomSheet.show(context);
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              builder: (BuildContext context) {
+                return LocationSettingBottomSheet();
+              },
+            );
           },
           child: Row(
             children: const [

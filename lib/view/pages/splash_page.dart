@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/images.dart';
+import 'package:provider/provider.dart';
 
 import '../../app.dart';
 import '../../vidw_model/location_view_model.dart';
@@ -15,11 +16,13 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final LocationViewModel _locationViewModel = LocationViewModel();
+ LocationViewModel _locationViewModel = LocationViewModel();
 
   @override
   void initState() {
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     _locationViewModel.fetchAllDistricts();
+    _locationViewModel.fetchFrequentDistricts();
     super.initState();
   }
 

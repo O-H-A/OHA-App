@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/utils/secret_key.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/vidw_model/login_view_model.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => LocationViewModel()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 840),
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const App(),
+          home: const SplashPage(),
         ),
       ),
     );

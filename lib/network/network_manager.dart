@@ -4,12 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
+import '../utils/secret_key.dart';
 import 'api_response.dart';
 
 class NetworkManager {
   Map<String, String> commonHeaders = {
     "Content-Type": "application/json",
     "Accept": "application/json",
+    "AUTHORIZATION": SecretKey.kakaoJWTKey,
   };
 
   static final NetworkManager _instance = NetworkManager._internal();
@@ -22,7 +24,11 @@ class NetworkManager {
     dynamic responseJson;
 
     try {
-      final response = await http.get(Uri.parse(serverUrl));
+      final response = await http.get(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+      );
+
       responseJson = returnResponse(response);
 
       responseJson = utf8.decode(response.bodyBytes);
@@ -49,10 +55,38 @@ class NetworkManager {
       if (response.statusCode == 200) {
         print("POST 성공: ${response.body}");
       } else {
-        print("POST 실패: ${response.statusCode}");
+        print("POST 실패: ${response.statusCode}    ${response.body}");
       }
 
       return response;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
+  Future<dynamic> delete(
+      String serverUrl, Map<String, dynamic> userData) async {
+    dynamic responseJson;
+
+    print("Jehe delete : ");
+
+    try {
+      String jsonData = jsonEncode(userData);
+
+      final response = await http.delete(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+        body: jsonData,
+      );
+
+      responseJson = returnResponse(response);
+
+      responseJson = utf8.decode(response.bodyBytes);
+
+      print("DELETE 성공: ${responseJson}");
+
+      return responseJson;
     } catch (error) {
       print("에러 발생: $error");
       return "";

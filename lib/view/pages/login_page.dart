@@ -52,13 +52,9 @@ class LoginPage extends StatelessWidget {
               final result =
                   await webViewCtrl?.evaluateJavascript(source: javascriptCode);
 
-              print("Jehee 789 : ${result} ");
-
               if (result != null && result.isNotEmpty) {
                 String cleanedResult =
                     result.replaceAll(RegExp(r'<[^>]*>'), '');
-
-                print("Jehee 123 : ${result} ${cleanedResult}");
 
                 try {
                   // Map<String, dynamic> jsonResult = json.decode(cleanedResult);
@@ -81,7 +77,6 @@ class LoginPage extends StatelessWidget {
                   //   urlRequest: URLRequest(url: Uri.parse("about:blank")),
                   // );
 
-                  print("Jehee 456 : ${result} ${cleanedResult}");
                 } catch (e) {
                   print("Error decoding JSON or accessing accessToken: $e");
                 }

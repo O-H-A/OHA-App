@@ -36,8 +36,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   void onLogout() async {
-    print("Jehee");
-
     await _loginViewModel.logout().then((value) {
       if (value == 200) {
         Navigator.pushAndRemoveUntil(
