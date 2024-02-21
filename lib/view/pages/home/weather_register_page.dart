@@ -19,6 +19,7 @@ class WeatherRegisterPage extends StatefulWidget {
 class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   String _selectTitle = "";
   String _selectImage = "";
+  String _selectLocation = "";
 
   Widget _buildTitleGuide() {
     return Column(
@@ -125,8 +126,8 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
   Widget _buildCurrentLocation() {
     return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
+      onTap: () async {
+        Map<String, String?>? result = await showModalBottomSheet(
           context: context,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -138,6 +139,13 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
             return LocationSettingBottomSheet();
           },
         );
+
+        if (result != null) {
+          String lastAddress = result['lastAddress'] ?? "";
+          setState(() {
+            _selectLocation = lastAddress;
+          });
+        }
       },
       child: Container(
         width: ScreenUtil().setWidth(139.0),
@@ -155,9 +163,9 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
             children: [
               const Icon(Icons.expand_more, color: Color(UserColors.ui06)),
               SizedBox(width: ScreenUtil().setWidth(10.0)),
-              const Text(
-                "논현동",
-                style: TextStyle(
+              Text(
+                _selectLocation,
+                style: const TextStyle(
                   fontFamily: "Pretendard",
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -273,6 +281,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
     );
   }
 
+  bool completeState() {
+    return _selectImage != "" && _selectTitle != "" && _selectLocation != "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -312,65 +324,68 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTitleGuide(),
-                  SizedBox(height: ScreenUtil().setHeight(46.0)),
-                  _buildCurrentLocationGuide(),
-                  SizedBox(height: ScreenUtil().setHeight(12.0)),
-                  _buildCurrentLocation(),
-                  SizedBox(height: ScreenUtil().setHeight(50.0)),
-                  _buildWeatherInfoGuide(),
-                  (_selectTitle == "" || _selectImage == "")
-                      ? _buildEmptyWeatherSelect()
-                      : _buildSelectWidgetWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(23.0)),
-                  const Text(
-                    Strings.peopleWeatherInfo,
-                    style: TextStyle(
-                        color: Color(UserColors.ui06),
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13),
-                  ),
-                  SizedBox(height: ScreenUtil().setHeight(12.0)),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().radius(8.0)),
-                          color: Colors.white,
-                          border: Border.all(
-                            color: const Color(UserColors.ui08),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildTitleGuide(),
+                    SizedBox(height: ScreenUtil().setHeight(46.0)),
+                    _buildCurrentLocationGuide(),
+                    SizedBox(height: ScreenUtil().setHeight(12.0)),
+                    _buildCurrentLocation(),
+                    SizedBox(height: ScreenUtil().setHeight(50.0)),
+                    _buildWeatherInfoGuide(),
+                    (_selectTitle == "" || _selectImage == "")
+                        ? _buildEmptyWeatherSelect()
+                        : _buildSelectWidgetWidget(),
+                    SizedBox(height: ScreenUtil().setHeight(23.0)),
+                    const Text(
+                      Strings.peopleWeatherInfo,
+                      style: TextStyle(
+                          color: Color(UserColors.ui06),
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13),
+                    ),
+                    SizedBox(height: ScreenUtil().setHeight(12.0)),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(ScreenUtil().radius(8.0)),
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color(UserColors.ui08),
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: ScreenUtil().setHeight(182.0),
                           ),
                         ),
-                        child: SizedBox(
-                          height: ScreenUtil().setHeight(182.0),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: ScreenUtil().setWidth(25.0)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              _buildWeatherInfoWIdget(
+                                  Images.littleCloudyDisable, "약간 흐려요", 1132),
+                              _buildWeatherInfoWIdget(
+                                  Images.cloudyDisable, "흐려요", 121),
+                              _buildWeatherInfoWIdget(
+                                  Images.veryColdDisable, "매우 추워요", 30),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(25.0)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            _buildWeatherInfoWIdget(
-                                Images.littleCloudyDisable, "약간 흐려요", 1132),
-                            _buildWeatherInfoWIdget(
-                                Images.cloudyDisable, "흐려요", 121),
-                            _buildWeatherInfoWIdget(
-                                Images.veryColdDisable, "매우 추워요", 30),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    SizedBox(height: ScreenUtil().setHeight(52.0)),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -378,10 +393,15 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
               child: InfinityButton(
                 height: ScreenUtil().setHeight(50.0),
                 radius: ScreenUtil().radius(8.0),
-                backgroundColor: const Color(UserColors.ui10),
+                backgroundColor: (completeState())
+                    ? const Color(UserColors.primaryColor)
+                    : const Color(UserColors.ui10),
                 text: Strings.register,
                 textSize: 16,
                 textWeight: FontWeight.w600,
+                textColor: (completeState())
+                    ? Colors.white
+                    : const Color(UserColors.ui06),
               ),
             )
           ],

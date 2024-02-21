@@ -52,6 +52,7 @@ class Images {
   static const String viewListDisable = "assets/images/view_list_disable.svg";
   static const String myImageDefault = "assets/images/my_image_default.png";
   static const String cloudyDisable = "assets/images/cloudy_disable.svg";
+  static const String cloudyEnable = "assets/images/cloudy_enable.svg";
   static const String littleCloudyDisable =
       "assets/images/little_cloudy_disable.svg";
   static const String manyCloudDisable = "assets/images/many_cloud_disable.svg";
@@ -66,4 +67,18 @@ class Images {
   static const String windDisable = "assets/images/wind_disable.svg";
   static const String veryColdDisable = "assets/images/very_cold_disable.svg";
   static const String rainbowDisable = "assets/images/rainbow_disable.svg";
+  static const String littleCloudyEnable =
+      "assets/images/little_cloudy_enable.svg";
+  static const String manyCloudEnable = "assets/images/many_cloud_disable.svg";
+  static const String sunnyEnable = "assets/images/sunny_enable.svg";
+  static const String rainEnable = "assets/images/rain_enable.svg";
+  static const String thunderEnable = "assets/images/thunder_enable.svg";
+  static const String snowEnable = "assets/images/snow_enable.svg";
+  static const String thunderRainEnable =
+      "assets/images/thunder_rain_enable.svg";
+  static const String veryHotEnable = "assets/images/very_hot_enable.svg";
+  static const String nightAirEnable = "assets/images/night_air_enable.svg";
+  static const String windEnable = "assets/images/wind_enable.svg";
+  static const String veryColdEnable = "assets/images/very_cold_enable.svg";
+  static const String rainbowEnable = "assets/images/rainbow_enable.svg";
 }

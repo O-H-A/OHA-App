@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const ProfileEditPage(),
+          home: const SplashPage(),
         ),
       ),
     );

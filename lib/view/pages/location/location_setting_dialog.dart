@@ -103,7 +103,11 @@ class _LocationSettingBottomSheetContentState
   Widget _buildLocationWidget(BuildContext context, int index) {
     return GestureDetector(
       onTap: () async {
-        _showLocationPage(index);
+        if (_selectedLocations[index] == "") {
+          _showLocationPage(index);
+        } else {
+          Navigator.pop(context, {'lastAddress': _selectedLocations[index]});
+        }
       },
       child: Stack(
         children: [
