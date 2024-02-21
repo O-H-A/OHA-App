@@ -36,7 +36,7 @@ class ApiUrl {
   // Weather
   static const String insert = "/api/common/weather/insert";
   static const String datas = "/api/common/weather/datas";
-  static const String weather = "/api/posting/weather";
+  static const String weather = "http://152.67.219.168/api/posting/weather";
   static const String weatherCount =
       "http://152.67.219.168/api/posting/weather/count";
   static const String weatherDelete = "/api/posting/weather/";

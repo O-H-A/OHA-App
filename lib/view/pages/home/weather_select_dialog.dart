@@ -7,7 +7,11 @@ import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
 
 class WeatherSelectDialog extends StatelessWidget {
-  static List<String> weatherTitleList = [
+  WeatherSelectDialog({
+    Key? key,
+  }) : super(key: key);
+
+  final List<String> weatherTitleList = [
     Strings.cloudy,
     Strings.littleCloudy,
     Strings.manyCloud,
@@ -23,7 +27,7 @@ class WeatherSelectDialog extends StatelessWidget {
     Strings.rainbow
   ];
 
-  static List<String> weatherImageList = [
+  final List<String> weatherImageList = [
     Images.cloudyDisable,
     Images.littleCloudyDisable,
     Images.manyCloudDisable,
@@ -39,14 +43,36 @@ class WeatherSelectDialog extends StatelessWidget {
     Images.rainbowDisable,
   ];
 
-  Widget _contentsWidget(BuildContext context, String image, String title) {
+  final List<String> weatherEnableImageList = [
+    Images.cloudyEnable,
+    Images.littleCloudyEnable,
+    Images.manyCloudEnable,
+    Images.sunnyEnable,
+    Images.rainEnable,
+    Images.thunderEnable,
+    Images.snowEnable,
+    Images.thunderRainEnable,
+    Images.veryHotEnable,
+    Images.nightAirEnable,
+    Images.windEnable,
+    Images.veryColdEnable,
+    Images.rainbowEnable,
+  ];
+
+  Widget _contentsWidget(
+      BuildContext context, String image, String title, int index) {
     return GestureDetector(
       onTap: () {
-        Navigator.pop(context, {'title': title, 'image': image});
+        Navigator.pop(
+            context, {'title': title, 'image': weatherEnableImageList[index]});
       },
       child: Column(
         children: [
-          SvgPicture.asset(image),
+          SvgPicture.asset(
+            image,
+            width: ScreenUtil().setWidth(40.0),
+            height: ScreenUtil().setHeight(40.0),
+          ),
           SizedBox(height: ScreenUtil().setHeight(22.0)),
           Text(
             title,
@@ -66,9 +92,9 @@ class WeatherSelectDialog extends StatelessWidget {
     return Dialog(
       alignment: Alignment.bottomCenter,
       insetPadding: EdgeInsets.only(
-        bottom: ScreenUtil().setHeight(75.0),
-        left: ScreenUtil().setWidth(12.0),
-        right: ScreenUtil().setWidth(12.0),
+        bottom: ScreenUtil().setHeight(35.0),
+        left: ScreenUtil().setWidth(22.0),
+        right: ScreenUtil().setWidth(22.0),
       ),
       child: Container(
         width: double.infinity,
@@ -76,20 +102,20 @@ class WeatherSelectDialog extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
         ),
-        child: GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 1,
+        child: Center(
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 1,
+            ),
+            itemCount: 13,
+            itemBuilder: (context, index) {
+              return _contentsWidget(context, weatherImageList[index],
+                  weatherTitleList[index], index);
+            },
           ),
-          itemCount: 13,
-          itemBuilder: (context, index) {
-            return _contentsWidget(
-              context,
-              weatherImageList[index],
-              weatherTitleList[index],
-            );
-          },
         ),
       ),
     );

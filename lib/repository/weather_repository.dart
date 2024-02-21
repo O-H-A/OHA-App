@@ -15,4 +15,14 @@ class WeatherRepository {
       rethrow;
     }
   }
+
+  Future<WeatherModel> addWeatherPosting(Map<String, dynamic> data) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.post(ApiUrl.weather, data);
+      return WeatherModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

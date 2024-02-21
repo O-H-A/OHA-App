@@ -30,6 +30,47 @@ class LocationViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> getFrequentRegionCode() {
+    int length = _frequentLocationData.data?.data.length ?? 0;
+    List<String> list = List.generate(length, (index) => '');
+
+    for (int i = 0; i < length; i++) {
+      list[i] = _frequentLocationData.data?.data[i].code ?? "";
+    }
+
+    return list;
+  }
+
+  List<String> getFrequentFullAddress() {
+    int length = _frequentLocationData.data?.data.length ?? 0;
+    List<String> list = List.generate(length, (index) => '');
+
+    String firstAddress = "";
+    String secondAddress = "";
+    String thirdAddress = "";
+
+    for (int i = 0; i < length; i++) {
+      firstAddress = _frequentLocationData.data?.data[i].firstAddress ?? "";
+      secondAddress = _frequentLocationData.data?.data[i].secondAddress ?? "";
+      thirdAddress = _frequentLocationData.data?.data[i].thirdAddress ?? "";
+
+      list[i] = "$firstAddress $secondAddress $thirdAddress";
+    }
+
+    return list;
+  }
+
+  List<String> getFrequentThirdAddress() {
+    int length = _frequentLocationData.data?.data.length ?? 0;
+    List<String> list = List.generate(length, (index) => '');
+
+    for (int i = 0; i < length; i++) {
+      list[i] = _frequentLocationData.data?.data[i].thirdAddress ?? "";
+    }
+
+    return list;
+  }
+
   Future<int> fetchAllDistricts() async {
     int statusCode = 400;
     await _locationRepository.getAllDistricts().then((value) {

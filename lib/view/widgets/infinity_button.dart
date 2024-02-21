@@ -8,6 +8,7 @@ class InfinityButton extends StatelessWidget {
   final double textSize;
   final FontWeight textWeight;
   final Color textColor;
+  final VoidCallback callback;
 
   const InfinityButton({
     Key? key,
@@ -18,31 +19,36 @@ class InfinityButton extends StatelessWidget {
     required this.textSize,
     required this.textWeight,
     this.textColor = Colors.black,
+    this.callback = _callback,
   }) : super(key: key);
 
+  static void _callback() {}
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: double.infinity,
-          height: height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius),
-            color: backgroundColor,
+    return GestureDetector(
+      onTap: callback,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            height: height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              color: backgroundColor,
+            ),
           ),
-        ),
-        Text(
-          text,
-          style: TextStyle(
-              color: textColor,
-              fontFamily: "Pretendard",
-              fontWeight: textWeight,
-              fontSize: textSize),
-        ),
-      ],
+          Text(
+            text,
+            style: TextStyle(
+                color: textColor,
+                fontFamily: "Pretendard",
+                fontWeight: textWeight,
+                fontSize: textSize),
+          ),
+        ],
+      ),
     );
   }
 }
