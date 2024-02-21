@@ -6,7 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/weather_register_page.dart';
+import 'package:provider/provider.dart';
 
 class NowWeatherTab extends StatefulWidget {
   const NowWeatherTab({super.key});
@@ -16,7 +19,29 @@ class NowWeatherTab extends StatefulWidget {
 }
 
 class _NowWeatherTabState extends State<NowWeatherTab> {
-  
+  WeatherViewModel _weatherViewModel = WeatherViewModel();
+  LocationViewModel _locationViewModel = LocationViewModel();
+  String regionCode = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
+
+    getRegionCode();
+    //Map<String, dynamic> sendData = {"regionCode ": regionCode};
+    Map<String, dynamic> sendData = {"regionCode": 1111010500};
+
+    _weatherViewModel.fetchWeatherCount(sendData);
+  }
+
+  void getRegionCode() {
+    regionCode =
+        _locationViewModel.getFrequentLocationData.data?.data[0].code ?? '0';
+  }
+
   Widget _buildWeatherInfoWIdget(String imagePath, String title, int count) {
     return Column(
       children: [
@@ -97,10 +122,10 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _buildWeatherInfoWIdget(
-                          Images.litteCloudIcon, "약간 흐려요", 1132),
-                      _buildWeatherInfoWIdget(Images.cloudyIcon, "흐려요", 121),
+                          Images.littleCloudyDisable, "약간 흐려요", 1132),
+                      _buildWeatherInfoWIdget(Images.cloudyDisable, "흐려요", 121),
                       _buildWeatherInfoWIdget(
-                          Images.veryColdIcon, "매우 추워요", 30),
+                          Images.veryColdDisable, "매우 추워요", 30),
                     ],
                   ),
                 ),

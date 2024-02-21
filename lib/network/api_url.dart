@@ -25,18 +25,20 @@ class ApiUrl {
   static const String getNameByCodes = "/api/common/location/getnamebycodes";
   static const String getNameByCode = "/api/common/location/getnamebycode/";
   static const String getGrid = "/api/common/location/getgrid/";
-  static const String freqDisrict = "http://152.67.219.168/api/common/location/freqdistrict";
-  static const String locationDefault = "/api/common/location/default";
+  static const String freqDisrict =
+      "http://152.67.219.168/api/common/location/freqdistrict";
+  static const String locationDefault =
+      "http://152.67.219.168/api/common/location/default";
   static const String sameGrid = "/api/common/location/samegrid/";
-  static const String allDistricts = "http://152.67.219.168/api/common/location/alldistricts";
+  static const String allDistricts =
+      "http://152.67.219.168/api/common/location/alldistricts";
 
   // Weather
   static const String insert = "/api/common/weather/insert";
   static const String datas = "/api/common/weather/datas";
-
-  // Neighborhood Weather
   static const String weather = "/api/posting/weather";
-  static const String weatherCount = "/api/posting/weather/count";
+  static const String weatherCount =
+      "http://152.67.219.168/api/posting/weather/count";
   static const String weatherDelete = "/api/posting/weather/";
 
   // Upload

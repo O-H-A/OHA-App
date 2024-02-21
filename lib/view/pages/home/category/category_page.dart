@@ -75,7 +75,7 @@ class _CategoryPageState extends State<CategoryPage>
         SizedBox(
             width: tabWidth, child: const Tab(text: Strings.sunsetSunrise)),
         SizedBox(width: tabWidth, child: const Tab(text: Strings.nightSky)),
-        SizedBox(width: tabWidth, child: const Tab(text: Strings.sunny)),
+        SizedBox(width: tabWidth, child: const Tab(text: Strings.sunnySky)),
       ],
       labelColor: const Color(0xFF333333),
       labelStyle: const TextStyle(

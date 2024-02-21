@@ -62,7 +62,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
         text = Strings.nightSky;
         break;
       case 5:
-        text = Strings.sunny;
+        text = Strings.sunnySky;
         break;
       default:
         break;
