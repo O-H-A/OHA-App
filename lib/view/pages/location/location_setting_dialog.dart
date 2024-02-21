@@ -27,6 +27,7 @@ class _LocationSettingBottomSheetContentState
     extends State<_LocationSettingBottomSheetContent> {
   final List<String> _selectedLocations = ["", "", "", ""];
   final List<String> _fullLocations = ["", "", "", ""];
+  final List<String> _frequentRegionCode = ["", "", "", ""];
 
   LocationViewModel _locationViewModel = LocationViewModel();
 
@@ -37,6 +38,7 @@ class _LocationSettingBottomSheetContentState
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
 
     getFrequentLocation();
+    getFrequentRegionCode();
   }
 
   void _removeLocation(int index) {
@@ -69,34 +71,24 @@ class _LocationSettingBottomSheetContentState
     }
   }
 
+  void getFrequentRegionCode() {
+    List<String> list = _locationViewModel.getFrequentRegionCode();
+
+    for (int i = 0; i < list.length; i++) {
+      _frequentRegionCode[i] = list[i];
+    }
+  }
+
   void getFrequentLocation() {
-    int length =
-        _locationViewModel.getFrequentLocationData.data?.data.length ?? 0;
+    List<String> fullList = _locationViewModel.getFrequentFullAddress();
+    List<String> thirdList = _locationViewModel.getFrequentThirdAddress();
 
-    String firstAddress = "";
-    String secondAddress = "";
-    String thirdAddress = "";
+    for (int i = 0; i < fullList.length; i++) {
+      _fullLocations[i] = fullList[i];
+    }
 
-    for (int i = 0; i < length; i++) {
-      if (i > 3) {
-        return;
-      }
-
-      firstAddress = _locationViewModel
-              .getFrequentLocationData.data?.data[i].firstAddress ??
-          "";
-
-      secondAddress = _locationViewModel
-              .getFrequentLocationData.data?.data[i].secondAddress ??
-          "";
-
-      thirdAddress = _locationViewModel
-              .getFrequentLocationData.data?.data[i].thirdAddress ??
-          "";
-
-      _selectedLocations[i] = thirdAddress;
-
-      _fullLocations[i] = "$firstAddress $secondAddress $thirdAddress";
+    for (int i = 0; i < thirdList.length; i++) {
+      _selectedLocations[i] = thirdList[i];
     }
   }
 
@@ -106,7 +98,10 @@ class _LocationSettingBottomSheetContentState
         if (_selectedLocations[index] == "") {
           _showLocationPage(index);
         } else {
-          Navigator.pop(context, {'lastAddress': _selectedLocations[index]});
+          Navigator.pop(context, {
+            'lastAddress': _selectedLocations[index],
+            'regionCode': _frequentRegionCode[index]
+          });
         }
       },
       child: Stack(

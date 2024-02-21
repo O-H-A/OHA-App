@@ -71,6 +71,7 @@ class NetworkManager {
   Future<dynamic> post(String serverUrl, Map<String, dynamic> userData) async {
     try {
       String jsonData = jsonEncode(userData);
+      dynamic responseJson;
 
       final response = await http.post(
         Uri.parse(serverUrl),
@@ -78,10 +79,12 @@ class NetworkManager {
         body: jsonData,
       );
 
+      responseJson = returnResponse(response);
+
       if (response.statusCode == 200) {
         print("POST 성공: ${response.body}");
       } else {
-        print("POST 실패: ${response.statusCode}    ${response.body}");
+        print("POST 실패: ${response.statusCode}    ${responseJson}");
       }
 
       return response;

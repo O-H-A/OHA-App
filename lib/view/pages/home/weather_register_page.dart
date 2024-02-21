@@ -4,9 +4,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/view/pages/home/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
+import 'package:provider/provider.dart';
 
+import '../../../vidw_model/weather_view_model.dart';
 import '../../widgets/back_close_app_bar.dart';
 import '../location/location_setting_dialog.dart';
 
@@ -20,7 +23,77 @@ class WeatherRegisterPage extends StatefulWidget {
 class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   String _selectTitle = "";
   String _selectImage = "";
-  String _selectLocation = "";
+  String _selectRegionCode = "";
+  String _selectThirdAddress = "";
+  String _selectWeatherCode = "";
+  LocationViewModel _locationViewModel = LocationViewModel();
+  WeatherViewModel _weatherViewModel = WeatherViewModel();
+  List<String> _frequentRegionCode = ["", "", "", ""];
+  List<String> _frequentThirdAddress = ["", "", "", ""];
+
+  /*
+    흐림	WTHR_CLOUDY
+    약간 흐림	WTHR_PARTLY_CLOUDY
+    구름 많음	WTHR_MOSTLY_CLOUDY
+    맑음	WTHR_CLEAR
+    비	WTHR_RAIN
+    천둥	WTHR_THUNDER
+    눈	WTHR_SNOW
+    천둥 비	WTHR_THUNDER_RAIN
+    매우 더움	WTHR_VERY_HOT
+    밤공기	WTHR_NIGHT_AIR
+    바람	WTHR_WIND
+    매우 추움	WTHR_VERY_COLD
+    무지개	WTHR_RAINBOW
+  */
+
+  final String cloudy = "WTHR_CLOUDY";
+  final String littleCloudy = "WTHR_PARTLY_CLOUDY";
+  final String manyCloud = "WTHR_MOSTLY_CLOUDY";
+  final String sunny = "WTHR_CLEAR";
+  final String rain = "WTHR_RAIN";
+  final String thunder = "WTHR_THUNDER";
+  final String snow = "WTHR_SNOW";
+  final String thunderSnow = "WTHR_THUNDER_RAIN";
+  final String veryHot = "WTHR_VERY_HOT";
+  final String nightAir = "WTHR_NIGHT_AIR";
+  final String wind = "WTHR_WIND";
+  final String veryCold = "WTHR_VERY_COLD";
+  final String rainbow = "WTHR_RAINBOW";
+
+  @override
+  void initState() {
+    super.initState();
+
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+
+    getFrequentRegionCode();
+    getFrequentThirdAddress();
+  }
+
+  void getFrequentRegionCode() {
+    List<String> list = _locationViewModel.getFrequentRegionCode();
+
+    if (list.isNotEmpty) {
+      _selectRegionCode = list[0];
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      _frequentRegionCode[i] = list[i];
+    }
+  }
+
+  void getFrequentThirdAddress() {
+    List<String> list = _locationViewModel.getFrequentThirdAddress();
+
+    if (list.isNotEmpty) {
+      _selectThirdAddress = list[0];
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      _frequentThirdAddress[i] = list[i];
+    }
+  }
 
   Widget _buildTitleGuide() {
     return Column(
@@ -143,8 +216,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
         if (result != null) {
           String lastAddress = result['lastAddress'] ?? "";
+          String regionCode = result['regionCode'] ?? "";
           setState(() {
-            _selectLocation = lastAddress;
+            _selectThirdAddress = lastAddress;
+            _selectRegionCode = regionCode;
           });
         }
       },
@@ -165,7 +240,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
               const Icon(Icons.expand_more, color: Color(UserColors.ui06)),
               SizedBox(width: ScreenUtil().setWidth(10.0)),
               Text(
-                _selectLocation,
+                _selectThirdAddress,
                 style: const TextStyle(
                   fontFamily: "Pretendard",
                   fontSize: 16,
@@ -192,6 +267,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       setState(() {
         _selectTitle = result['title'];
         _selectImage = result['image'];
+        _selectWeatherCode = getWeatherCode(_selectTitle);
       });
     }
   }
@@ -283,7 +359,57 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   }
 
   bool completeState() {
-    return _selectImage != "" && _selectTitle != "" && _selectLocation != "";
+    return _selectImage != "" &&
+        _selectTitle != "" &&
+        _selectThirdAddress != "" &&
+        _selectRegionCode != "";
+  }
+
+  String getWeatherCode(String title) {
+    switch (title) {
+      case Strings.cloudy:
+        return cloudy;
+      case Strings.littleCloudy:
+        return littleCloudy;
+      case Strings.manyCloud:
+        return manyCloud;
+      case Strings.sunny:
+        return sunny;
+      case Strings.rain:
+        return rain;
+      case Strings.thunder:
+        return thunder;
+      case Strings.snow:
+        return snow;
+      case Strings.thunderSnow:
+        return thunderSnow;
+      case Strings.veryHot:
+        return veryHot;
+      case Strings.nightAir:
+        return nightAir;
+      case Strings.wind:
+        return wind;
+      case Strings.veryCold:
+        return veryCold;
+      case Strings.rainbow:
+        return rainbow;
+      default:
+        return "";
+    }
+  }
+
+  void sendWeatherPosting() {
+    if (completeState()) {
+      Map<String, dynamic> sendData = {
+        "regionCode": _selectRegionCode,
+        "weatherCode": _selectWeatherCode
+      };
+
+      _weatherViewModel.addWeatherPosting(sendData).then((response) {
+        if (response == 201) {
+        } else {}
+      }).catchError((error) {});
+    }
   }
 
   @override
@@ -374,6 +500,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                 textColor: (completeState())
                     ? Colors.white
                     : const Color(UserColors.ui06),
+                callback: sendWeatherPosting,
               ),
             )
           ],

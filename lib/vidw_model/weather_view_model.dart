@@ -20,4 +20,16 @@ class WeatherViewModel with ChangeNotifier {
       setWeatherCount(ApiResponse.error(error.toString()));
     });
   }
+
+  Future<int> addWeatherPosting(Map<String, dynamic> data) async {
+    await _weatherRepository.addWeatherPosting(data).then((value) {
+      return value.statusCode;
+      //setFrequentLocationData(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      //setFrequentLocationData(ApiResponse.error(error.toString()));
+      return 400;
+    });
+
+    return 400;
+  }
 }
