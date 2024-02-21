@@ -7,6 +7,7 @@ import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/home/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 
+import '../../widgets/back_close_app_bar.dart';
 import '../location/location_setting_dialog.dart';
 
 class WeatherRegisterPage extends StatefulWidget {
@@ -289,36 +290,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        centerTitle: true,
-        title: const Text(
-          Strings.weatherRegister,
-          style: TextStyle(
-              color: Colors.black,
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w600,
-              fontSize: 16),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
-      ),
+      appBar: const BackCloseAppBar(title: Strings.weatherRegister),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
         child: Column(
