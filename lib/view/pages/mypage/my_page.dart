@@ -9,11 +9,12 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/login_page.dart';
+import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
 import 'package:provider/provider.dart';
 
-import '../../network/network_manager.dart';
-import '../../vidw_model/login_view_model.dart';
-import '../widgets/notification_app_bar.dart';
+import '../../../network/network_manager.dart';
+import '../../../vidw_model/login_view_model.dart';
+import '../../widgets/notification_app_bar.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -44,9 +45,14 @@ class _MyPageState extends State<MyPage> {
           (Route<dynamic> route) => false,
         );
       }
-    }).onError((error, stackTrace) {
-      // Handle error navigation here
-    });
+    }).onError((error, stackTrace) {});
+  }
+
+  void showAgreementPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const TermsAndPolicies()),
+    );
   }
 
   Future getProfileImage(ImageSource imageSource) async {
@@ -216,8 +222,9 @@ class _MyPageState extends State<MyPage> {
                       color: Color(UserColors.ui06),
                     ),
                   ),
-                  // SizedBox(height: ScreenUtil().setHeight(28.0)),
-                  // _buildContentsWidget(Strings.termsAndPolicies),
+                  SizedBox(height: ScreenUtil().setHeight(28.0)),
+                  _buildContentsWidget(
+                      Strings.termsAndPolicies, showAgreementPage),
                   // SizedBox(height: ScreenUtil().setHeight(26.0)),
                   // _buildContentsWidget(Strings.sendCommentsInquiries),
                   // SizedBox(height: ScreenUtil().setHeight(26.0)),
