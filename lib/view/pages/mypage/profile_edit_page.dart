@@ -1,0 +1,205 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../statics/Colors.dart';
+import '../../../statics/images.dart';
+import '../../../statics/strings.dart';
+import '../../widgets/back_complete_app_bar.dart';
+
+class ProfileEditPage extends StatefulWidget {
+  const ProfileEditPage({super.key});
+
+  @override
+  State<ProfileEditPage> createState() => _ProfileEditPageState();
+}
+
+class _ProfileEditPageState extends State<ProfileEditPage> {
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _getProfileImage;
+  final _textController = TextEditingController();
+
+  Future getProfileImage(ImageSource imageSource) async {
+    final XFile? pickedFile =
+        await _imagePicker.pickImage(source: imageSource, imageQuality: 30);
+
+    if (pickedFile != null) {
+      setState(() {
+        _getProfileImage = XFile(pickedFile.path);
+      });
+    }
+  }
+
+  Widget _buildProfileImage() {
+    return GestureDetector(
+      onTap: () {
+        getProfileImage(ImageSource.gallery);
+      },
+      child: _getProfileImage == null
+          ? SvgPicture.asset(Images.myPageDefaultProfile)
+          : Container(
+              width: ScreenUtil().setWidth(100.0),
+              height: ScreenUtil().setHeight(100.0),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: ClipOval(
+                child: Image.file(File(_getProfileImage!.path)),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildNickNameText() {
+    return const Text(
+      Strings.nickName,
+      style: TextStyle(
+          color: Colors.black,
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w600,
+          fontSize: 16),
+    );
+  }
+
+  Widget _buildEditAreaWidget() {
+    return SizedBox(
+      height: ScreenUtil().setHeight(70.0),
+      child: TextField(
+        maxLines: null,
+        minLines: null,
+        controller: _textController,
+        textAlign: TextAlign.start,
+        textAlignVertical: TextAlignVertical.center,
+        style: const TextStyle(
+          color: Color(UserColors.ui01),
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+          decoration: TextDecoration.none,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color(UserColors.ui11),
+          hintText: Strings.nickNameEditHint,
+          hintStyle: const TextStyle(
+            color: Color(UserColors.ui06),
+            fontFamily: "Pretendard",
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+            decoration: TextDecoration.none,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(8),
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_.]')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentNickNameWidget() {
+    return Row(
+      children: const [
+        Text(
+          Strings.currentNickName,
+          style: TextStyle(
+              color: Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w500,
+              fontSize: 12),
+        ),
+        Text(
+          "User A",
+          style: TextStyle(
+              color: Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w500,
+              fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuideContent() {
+    return Column(
+      children: [
+        Row(
+          children: const [
+            Text(
+              Strings.middlePoint + Strings.nickNameEditGuide1,
+              style: TextStyle(
+                  color: Color(UserColors.ui06),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12),
+            ),
+          ],
+        ),
+        SizedBox(height: ScreenUtil().setHeight(8.0)),
+        Row(
+          children: const [
+            Text(
+              Strings.middlePoint + Strings.nickNameEditGuide2,
+              style: TextStyle(
+                  color: Color(UserColors.ui06),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12),
+            ),
+          ],
+        ),
+        SizedBox(height: ScreenUtil().setHeight(8.0)),
+        Row(
+          children: const [
+            Flexible(
+              child: Text(
+                Strings.middlePoint + Strings.nickNameEditGuide3,
+                style: TextStyle(
+                    color: Color(UserColors.ui06),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const BackCompleteAppBar(
+        title: Strings.profile,
+      ),
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: ScreenUtil().setHeight(47.0)),
+            Center(child: _buildProfileImage()),
+            SizedBox(height: ScreenUtil().setHeight(22.0)),
+            _buildNickNameText(),
+            SizedBox(height: ScreenUtil().setHeight(12.0)),
+            _buildEditAreaWidget(),
+            SizedBox(height: ScreenUtil().setHeight(8.0)),
+            _buildCurrentNickNameWidget(),
+            SizedBox(height: ScreenUtil().setHeight(26.0)),
+            _buildGuideContent(),
+          ],
+        ),
+      ),
+    );
+  }
+}

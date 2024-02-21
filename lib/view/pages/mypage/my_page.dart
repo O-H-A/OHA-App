@@ -7,6 +7,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/login_page.dart';
+import 'package:oha/view/pages/mypage/profile_edit_page.dart';
 import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
 import 'package:provider/provider.dart';
 
@@ -50,35 +51,48 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _buildProfileWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SvgPicture.asset(Images.defaultProfile),
-        SizedBox(width: ScreenUtil().setWidth(12.0)),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "User A",
-              style: const TextStyle(
-                fontFamily: "Pretendard",
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: Color(UserColors.ui01),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileEditPage()),
+        );
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SvgPicture.asset(Images.defaultProfile),
+          SizedBox(width: ScreenUtil().setWidth(12.0)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "User A",
+                style: const TextStyle(
+                  fontFamily: "Pretendard",
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(UserColors.ui01),
+                ),
               ),
-            ),
-            const Text(
-              Strings.loginedWithKakao,
-              style: TextStyle(
-                fontFamily: "Pretendard",
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(UserColors.ui06),
+              GestureDetector(
+                onTap: () {
+                  return;
+                },
+                child: const Text(
+                  Strings.loginedWithKakao,
+                  style: TextStyle(
+                    fontFamily: "Pretendard",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(UserColors.ui06),
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
