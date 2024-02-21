@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:oha/network/api_url.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
@@ -12,7 +10,6 @@ import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
 import 'package:provider/provider.dart';
 
-import '../../../network/network_manager.dart';
 import '../../../vidw_model/login_view_model.dart';
 import '../../widgets/notification_app_bar.dart';
 
@@ -24,9 +21,6 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  final ImagePicker _imagePicker = ImagePicker();
-  XFile? _getProfileImage;
-  XFile? _getBackgroundImage;
   LoginViewModel _loginViewModel = LoginViewModel();
 
   @override
@@ -55,60 +49,37 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Future getProfileImage(ImageSource imageSource) async {
-    final XFile? pickedFile =
-        await _imagePicker.pickImage(source: imageSource, imageQuality: 30);
-
-    if (pickedFile != null) {
-      setState(() {
-        _getProfileImage = XFile(pickedFile.path);
-
-        NetworkManager.instance
-            .imagePut(ApiUrl.profileImageUpdate, _getProfileImage);
-      });
-    }
-  }
-
-  Future getBackgroundImage(ImageSource imageSource) async {
-    final XFile? pickedFile =
-        await _imagePicker.pickImage(source: imageSource, imageQuality: 30);
-
-    if (pickedFile != null) {
-      setState(() {
-        _getBackgroundImage = XFile(pickedFile.path);
-
-        NetworkManager.instance
-            .imagePut(ApiUrl.backgroundImageUpdate, _getBackgroundImage);
-      });
-    }
-  }
-
-  Widget _buildProfileImage() {
-    return _getProfileImage == null
-        ? SvgPicture.asset(Images.myPageDefaultProfile)
-        : Container(
-            width: ScreenUtil().setWidth(100.0),
-            height: ScreenUtil().setHeight(100.0),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
+  Widget _buildProfileWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SvgPicture.asset(Images.defaultProfile),
+        SizedBox(width: ScreenUtil().setWidth(12.0)),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "User A",
+              style: const TextStyle(
+                fontFamily: "Pretendard",
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: Color(UserColors.ui01),
+              ),
             ),
-            child: ClipOval(
-              child: Image.file(File(_getProfileImage!.path)),
+            const Text(
+              Strings.loginedWithKakao,
+              style: TextStyle(
+                fontFamily: "Pretendard",
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(UserColors.ui06),
+              ),
             ),
-          );
-  }
-
-  Widget _buildBackgroundImage() {
-    return _getBackgroundImage == null
-        ? Image.asset(Images.myImageDefault,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: ScreenUtil().setHeight(380.0))
-        : SizedBox(
-            width: double.infinity,
-            height: ScreenUtil().setHeight(380.0),
-            child: Image.file(File(_getBackgroundImage!.path)),
-          );
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildContentsWidget(String title, VoidCallback callback) {
@@ -143,67 +114,15 @@ class _MyPageState extends State<MyPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: double.infinity,
-              height: ScreenUtil().setHeight(295.0),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  _buildBackgroundImage(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            getProfileImage(ImageSource.gallery);
-                          },
-                          child: _buildProfileImage()),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "User A",
-                            style: TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SvgPicture.asset(Images.edit),
-                        ],
-                      ),
-                      SizedBox(height: ScreenUtil().setHeight(19.0)),
-                      GestureDetector(
-                        onTap: () {
-                          getBackgroundImage(ImageSource.gallery);
-                        },
-                        child: const Text(
-                          Strings.editBackgroundImage,
-                          style: TextStyle(
-                            fontFamily: "Pretendard",
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: ScreenUtil().setHeight(26.0),
-            ),
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: ScreenUtil().setHeight(17.0)),
+                  _buildProfileWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(40.0)),
                   const Text(
                     Strings.updateHistory,
                     style: TextStyle(
@@ -225,7 +144,7 @@ class _MyPageState extends State<MyPage> {
                   SizedBox(height: ScreenUtil().setHeight(28.0)),
                   _buildContentsWidget(
                       Strings.termsAndPolicies, showAgreementPage),
-                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  SizedBox(height: ScreenUtil().setHeight(26.0)),
                   // _buildContentsWidget(Strings.sendCommentsInquiries),
                   // SizedBox(height: ScreenUtil().setHeight(26.0)),
                   // _buildContentsWidget(Strings.accountCancel),
