@@ -98,13 +98,13 @@ class _AgreementsPageState extends State<AgreementsPage> {
   void _toggleAgreementState(String title) {
     setState(() {
       switch (title) {
-        case Strings.serviceAgreement:
+        case Strings.requiredServiceAgreement:
           _serviceAgreements = !_serviceAgreements;
           break;
-        case Strings.privacyAgreement:
+        case Strings.requiredPrivacyAgreement:
           _privacyAgreements = !_privacyAgreements;
           break;
-        case Strings.locationAgreement:
+        case Strings.requiredLocationAgreement:
           _locationAgreements = !_locationAgreements;
           break;
         default:

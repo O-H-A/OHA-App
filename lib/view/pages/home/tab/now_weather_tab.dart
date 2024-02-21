@@ -31,8 +31,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
 
     getRegionCode();
-    //Map<String, dynamic> sendData = {"regionCode ": regionCode};
-    Map<String, dynamic> sendData = {"regionCode": 1111010500};
+    Map<String, dynamic> sendData = {"regionCode": regionCode};
 
     _weatherViewModel.fetchWeatherCount(sendData);
   }

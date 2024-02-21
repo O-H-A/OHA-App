@@ -17,6 +17,7 @@ import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/location/location_setting_page.dart';
 import 'package:oha/view/pages/location/map_setting_page.dart';
 import 'package:oha/view/pages/login_page.dart';
+import 'package:oha/view/pages/mypage/profile_edit_page.dart';
 import 'package:oha/view/pages/splash_page.dart';
 import 'package:oha/view/pages/upload/upload_agreements_page.dart';
 import 'package:oha/view/pages/upload/upload_page.dart';
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const SplashPage(),
+          home: const ProfileEditPage(),
         ),
       ),
     );
