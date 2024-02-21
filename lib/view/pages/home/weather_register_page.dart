@@ -4,7 +4,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/pages/home/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
+
+import '../location/location_setting_dialog.dart';
 
 class WeatherRegisterPage extends StatefulWidget {
   const WeatherRegisterPage({super.key});
@@ -14,6 +17,60 @@ class WeatherRegisterPage extends StatefulWidget {
 }
 
 class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
+  String _selectTitle = "";
+  String _selectImage = "";
+
+  Widget _buildTitleGuide() {
+    return Column(
+      children: [
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        const Text(
+          Strings.neighborhoodWeather,
+          style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 20),
+        ),
+        SizedBox(height: ScreenUtil().setHeight(9.0)),
+        const Text(
+          Strings.weatherRegisterGuide,
+          style: TextStyle(
+              color: Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w400,
+              fontSize: 13),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeatherInfoGuide() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          Strings.questionWeather,
+          style: TextStyle(
+              color: Color(UserColors.ui01),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 16),
+        ),
+        SizedBox(height: ScreenUtil().setHeight(9.0)),
+        const Text(
+          Strings.chooseIcon,
+          style: TextStyle(
+              color: Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w400,
+              fontSize: 13),
+        ),
+        SizedBox(height: ScreenUtil().setHeight(22.0)),
+      ],
+    );
+  }
+
   Widget _buildWeatherInfoWIdget(String imagePath, String title, int count) {
     return Column(
       children: [
@@ -54,13 +111,177 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
     );
   }
 
+  Widget _buildCurrentLocationGuide() {
+    return const Text(
+      Strings.curretLocationNeighborhood,
+      style: TextStyle(
+        fontFamily: "Pretendard",
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: Color(UserColors.ui01),
+      ),
+    );
+  }
+
+  Widget _buildCurrentLocation() {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
+          builder: (BuildContext context) {
+            return LocationSettingBottomSheet();
+          },
+        );
+      },
+      child: Container(
+        width: ScreenUtil().setWidth(139.0),
+        height: ScreenUtil().setHeight(41.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+          border: Border.all(
+              color: const Color(UserColors.ui08),
+              width: ScreenUtil().setWidth(1.0)),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: ScreenUtil().setWidth(15.0)),
+          child: Row(
+            children: [
+              const Icon(Icons.expand_more, color: Color(UserColors.ui06)),
+              SizedBox(width: ScreenUtil().setWidth(10.0)),
+              const Text(
+                "논현동",
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(UserColors.ui01),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _getWeatherSelect() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WeatherSelectDialog();
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectTitle = result['title'];
+        _selectImage = result['image'];
+      });
+    }
+  }
+
+  Widget _buildEmptyWeatherSelect() {
+    return GestureDetector(
+      onTap: () async {
+        _getWeatherSelect();
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+              color: Colors.white,
+              border: Border.all(
+                color: const Color(UserColors.ui08),
+              ),
+            ),
+            child: SizedBox(
+              height: ScreenUtil().setHeight(82.0),
+            ),
+          ),
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(25.0)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Images.cloudyDisable),
+                SvgPicture.asset(Images.littleCloudyDisable),
+                SvgPicture.asset(Images.manyCloudDisable),
+                SvgPicture.asset(Images.sunnyDisable),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectWidgetWidget() {
+    return GestureDetector(
+      onTap: () {
+        _getWeatherSelect();
+      },
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+              color: Colors.white,
+              border: Border.all(
+                color: const Color(UserColors.ui08),
+              ),
+            ),
+            child: SizedBox(
+              height: ScreenUtil().setHeight(82.0),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: ScreenUtil().setWidth(25.0)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(_selectImage),
+                SizedBox(
+                  width: ScreenUtil().setWidth(32.0),
+                ),
+                Text(
+                  _selectTitle,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -78,7 +299,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
           Padding(
             padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
             child: IconButton(
-              icon: Icon(Icons.close),
+              icon: Icon(Icons.close, color: Colors.black),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -94,106 +315,16 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: ScreenUtil().setHeight(12.0)),
-                  const Text(
-                    Strings.neighborhoodWeather,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20),
-                  ),
-                  SizedBox(height: ScreenUtil().setHeight(9.0)),
-                  const Text(
-                    Strings.weatherRegisterGuide,
-                    style: TextStyle(
-                        color: Color(UserColors.ui06),
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13),
-                  ),
+                  _buildTitleGuide(),
                   SizedBox(height: ScreenUtil().setHeight(46.0)),
-                  Container(
-                    width: ScreenUtil().setWidth(139.0),
-                    height: ScreenUtil().setHeight(41.0),
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(ScreenUtil().radius(8.0)),
-                      border: Border.all(
-                          color: const Color(UserColors.ui08),
-                          width: ScreenUtil().setWidth(1.0)),
-                      color: Colors.white,
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(left: ScreenUtil().setWidth(15.0)),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.expand_more,
-                              color: Color(UserColors.ui06)),
-                          SizedBox(width: ScreenUtil().setWidth(10.0)),
-                          const Text(
-                            "논현동",
-                            style: TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color(UserColors.ui01),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: ScreenUtil().setHeight(50.0)),
-                  const Text(
-                    Strings.questionWeather,
-                    style: TextStyle(
-                        color: Color(UserColors.ui01),
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16),
-                  ),
-                  SizedBox(height: ScreenUtil().setHeight(9.0)),
-                  const Text(
-                    Strings.chooseIcon,
-                    style: TextStyle(
-                        color: Color(UserColors.ui06),
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13),
-                  ),
+                  _buildCurrentLocationGuide(),
                   SizedBox(height: ScreenUtil().setHeight(12.0)),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().radius(10.0)),
-                          color: Colors.white,
-                        ),
-                        child: SizedBox(
-                          height: ScreenUtil().setHeight(82.0),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(25.0)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(Images.litteCloudIcon),
-                            SvgPicture.asset(Images.cloudyIcon),
-                            SvgPicture.asset(Images.cloudyIcon),
-                            SvgPicture.asset(Images.cloudyIcon),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildCurrentLocation(),
+                  SizedBox(height: ScreenUtil().setHeight(50.0)),
+                  _buildWeatherInfoGuide(),
+                  (_selectTitle == "" || _selectImage == "")
+                      ? _buildEmptyWeatherSelect()
+                      : _buildSelectWidgetWidget(),
                   SizedBox(height: ScreenUtil().setHeight(23.0)),
                   const Text(
                     Strings.peopleWeatherInfo,
@@ -213,6 +344,9 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                           borderRadius:
                               BorderRadius.circular(ScreenUtil().radius(8.0)),
                           color: Colors.white,
+                          border: Border.all(
+                            color: const Color(UserColors.ui08),
+                          ),
                         ),
                         child: SizedBox(
                           height: ScreenUtil().setHeight(182.0),
@@ -226,11 +360,11 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             _buildWeatherInfoWIdget(
-                                Images.litteCloudIcon, "약간 흐려요", 1132),
+                                Images.littleCloudyDisable, "약간 흐려요", 1132),
                             _buildWeatherInfoWIdget(
-                                Images.cloudyIcon, "흐려요", 121),
+                                Images.cloudyDisable, "흐려요", 121),
                             _buildWeatherInfoWIdget(
-                                Images.veryColdIcon, "매우 추워요", 30),
+                                Images.veryColdDisable, "매우 추워요", 30),
                           ],
                         ),
                       ),

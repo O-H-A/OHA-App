@@ -48,7 +48,7 @@ class NetworkManager {
 
     try {
       final Uri uri =
-          Uri.parse(serverUrl).replace(queryParameters: responseJson);
+          Uri.parse(serverUrl).replace(queryParameters: queryParams);
 
       final response = await http.get(
         uri,

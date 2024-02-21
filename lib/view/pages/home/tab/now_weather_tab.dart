@@ -31,7 +31,9 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
 
     getRegionCode();
-    Map<String, dynamic> sendData = {"regionCode ": regionCode};
+    //Map<String, dynamic> sendData = {"regionCode ": regionCode};
+    Map<String, dynamic> sendData = {"regionCode ": "1111010500"};
+
     _weatherViewModel.fetchWeatherCount(sendData);
   }
 
@@ -120,10 +122,10 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _buildWeatherInfoWIdget(
-                          Images.litteCloudIcon, "약간 흐려요", 1132),
-                      _buildWeatherInfoWIdget(Images.cloudyIcon, "흐려요", 121),
+                          Images.littleCloudyDisable, "약간 흐려요", 1132),
+                      _buildWeatherInfoWIdget(Images.cloudyDisable, "흐려요", 121),
                       _buildWeatherInfoWIdget(
-                          Images.veryColdIcon, "매우 추워요", 30),
+                          Images.veryColdDisable, "매우 추워요", 30),
                     ],
                   ),
                 ),
