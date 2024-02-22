@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/location/location_setting_page.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/button_icon.dart';
+import 'location_change_dialog.dart';
 
 class LocationSettingBottomSheet extends StatelessWidget {
   @override
@@ -41,17 +43,45 @@ class _LocationSettingBottomSheetContentState
     getFrequentRegionCode();
   }
 
-  void _removeLocation(int index) {
-    Map<String, dynamic> sendData = {"address": _fullLocations[index]};
-    _locationViewModel.deleteFrequentDistricts(sendData);
-
-    setState(() {
-      _selectedLocations[index] = "";
-      _fullLocations[index] = "";
-    });
+  @override
+  void dispose() {
+    super.dispose();
   }
 
-  void _showLocationPage(int index) async {
+  void _removeLocation(int index) {
+    if (_locationViewModel.getFrequentLength() <= 1) {
+      Navigator.pop(context);
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return LocationChangeDialog(
+            yesCallback: () => onLocationChangeYes(context),
+            noCallback: () => onLocationChangeNo(context),
+          );
+        },
+      );
+    } else {
+      Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+      _locationViewModel.deleteFrequentDistricts(sendData);
+
+      setState(() {
+        _selectedLocations[index] = "";
+        _fullLocations[index] = "";
+      });
+    }
+  }
+
+  void onLocationChangeYes(BuildContext context) {
+    Navigator.pop(context);
+    _addFrequentLocation(context, 0);
+  }
+
+  void onLocationChangeNo(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void _addFrequentLocation(BuildContext context, int index) async {
     Map<String, String?>? result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LocationSettingPage()),
@@ -60,15 +90,18 @@ class _LocationSettingBottomSheetContentState
     if (result != null) {
       String fullAddress = result['fullAddress'] ?? "";
       String lastAddress = result['lastAddress'] ?? "";
+
+      Map<String, dynamic> sendData = {"address": fullAddress};
+
+      await _locationViewModel.addFrequentDistricts(sendData);
+
       setState(() {
         _selectedLocations[index] = lastAddress;
         _fullLocations[index] = fullAddress;
       });
-
-      Map<String, dynamic> sendData = {"address": fullAddress};
-
-      _locationViewModel.addFrequentDistricts(sendData);
     }
+
+    _locationViewModel.fetchFrequentDistricts();
   }
 
   void getFrequentRegionCode() {
@@ -96,12 +129,24 @@ class _LocationSettingBottomSheetContentState
     return GestureDetector(
       onTap: () async {
         if (_selectedLocations[index] == "") {
-          _showLocationPage(index);
+          _addFrequentLocation(context, index);
         } else {
           Navigator.pop(context, {
             'lastAddress': _selectedLocations[index],
             'regionCode': _frequentRegionCode[index]
           });
+
+          showDialog(
+            context: context,
+            barrierColor: Colors.transparent,
+            builder: (BuildContext context) {
+              return CompleteDialog(title: _selectedLocations[index]);
+            },
+          );
+
+          Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+
+          _locationViewModel.changeFrequentDistricts(sendData);
         }
       },
       child: Stack(
@@ -150,7 +195,7 @@ class _LocationSettingBottomSheetContentState
                         ? const Color(UserColors.ui01)
                         : Colors.white,
                     callback: () => (_selectedLocations[index] == "")
-                        ? _showLocationPage(index)
+                        ? _addFrequentLocation(context, index)
                         : _removeLocation(index),
                   ),
                 ],
@@ -247,4 +292,34 @@ class _LocationSettingBottomSheetContentState
       ),
     );
   }
+}
+
+class CustomDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      // 커스텀 다이얼로그의 디자인을 구성합니다.
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('내용을 입력하세요'),
+            // 다이얼로그 내용 추가
+            // 필요한 경우 버튼이나 다른 위젯을 추가할 수 있습니다.
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 사용 예시
+void showCustomDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomDialog();
+    },
+  );
 }

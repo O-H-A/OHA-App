@@ -30,6 +30,10 @@ class LocationViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  int getFrequentLength() {
+    return _frequentLocationData.data?.data.length ?? 0;
+  }
+
   List<String> getFrequentRegionCode() {
     int length = _frequentLocationData.data?.data.length ?? 0;
     List<String> list = List.generate(length, (index) => '');
@@ -105,6 +109,14 @@ class LocationViewModel with ChangeNotifier {
 
   Future<void> deleteFrequentDistricts(Map<String, dynamic> data) async {
     await _locationRepository.deleteFrequentlyDistricts(data).then((value) {
+      setFrequentLocationData(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setFrequentLocationData(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> changeFrequentDistricts(Map<String, dynamic> data) async {
+    await _locationRepository.changeFrequentlyDistricts(data).then((value) {
       setFrequentLocationData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setFrequentLocationData(ApiResponse.error(error.toString()));
