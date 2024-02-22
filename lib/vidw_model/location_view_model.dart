@@ -30,6 +30,10 @@ class LocationViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  int getFrequentLength() {
+    return _frequentLocationData.data?.data.length ?? 0;
+  }
+
   List<String> getFrequentRegionCode() {
     int length = _frequentLocationData.data?.data.length ?? 0;
     List<String> list = List.generate(length, (index) => '');

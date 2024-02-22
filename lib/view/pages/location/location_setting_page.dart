@@ -33,6 +33,11 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
     _allLocationList = _getAllLocations();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   List<String> _getAllLocations() {
     List<String> locations = [];
     final data = _locationViewModel.getLocationData.data?.data.locations;
@@ -138,7 +143,10 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                               ? locationParts.last
                               : '';
 
-                          Navigator.pop(context, {'fullAddress': selectedLocation, 'lastAddress': address});
+                          Navigator.pop(context, {
+                            'fullAddress': selectedLocation,
+                            'lastAddress': address
+                          });
                         },
                         child: Text(
                           (_displayLocationList.isEmpty)

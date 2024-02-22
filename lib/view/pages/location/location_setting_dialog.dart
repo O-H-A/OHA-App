@@ -10,6 +10,7 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/button_icon.dart';
+import 'location_change_dialog.dart';
 
 class LocationSettingBottomSheet extends StatelessWidget {
   @override
@@ -42,17 +43,45 @@ class _LocationSettingBottomSheetContentState
     getFrequentRegionCode();
   }
 
-  void _removeLocation(int index) {
-    Map<String, dynamic> sendData = {"address": _fullLocations[index]};
-    _locationViewModel.deleteFrequentDistricts(sendData);
-
-    setState(() {
-      _selectedLocations[index] = "";
-      _fullLocations[index] = "";
-    });
+  @override
+  void dispose() {
+    super.dispose();
   }
 
-  void _showLocationPage(int index) async {
+  void _removeLocation(int index) {
+    if (_locationViewModel.getFrequentLength() <= 1) {
+      Navigator.pop(context);
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return LocationChangeDialog(
+            yesCallback: () => onLocationChangeYes(context),
+            noCallback: () => onLocationChangeNo(context),
+          );
+        },
+      );
+    } else {
+      Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+      _locationViewModel.deleteFrequentDistricts(sendData);
+
+      setState(() {
+        _selectedLocations[index] = "";
+        _fullLocations[index] = "";
+      });
+    }
+  }
+
+  void onLocationChangeYes(BuildContext context) {
+    Navigator.pop(context);
+    _addFrequentLocation(context, 0);
+  }
+
+  void onLocationChangeNo(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void _addFrequentLocation(BuildContext context, int index) async {
     Map<String, String?>? result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LocationSettingPage()),
@@ -61,15 +90,18 @@ class _LocationSettingBottomSheetContentState
     if (result != null) {
       String fullAddress = result['fullAddress'] ?? "";
       String lastAddress = result['lastAddress'] ?? "";
+
+      Map<String, dynamic> sendData = {"address": fullAddress};
+
+      await _locationViewModel.addFrequentDistricts(sendData);
+
       setState(() {
         _selectedLocations[index] = lastAddress;
         _fullLocations[index] = fullAddress;
       });
-
-      Map<String, dynamic> sendData = {"address": fullAddress};
-
-      _locationViewModel.addFrequentDistricts(sendData);
     }
+
+    _locationViewModel.fetchAllDistricts();
   }
 
   void getFrequentRegionCode() {
@@ -97,7 +129,7 @@ class _LocationSettingBottomSheetContentState
     return GestureDetector(
       onTap: () async {
         if (_selectedLocations[index] == "") {
-          _showLocationPage(index);
+          _addFrequentLocation(context, index);
         } else {
           Navigator.pop(context, {
             'lastAddress': _selectedLocations[index],
@@ -159,7 +191,7 @@ class _LocationSettingBottomSheetContentState
                         ? const Color(UserColors.ui01)
                         : Colors.white,
                     callback: () => (_selectedLocations[index] == "")
-                        ? _showLocationPage(index)
+                        ? _addFrequentLocation(context, index)
                         : _removeLocation(index),
                   ),
                 ],
