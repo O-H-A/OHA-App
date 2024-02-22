@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
 import 'package:oha/view/pages/home/tab/popularity_tab.dart';
 import 'package:oha/view/pages/home/weather/windy_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
@@ -26,6 +28,13 @@ class _HomePageState extends State<HomePage>
     initialIndex: 0,
     animationDuration: const Duration(milliseconds: 300),
   );
+  LocationViewModel _locationViewModel = LocationViewModel();
+
+  @override
+  void initState() {
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -66,7 +75,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

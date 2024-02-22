@@ -98,8 +98,6 @@ class NetworkManager {
       String serverUrl, Map<String, dynamic> userData) async {
     dynamic responseJson;
 
-    print("Jehe delete : ");
-
     try {
       String jsonData = jsonEncode(userData);
 

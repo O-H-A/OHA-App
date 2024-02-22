@@ -26,6 +26,22 @@ class _UploadPageState extends State<UploadPage> {
   late Album _currentAlbum;
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    checkPermission();
+  }
+
+  void showWritePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => UploadWritePage(
+                selectImage: _images[_selectedIndex],
+              )),
+    );
+  }
+
   Future<void> checkPermission() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth) {
@@ -73,12 +89,6 @@ class _UploadPageState extends State<UploadPage> {
         _images.addAll(loadImages);
       }
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    checkPermission();
   }
 
   void _setSelectedIndex(int index) {
@@ -140,25 +150,15 @@ class _UploadPageState extends State<UploadPage> {
                       bottom: ScreenUtil().setHeight(20.0),
                       left: ScreenUtil().setWidth(22.0),
                       right: ScreenUtil().setWidth(22.0)),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UploadWritePage(
-                                  selectImage: _images[_selectedIndex],
-                                )),
-                      );
-                    },
-                    child: InfinityButton(
-                      height: ScreenUtil().setHeight(50.0),
-                      radius: 8.0,
-                      backgroundColor: const Color(UserColors.primaryColor),
-                      text: Strings.next,
-                      textSize: 16,
-                      textWeight: FontWeight.w600,
-                      textColor: Colors.white,
-                    ),
+                  child: InfinityButton(
+                    height: ScreenUtil().setHeight(50.0),
+                    radius: 8.0,
+                    backgroundColor: const Color(UserColors.primaryColor),
+                    text: Strings.next,
+                    textSize: 16,
+                    textWeight: FontWeight.w600,
+                    textColor: Colors.white,
+                    callback: showWritePage,
                   ),
                 ),
               ],

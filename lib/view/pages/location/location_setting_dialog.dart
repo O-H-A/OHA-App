@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/location/location_setting_page.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
@@ -102,6 +103,14 @@ class _LocationSettingBottomSheetContentState
             'lastAddress': _selectedLocations[index],
             'regionCode': _frequentRegionCode[index]
           });
+
+          showDialog(
+            context: context,
+            barrierColor: Colors.transparent,
+            builder: (BuildContext context) {
+              return CompleteDialog(title: _selectedLocations[index]);
+            },
+          );
         }
       },
       child: Stack(
@@ -247,4 +256,34 @@ class _LocationSettingBottomSheetContentState
       ),
     );
   }
+}
+
+class CustomDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      // 커스텀 다이얼로그의 디자인을 구성합니다.
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('내용을 입력하세요'),
+            // 다이얼로그 내용 추가
+            // 필요한 경우 버튼이나 다른 위젯을 추가할 수 있습니다.
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 사용 예시
+void showCustomDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomDialog();
+    },
+  );
 }
