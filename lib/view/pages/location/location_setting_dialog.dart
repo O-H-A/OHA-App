@@ -101,7 +101,7 @@ class _LocationSettingBottomSheetContentState
       });
     }
 
-    _locationViewModel.fetchAllDistricts();
+    _locationViewModel.fetchFrequentDistricts();
   }
 
   void getFrequentRegionCode() {
@@ -143,6 +143,10 @@ class _LocationSettingBottomSheetContentState
               return CompleteDialog(title: _selectedLocations[index]);
             },
           );
+
+          Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+
+          _locationViewModel.changeFrequentDistricts(sendData);
         }
       },
       child: Stack(

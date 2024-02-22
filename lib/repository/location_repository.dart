@@ -45,4 +45,15 @@ class LocationRepository {
       rethrow;
     }
   }
+
+  Future<FrequentLocationModel> changeFrequentlyDistricts(
+      Map<String, dynamic> data) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.put(ApiUrl.locationDefault, data);
+      return FrequentLocationModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

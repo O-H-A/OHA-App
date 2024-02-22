@@ -94,6 +94,32 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> put(String serverUrl, Map<String, dynamic> userData) async {
+    try {
+      String jsonData = jsonEncode(userData);
+      dynamic responseJson;
+
+      final response = await http.put(
+        Uri.parse(serverUrl),
+        headers: commonHeaders,
+        body: jsonData,
+      );
+
+      responseJson = returnResponse(response);
+
+      if (response.statusCode == 200) {
+        print("PUT 성공: ${response.body}");
+      } else {
+        print("PUT 실패: ${response.statusCode}    ${responseJson}");
+      }
+
+      return response;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   Future<dynamic> delete(
       String serverUrl, Map<String, dynamic> userData) async {
     dynamic responseJson;
