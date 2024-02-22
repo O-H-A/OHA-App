@@ -59,6 +59,9 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
   Widget _buildKeywordWidget(String text, int index) {
     final textSpan = _buildTextSpan(text);
     final textPainter = _getTextPainter(textSpan);
+    double maxWidth = ScreenUtil().setWidth(102.0);
+    double currentWidth = ScreenUtil()
+        .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(55.0));
 
     return GestureDetector(
       onTap: () {
@@ -66,8 +69,7 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
       },
       child: Container(
         height: ScreenUtil().setHeight(35.0),
-        width: ScreenUtil()
-            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(55.0)),
+        width: (currentWidth > maxWidth) ? maxWidth : currentWidth,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
@@ -81,13 +83,16 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Color(UserColors.ui01),
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               GestureDetector(
@@ -103,6 +108,15 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
         ),
       ),
     );
+  }
+
+  void addKeyword() {
+    setState(() {
+      if (_controller.text.isNotEmpty) {
+        _keywordList.add(_controller.text);
+        _controller.text = "";
+      }
+    });
   }
 
   @override
@@ -216,24 +230,15 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                   Padding(
                     padding:
                         EdgeInsets.only(bottom: ScreenUtil().setHeight(42.0)),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (_controller.text.isNotEmpty) {
-                            _keywordList.add(_controller.text);
-                            _controller.text = "";
-                          }
-                        });
-                      },
-                      child: InfinityButton(
-                        height: ScreenUtil().setHeight(50.0),
-                        radius: ScreenUtil().radius(8.0),
-                        backgroundColor: const Color(UserColors.primaryColor),
-                        text: Strings.add,
-                        textSize: 16,
-                        textWeight: FontWeight.w600,
-                        textColor: Colors.white,
-                      ),
+                    child: InfinityButton(
+                      height: ScreenUtil().setHeight(50.0),
+                      radius: ScreenUtil().radius(8.0),
+                      backgroundColor: const Color(UserColors.primaryColor),
+                      text: Strings.add,
+                      textSize: 16,
+                      textWeight: FontWeight.w600,
+                      textColor: Colors.white,
+                      callback: addKeyword,
                     ),
                   ),
                 ],
