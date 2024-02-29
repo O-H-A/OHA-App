@@ -5,14 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oha/view/pages/home_page.dart';
+import 'package:oha/view/pages/mypage/delete_dialog.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
 import '../../../vidw_model/my_page_view_model.dart';
 import '../../widgets/back_complete_app_bar.dart';
 import '../../widgets/complete_dialog.dart';
+import '../location/location_change_dialog.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -192,8 +196,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     try {
       await _myPageViewModel.changeNickName(sendData);
       showCompleteDialog();
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   void showCompleteDialog() {
@@ -208,12 +211,37 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     Navigator.pop(context);
   }
 
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          yesCallback: () => onChangeHistoryDeleteYes(context),
+          noCallback: () => onChangeHistoryDeleteNo(context),
+        );
+      },
+    );
+  }
+
+  void onChangeHistoryDeleteYes(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const App()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  void onChangeHistoryDeleteNo(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BackCompleteAppBar(
         title: Strings.profile,
-        callback: nickNameChangeComplete,
+        doneCallback: nickNameChangeComplete,
+        backCallback: showDeleteDialog,
       ),
       backgroundColor: Colors.white,
       body: Padding(
