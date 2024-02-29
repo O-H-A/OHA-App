@@ -18,8 +18,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   final List<Widget> _pages = <Widget>[
     const HomePage(),
-    //const UploadPage(),
-    const HomePage(),
+    const UploadPage(),
     const DiaryPage(),
     const MyPage()
   ];

@@ -1,6 +1,6 @@
 class ApiUrl {
   // User
-  static const String nickNameUpdate = "/api/user/name";
+  static const String nickNameUpdate = "http://152.67.219.168/api/user/name";
   static const String profileImageUpdate =
       "http://152.67.219.168/api/user/image/profile";
   static const String backgroundImageUpdate =

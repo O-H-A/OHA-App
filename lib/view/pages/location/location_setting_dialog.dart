@@ -140,7 +140,7 @@ class _LocationSettingBottomSheetContentState
             context: context,
             barrierColor: Colors.transparent,
             builder: (BuildContext context) {
-              return CompleteDialog(title: _selectedLocations[index]);
+              return CompleteDialog(title: "${_selectedLocations[index]}${Strings.locationSelectGuide}");
             },
           );
 

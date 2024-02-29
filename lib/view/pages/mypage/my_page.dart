@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/vidw_model/my_page_view_model.dart';
 import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/mypage/profile_edit_page.dart';
 import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
@@ -23,12 +24,14 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   LoginViewModel _loginViewModel = LoginViewModel();
+  MyPageViewModel _myPageViewModel = MyPageViewModel();
 
   @override
   void initState() {
     super.initState();
 
     _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+    _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
   }
 
   void onLogout() async {
