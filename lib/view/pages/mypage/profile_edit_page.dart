@@ -5,11 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
+import '../../../vidw_model/my_page_view_model.dart';
 import '../../widgets/back_complete_app_bar.dart';
+import '../../widgets/complete_dialog.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -22,6 +25,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _getProfileImage;
   final _textController = TextEditingController();
+  MyPageViewModel _myPageViewModel = MyPageViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
+  }
 
   Future getProfileImage(ImageSource imageSource) async {
     final XFile? pickedFile =
@@ -175,11 +186,34 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 
+  void nickNameChangeComplete() async {
+    Map<String, dynamic> sendData = {"name": _textController.text};
+
+    try {
+      await _myPageViewModel.changeNickName(sendData);
+      showCompleteDialog();
+    } catch (error) {
+    }
+  }
+
+  void showCompleteDialog() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const CompleteDialog(title: Strings.editComple);
+      },
+    );
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BackCompleteAppBar(
+      appBar: BackCompleteAppBar(
         title: Strings.profile,
+        callback: nickNameChangeComplete,
       ),
       backgroundColor: Colors.white,
       body: Padding(

@@ -56,7 +56,7 @@ class _CompleteDialogState extends State<CompleteDialog> {
         ),
         child: Center(
           child: Text(
-            "${widget.title}${Strings.locationSelectGuide}",
+            widget.title,
             style: const TextStyle(
               color: Colors.white,
               fontFamily: "Pretendard",

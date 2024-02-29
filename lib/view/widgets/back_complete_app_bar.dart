@@ -5,8 +5,11 @@ import 'package:oha/view/widgets/button_icon.dart';
 class BackCompleteAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
+  final VoidCallback callback;
 
-  const BackCompleteAppBar({Key? key, required this.title}) : super(key: key);
+  const BackCompleteAppBar(
+      {Key? key, required this.title, required this.callback})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class BackCompleteAppBar extends StatelessWidget
                   fontSize: 18),
             ),
             ButtonIcon(
-                icon: Icons.done, iconColor: Colors.black, callback: () {}),
+                icon: Icons.done, iconColor: Colors.black, callback: callback),
           ],
         ),
       ),
