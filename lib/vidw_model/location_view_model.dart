@@ -117,9 +117,9 @@ class LocationViewModel with ChangeNotifier {
 
   Future<void> changeFrequentDistricts(Map<String, dynamic> data) async {
     await _locationRepository.changeFrequentlyDistricts(data).then((value) {
-      setFrequentLocationData(ApiResponse.complete(value));
+      //setFrequentLocationData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
-      setFrequentLocationData(ApiResponse.error(error.toString()));
+      //setFrequentLocationData(ApiResponse.error(error.toString()));
     });
   }
 }
