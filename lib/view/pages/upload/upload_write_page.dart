@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/vidw_model/upload_view_model.dart';
 import 'package:oha/view/pages/upload/add_keyword_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 
 import '../../../app.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
+import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/infinity_button.dart';
 
 class UploadWritePage extends StatefulWidget {
@@ -25,7 +28,15 @@ class UploadWritePage extends StatefulWidget {
 class _UploadWritePageState extends State<UploadWritePage> {
   int _selectIndex = 0;
   final _textController = TextEditingController();
-  List<String> _keywordList = [];
+  UploadViewModel _uploadViewModel = UploadViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    _uploadViewModel.getKetwordList.clear();
+  }
 
   TextSpan _buildTextSpan(String text) {
     return TextSpan(
@@ -107,17 +118,21 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
+  void showKeyDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AddKeywordDialog();
+      },
+    );
+  }
+
   Widget _buildKeywordDefaultWidget() {
     String text = Strings.keywordDefault;
 
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AddKeywordDialog();
-          },
-        );
+        showKeyDialog();
       },
       child: Padding(
         padding: EdgeInsets.only(right: ScreenUtil().setWidth(8.0)),
@@ -144,34 +159,53 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
-  Widget _buildKeywordWidget(String text) {
+  Widget _buildKeywordWidget(String text, int index) {
     final textSpan = _buildTextSpan(text);
     final textPainter = _getTextPainter(textSpan);
 
     return GestureDetector(
       onTap: () {
+        showKeyDialog();
         setState(() {});
       },
-      child: Padding(
-        padding: EdgeInsets.only(right: ScreenUtil().setWidth(8.0)),
-        child: Container(
-          height: ScreenUtil().setHeight(35.0),
-          width: ScreenUtil()
-              .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(30.0)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
-            border: Border.all(color: const Color(UserColors.ui08)),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: "Pretendard",
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Color(UserColors.ui06),
-            ),
+      child: Container(
+        height: ScreenUtil().setHeight(35.0),
+        width: ScreenUtil()
+            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
+          border: Border.all(color: const Color(UserColors.ui08)),
+        ),
+        alignment: Alignment.center,
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(10.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _uploadViewModel.getKetwordList.removeAt(index);
+                    });
+                  },
+                  child:
+                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
+            ],
           ),
         ),
       ),
@@ -356,7 +390,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
                           ),
                         ),
                         Text(
-                          _keywordList.length.toString() + Strings.keywordCount,
+                          _uploadViewModel.getKetwordList.length.toString() +
+                              Strings.keywordCount,
                           style: const TextStyle(
                             color: Colors.black,
                             fontFamily: "Pretendard",
@@ -367,15 +402,22 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    (_keywordList.isEmpty)
+                    (_uploadViewModel.getKetwordList.isEmpty)
                         ? _buildKeywordDefaultWidget()
                         : SizedBox(
                             height: ScreenUtil().setHeight(35.0),
-                            child: ListView.builder(
+                            child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _keywordList.length,
+                              itemCount: _uploadViewModel.getKetwordList.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return SizedBox(
+                                    width: ScreenUtil().setWidth(8.0));
+                              },
                               itemBuilder: (BuildContext context, int index) {
-                                return _buildKeywordWidget("가을 하늘");
+                                return _buildKeywordWidget(
+                                    _uploadViewModel.getKetwordList[index],
+                                    index);
                               },
                             ),
                           ),

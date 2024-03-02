@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/vidw_model/upload_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
@@ -16,7 +19,14 @@ class AddKeywordDialog extends StatefulWidget {
 
 class _AddKeywordDialogState extends State<AddKeywordDialog> {
   final _controller = TextEditingController();
-  List<String> _keywordList = [];
+  UploadViewModel _uploadViewModel = UploadViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+  }
 
   TextSpan _buildTextSpan(String text) {
     return TextSpan(
@@ -59,9 +69,6 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
   Widget _buildKeywordWidget(String text, int index) {
     final textSpan = _buildTextSpan(text);
     final textPainter = _getTextPainter(textSpan);
-    double maxWidth = ScreenUtil().setWidth(102.0);
-    double currentWidth = ScreenUtil()
-        .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(55.0));
 
     return GestureDetector(
       onTap: () {
@@ -69,7 +76,8 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
       },
       child: Container(
         height: ScreenUtil().setHeight(35.0),
-        width: (currentWidth > maxWidth) ? maxWidth : currentWidth,
+        width: ScreenUtil()
+            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
@@ -98,7 +106,7 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
               GestureDetector(
                   onTap: () {
                     setState(() {
-                      _keywordList.removeAt(index);
+                      _uploadViewModel.getKetwordList.removeAt(index);
                     });
                   },
                   child:
@@ -113,7 +121,7 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
   void addKeyword() {
     setState(() {
       if (_controller.text.isNotEmpty) {
-        _keywordList.add(_controller.text);
+        _uploadViewModel.setUploadKeywordList(_controller.text);
         _controller.text = "";
       }
     });
@@ -174,13 +182,13 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                     ),
                   ),
                   SizedBox(height: ScreenUtil().setHeight(22.0)),
-                  (_keywordList.isEmpty)
+                  (_uploadViewModel.getKetwordList.isEmpty)
                       ? _buildExampleWidget()
                       : SizedBox(
                           height: ScreenUtil().setHeight(35.0),
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
-                            itemCount: _keywordList.length,
+                            itemCount: _uploadViewModel.getKetwordList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
                               return SizedBox(
@@ -188,7 +196,8 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return _buildKeywordWidget(
-                                  _keywordList[index], index);
+                                  _uploadViewModel.getKetwordList[index],
+                                  index);
                             },
                           ),
                         ),
