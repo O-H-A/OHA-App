@@ -131,7 +131,7 @@ class _FeedWidgetState extends State<FeedWidget> {
               SizedBox(height: ScreenUtil().setHeight(16.0)),
               //here image not padding
               Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzXZT2D5aAY4xFSPf-VkK02mgELw4JG7OYp6Y6Alq5DbZmUE2DVOAwIBmR-uoByD9sie4&usqp=CAU",
+                  "https://mediahub.seoul.go.kr/wp-content/uploads/2020/03/53552dfe5d897d0a50138605f19628a6.jpg",
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: ScreenUtil().setHeight(390.0)),

@@ -18,6 +18,8 @@ class LocationViewModel with ChangeNotifier {
   ApiResponse<FrequentLocationModel> get getFrequentLocationData =>
       _frequentLocationData;
 
+  String _defaultLocation = "";
+
   void setLocationData(ApiResponse<LocationModel> response) {
     _locationData = response;
 
@@ -115,11 +117,24 @@ class LocationViewModel with ChangeNotifier {
     });
   }
 
-  Future<void> changeFrequentDistricts(Map<String, dynamic> data) async {
-    await _locationRepository.changeFrequentlyDistricts(data).then((value) {
-      setFrequentLocationData(ApiResponse.complete(value));
-    }).onError((error, stackTrace) {
-      setFrequentLocationData(ApiResponse.error(error.toString()));
-    });
+  Future<void> changeDefaultFrequentDistricts(Map<String, dynamic> data) async {
+    await _locationRepository
+        .changeDefaultFrequentlyDistricts(data)
+        .then((value) {})
+        .onError((error, stackTrace) {});
   }
+
+  Future<void> getDefaultFrequentDistricts() async {
+    await _locationRepository.getDefaultFrequentlyDistricts().then((value) {
+      setDefaultLocation(value.data[0].thirdAddress);
+    }).onError((error, stackTrace) {});
+  }
+
+  void setDefaultLocation(String location) {
+    _defaultLocation = location;
+
+    notifyListeners();
+  }
+
+  String get getDefaultLocation => _defaultLocation;
 }

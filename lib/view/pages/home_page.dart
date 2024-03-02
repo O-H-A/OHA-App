@@ -96,14 +96,19 @@ class _HomePageState extends State<HomePage>
             );
           },
           child: Row(
-            children: const [
-              Text(
-                "논현동",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16),
+            children: [
+              Builder(
+                builder: (context) {
+                  return Text(
+                    Provider.of<LocationViewModel>(context).getDefaultLocation,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  );
+                },
               ),
               Icon(Icons.expand_more, color: Colors.black),
             ],

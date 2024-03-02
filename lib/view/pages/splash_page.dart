@@ -23,6 +23,7 @@ class _SplashPageState extends State<SplashPage> {
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     _locationViewModel.fetchAllDistricts();
     _locationViewModel.fetchFrequentDistricts();
+    _locationViewModel.getDefaultFrequentDistricts();
     super.initState();
   }
 
