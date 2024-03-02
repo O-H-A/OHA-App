@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
+import 'package:provider/provider.dart';
 
 import '../../statics/colors.dart';
 import '../../statics/strings.dart';
+import '../../vidw_model/upload_view_model.dart';
 
 class LocationInfoDialog extends StatefulWidget {
   @override
@@ -12,7 +14,29 @@ class LocationInfoDialog extends StatefulWidget {
 
 class _LocationInfoDialogState extends State<LocationInfoDialog> {
   final _controller = TextEditingController();
-  List<String> locationList = [];
+  UploadViewModel _uploadViewModel = UploadViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+  }
+
+  TextSpan _buildTextSpan(String text) {
+    return TextSpan(
+      text: text,
+    );
+  }
+
+  TextPainter _getTextPainter(TextSpan textSpan) {
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    return textPainter;
+  }
 
   Widget _buildExampleWidget() {
     return Container(
@@ -38,31 +62,63 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
   }
 
   Widget _buildLocationWidget(String location) {
-    return Container(
-      width: ScreenUtil().setWidth(106.0),
-      height: ScreenUtil().setHeight(35.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
-        color: Colors.white,
-        border: Border.all(color: const Color(UserColors.ui08)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            location,
-            style: const TextStyle(
-              color: Color(UserColors.ui01),
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
+    final textSpan = _buildTextSpan(location);
+    final textPainter = _getTextPainter(textSpan);
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {});
+      },
+      child: Container(
+        height: ScreenUtil().setHeight(35.0),
+        width: ScreenUtil()
+            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
+          border: Border.all(color: const Color(UserColors.ui08)),
+        ),
+        alignment: Alignment.center,
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(10.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  location,
+                  style: const TextStyle(
+                    color: Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _uploadViewModel.setUploadLocation("");
+                    });
+                  },
+                  child:
+                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
+            ],
           ),
-          const Icon(Icons.cancel, color: Color(UserColors.ui07)),
-        ],
+        ),
       ),
     );
+  }
+
+  void onAddClicked() {
+    print("Jehee");
+    _uploadViewModel.setUploadLocation(_controller.text);
+    _controller.text = "";
+
+    Navigator.pop(context);
   }
 
   @override
@@ -117,9 +173,9 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
               ),
             ),
             SizedBox(height: ScreenUtil().setHeight(22.0)),
-            (locationList.isEmpty)
-                ? _buildLocationWidget("인천 중구")
-                : _buildExampleWidget(),
+            (_uploadViewModel.getUploadLocation.isEmpty)
+                ? _buildExampleWidget()
+                : _buildLocationWidget(_controller.text),
             SizedBox(height: ScreenUtil().setHeight(22.0)),
             TextField(
               controller: _controller,
@@ -149,21 +205,17 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
               textSize: 16,
               textWeight: FontWeight.w600,
               textColor: Colors.white,
+              callback: onAddClicked,
             ),
             SizedBox(height: ScreenUtil().setHeight(12.0)),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: InfinityButton(
-                height: ScreenUtil().setHeight(50.0),
-                radius: ScreenUtil().radius(8.0),
-                backgroundColor: const Color(UserColors.ui10),
-                text: Strings.onlyLocationRegister,
-                textSize: 16,
-                textWeight: FontWeight.w600,
-                textColor: const Color(UserColors.ui01),
-              ),
+            InfinityButton(
+              height: ScreenUtil().setHeight(50.0),
+              radius: ScreenUtil().radius(8.0),
+              backgroundColor: const Color(UserColors.ui10),
+              text: Strings.onlyLocationRegister,
+              textSize: 16,
+              textWeight: FontWeight.w600,
+              textColor: const Color(UserColors.ui01),
             ),
           ],
         ),

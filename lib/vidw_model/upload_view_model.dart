@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 
 class UploadViewModel with ChangeNotifier {
 
-  List<String> keywordList = [];
+  List<String> _keywordList = [];
+  String _uploadLocation = "";
 
-  List<String> get getKetwordList => keywordList;
+  List<String> get getKetwordList => _keywordList;
+  String get getUploadLocation => _uploadLocation;
 
   void setUploadKeywordList(String keyword) {
-    keywordList.add(keyword);
+    _keywordList.add(keyword);
 
-    print("Jehee : ${keywordList}");
+    notifyListeners();
+  }
+
+  void setUploadLocation(String location) {
+    _uploadLocation = location;
 
     notifyListeners();
   }
