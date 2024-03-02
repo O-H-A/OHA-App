@@ -12,6 +12,7 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/infinity_button.dart';
+import '../../widgets/location_info_dialog.dart';
 
 class UploadWritePage extends StatefulWidget {
   final AssetEntity selectImage;
@@ -127,6 +128,15 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
+  void showLocationInfoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return LocationInfoDialog();
+      },
+    );
+  }
+
   Widget _buildKeywordDefaultWidget() {
     String text = Strings.keywordDefault;
 
@@ -212,12 +222,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
-  Widget _buildLocationWidget(String text) {
+  Widget _buildLocationDefaultWidget(String text) {
     final textSpan = _buildTextSpan(text);
     final textPainter = _getTextPainter(textSpan);
 
     return GestureDetector(
       onTap: () {
+        showLocationInfoDialog();
         setState(() {});
       },
       child: Padding(
@@ -240,6 +251,59 @@ class _UploadWritePageState extends State<UploadWritePage> {
               fontWeight: FontWeight.w500,
               color: Color(UserColors.ui06),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationWidget(String text) {
+    final textSpan = _buildTextSpan(text);
+    final textPainter = _getTextPainter(textSpan);
+
+    return GestureDetector(
+      onTap: () {
+        showLocationInfoDialog();
+        setState(() {});
+      },
+      child: Container(
+        height: ScreenUtil().setHeight(35.0),
+        width: ScreenUtil()
+            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
+          border: Border.all(color: const Color(UserColors.ui08)),
+        ),
+        alignment: Alignment.center,
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(10.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _uploadViewModel.setUploadLocation("");
+                    });
+                  },
+                  child:
+                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
+            ],
           ),
         ),
       ),
@@ -438,7 +502,10 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    _buildLocationWidget("ex) 면목동"),
+                    (_uploadViewModel.getUploadLocation.isEmpty)
+                        ? _buildLocationDefaultWidget("ex) 면목동")
+                        : _buildLocationWidget(
+                            _uploadViewModel.getUploadLocation),
                     SizedBox(height: ScreenUtil().setHeight(49.0)),
                   ],
                 ),
