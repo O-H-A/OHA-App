@@ -13,6 +13,7 @@ import '../../../statics/strings.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
+import '../location/location_setting_page.dart';
 
 class UploadWritePage extends StatefulWidget {
   final AssetEntity selectImage;
@@ -37,6 +38,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _uploadViewModel.getKetwordList.clear();
+    _uploadViewModel.setUploadLocation("");
   }
 
   TextSpan _buildTextSpan(String text) {
@@ -126,6 +128,25 @@ class _UploadWritePageState extends State<UploadWritePage> {
         return const AddKeywordDialog();
       },
     );
+  }
+
+  void getLocationInfo() async {
+    Map<String, String?>? result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LocationSettingPage()),
+    );
+
+    if (result != null) {
+      String fullAddress = result['fullAddress'] ?? "";
+      String lastAddress = result['lastAddress'] ?? "";
+
+      _uploadViewModel.setUploadLocation(fullAddress);
+    }
+    else {
+      return;
+    }
+
+    showLocationInfoDialog();
   }
 
   void showLocationInfoDialog() {
@@ -227,9 +248,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
     final textPainter = _getTextPainter(textSpan);
 
     return GestureDetector(
-      onTap: () {
-        showLocationInfoDialog();
-        setState(() {});
+      onTap: () async {
+        getLocationInfo();
       },
       child: Padding(
         padding: EdgeInsets.only(right: ScreenUtil().setWidth(8.0)),
@@ -263,8 +283,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     return GestureDetector(
       onTap: () {
-        showLocationInfoDialog();
-        setState(() {});
+        getLocationInfo();
       },
       child: Container(
         height: ScreenUtil().setHeight(35.0),

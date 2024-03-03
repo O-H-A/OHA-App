@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../statics/colors.dart';
 import '../../statics/strings.dart';
 import '../../vidw_model/upload_view_model.dart';
+import 'button_icon.dart';
 
 class LocationInfoDialog extends StatefulWidget {
   @override
@@ -65,59 +66,58 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
     final textSpan = _buildTextSpan(location);
     final textPainter = _getTextPainter(textSpan);
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {});
-      },
-      child: Container(
-        height: ScreenUtil().setHeight(35.0),
-        width: ScreenUtil()
-            .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
-          border: Border.all(color: const Color(UserColors.ui08)),
-        ),
-        alignment: Alignment.center,
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(10.0)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Text(
-                  location,
-                  style: const TextStyle(
-                    color: Color(UserColors.ui01),
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+    return Container(
+      height: ScreenUtil().setHeight(35.0),
+      width: ScreenUtil()
+          .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(75.0)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
+        border: Border.all(color: const Color(UserColors.ui08)),
+      ),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(10.0)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                location,
+                style: const TextStyle(
+                  color: Color(UserColors.ui01),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _uploadViewModel.setUploadLocation("");
-                    });
-                  },
-                  child:
-                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
-            ],
-          ),
+            ),
+            ButtonIcon(
+                icon: Icons.cancel,
+                iconColor: Color(UserColors.ui07),
+                callback: () {
+                  setState(() {
+                    _uploadViewModel.setUploadLocation("");
+                  });
+                }),
+          ],
         ),
       ),
     );
   }
 
   void onAddClicked() {
-    print("Jehee");
-    _uploadViewModel.setUploadLocation(_controller.text);
-    _controller.text = "";
+    String location =
+        "${_uploadViewModel.getUploadLocation} ${_controller.text}";
+    _uploadViewModel.setUploadLocation(location);
 
+    _controller.text = "";
+    Navigator.pop(context);
+  }
+
+  void onLocationOnlyClicked() {
     Navigator.pop(context);
   }
 
@@ -125,7 +125,6 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: SizedBox(
-        //width: double.infinity,
         width: ScreenUtil().setWidth(366.0),
         height: ScreenUtil().setHeight(389.0),
         child: Column(
@@ -175,13 +174,13 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
             SizedBox(height: ScreenUtil().setHeight(22.0)),
             (_uploadViewModel.getUploadLocation.isEmpty)
                 ? _buildExampleWidget()
-                : _buildLocationWidget(_controller.text),
+                : _buildLocationWidget(_uploadViewModel.getUploadLocation),
             SizedBox(height: ScreenUtil().setHeight(22.0)),
             TextField(
               controller: _controller,
               textAlign: TextAlign.start,
               style: const TextStyle(
-                color: Color(UserColors.ui06),
+                color: Color(UserColors.ui01),
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
@@ -193,6 +192,12 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
+                ),
+                hintStyle: const TextStyle(
+                  color: Color(UserColors.ui06),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -216,6 +221,7 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
               textSize: 16,
               textWeight: FontWeight.w600,
               textColor: const Color(UserColors.ui01),
+              callback: onLocationOnlyClicked,
             ),
           ],
         ),
