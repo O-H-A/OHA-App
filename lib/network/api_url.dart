@@ -42,7 +42,7 @@ class ApiUrl {
   static const String weatherDelete = "/api/posting/weather/";
 
   // Upload
-  static const String posting = "/api/posting/post";
+  static const String posting = "http://152.67.219.168/api/posting/post";
   static const String report = "/api/posting/post/report";
   static const String like = "/api/posting/post/like";
   static const String posts = "/api/posting/posts";

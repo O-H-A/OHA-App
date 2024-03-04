@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:oha/repository/upload_repository.dart';
 
 class UploadViewModel with ChangeNotifier {
+  UploadRepository _uploadRepository = UploadRepository();
 
   List<String> _keywordList = [];
   String _uploadLocation = "";
@@ -18,5 +20,17 @@ class UploadViewModel with ChangeNotifier {
     _uploadLocation = location;
 
     notifyListeners();
+  }
+
+  Future<int> posting(Map<String, dynamic> data) async {
+    await _uploadRepository.posting(data).then((value) {
+      return value.statusCode;
+      //setFrequentLocationData(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      //setFrequentLocationData(ApiResponse.error(error.toString()));
+      return 400;
+    });
+
+    return 400;
   }
 }

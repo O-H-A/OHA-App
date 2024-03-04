@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -8,12 +10,15 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app.dart';
+import '../../../network/api_url.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
 import '../location/location_setting_page.dart';
+
+import 'package:http/http.dart' as http;
 
 class UploadWritePage extends StatefulWidget {
   final AssetEntity selectImage;
@@ -28,17 +33,40 @@ class UploadWritePage extends StatefulWidget {
 }
 
 class _UploadWritePageState extends State<UploadWritePage> {
-  int _selectIndex = 0;
+  int _categorySelectIndex = 0;
   final _textController = TextEditingController();
   UploadViewModel _uploadViewModel = UploadViewModel();
+
+  /*
+    구름 	CTGR_CLOUD
+    달	CTGR_MOON
+    무지개	CTGR_RAINBOW
+    일몰/일출	CTGR_SUNSET_SUNRISE
+    밤하늘	CTGR_NIGHT_SKY
+    맑은 하늘	CTGR_CLEAR_SKY
+  */
+
+  Map<int, String> categoryMap = {
+    0: "CTGR_CLOUD",
+    1: "CTGR_MOON",
+    2: "CTGR_RAINBOW",
+    3: "CTGR_SUNSET_SUNRISE",
+    4: "CTGR_NIGHT_SKY",
+    5: "CTGR_CLEAR_SKY"
+  };
 
   @override
   void initState() {
     super.initState();
 
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
-    _uploadViewModel.getKetwordList.clear();
-    _uploadViewModel.setUploadLocation("");
+
+    Future.delayed(Duration.zero, () {
+      _uploadViewModel.getKetwordList.clear();
+      _uploadViewModel.setUploadLocation("");
+
+      setState(() {});
+    });
   }
 
   TextSpan _buildTextSpan(String text) {
@@ -88,7 +116,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectIndex = index;
+          _categorySelectIndex = index;
         });
       },
       child: Padding(
@@ -98,7 +126,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
           width: ScreenUtil()
               .setWidth(textPainter.width * 1 + ScreenUtil().setWidth(30.0)),
           decoration: BoxDecoration(
-            color: (_selectIndex == index)
+            color: (_categorySelectIndex == index)
                 ? const Color(UserColors.primaryColor)
                 : Colors.white,
             borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
@@ -111,7 +139,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
               fontFamily: "Pretendard",
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: (_selectIndex == index)
+              color: (_categorySelectIndex == index)
                   ? Colors.white
                   : const Color(UserColors.ui01),
             ),
@@ -138,11 +166,9 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     if (result != null) {
       String fullAddress = result['fullAddress'] ?? "";
-      String lastAddress = result['lastAddress'] ?? "";
 
       _uploadViewModel.setUploadLocation(fullAddress);
-    }
-    else {
+    } else {
       return;
     }
 
@@ -329,6 +355,51 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
+  void upload() async {
+    String content = _textController.text;
+    String selectCategory = categoryMap[_categorySelectIndex] ?? "";
+    List<String> keyword = _uploadViewModel.getKetwordList;
+    String selectLocation = _uploadViewModel.getUploadLocation;
+
+    Map<String, dynamic> sendData = {
+      "content": content,
+      "categoryCode": selectCategory,
+      "keywords": [keyword[0], keyword[1], keyword[2]],
+      "regionCode": "1111010200",
+      "locationDetail": selectLocation,
+    };
+
+    //_uploadViewModel.posting(sendData);
+
+    var request = http.MultipartRequest('POST', Uri.parse(ApiUrl.posting));
+
+    Uint8List? imageBytes = await widget.selectImage.originBytes;
+
+    if (imageBytes != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'files',
+          imageBytes,
+          filename: 'image.jpg',
+        ),
+      );
+
+      var response = await request.send();
+
+      var responseString = await http.Response.fromStream(response);
+
+      print("Jehee Test : $responseString");
+      
+      if (response.statusCode == 200) {
+        print('Image upload successful');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}');
+      }
+    } else {
+      print('Image bytes are null');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -454,7 +525,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       height: ScreenUtil().setHeight(35.0),
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: 6,
+                          itemCount: categoryMap.length,
                           itemBuilder: (BuildContext context, int index) {
                             return _buildCategoryWidget(index);
                           }),
@@ -537,10 +608,18 @@ class _UploadWritePageState extends State<UploadWritePage> {
               child: InfinityButton(
                 height: ScreenUtil().setHeight(50.0),
                 radius: ScreenUtil().radius(8.0),
-                backgroundColor: const Color(UserColors.ui10),
+                backgroundColor: (_textController.text.isNotEmpty &&
+                        _uploadViewModel.getUploadLocation.isNotEmpty)
+                    ? const Color(UserColors.primaryColor)
+                    : const Color(UserColors.ui10),
                 text: Strings.upload,
                 textSize: 16,
                 textWeight: FontWeight.w600,
+                textColor: (_textController.text.isNotEmpty &&
+                        _uploadViewModel.getUploadLocation.isNotEmpty)
+                    ? Colors.white
+                    : Colors.black,
+                callback: upload,
               ),
             ),
           ],
