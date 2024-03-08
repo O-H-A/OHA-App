@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+
 
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -6,6 +8,11 @@ import 'dart:convert';
 
 import '../utils/secret_key.dart';
 import 'api_response.dart';
+
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+
+
 
 class NetworkManager {
   Map<String, String> commonHeaders = {
@@ -91,6 +98,52 @@ class NetworkManager {
     } catch (error) {
       print("에러 발생: $error");
       return "";
+    }
+  }
+
+  Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
+      Uint8List? thumbnailData) async {
+    Map<String, dynamic> sendData = userData;
+
+    var dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      "files": await MultipartFile.fromBytes(
+        thumbnailData!,
+        filename: 'files.png',
+        contentType: MediaType('application', 'octet-stream'),
+      ),
+      "dto": MultipartFile.fromString(
+        jsonEncode(sendData),
+        contentType: MediaType('application', 'json'),
+      ),
+    });
+
+    try {
+      Response response = await dio.post(
+        serverUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+            "Authorization": SecretKey.kakaoJWTKey,
+          },
+        ),
+      );
+
+      print("Jehee: ${response.data}");
+
+      if (response.statusCode == 200) {
+        print('Image upload successful');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}');
+      }
+
+      return response.data; // 이 부분은 상황에 맞게 반환하십시오.
+    } catch (error) {
+      print('Error uploading: $error');
+      throw error; // 이 부분은 상황에 맞게 처리하십시오.
     }
   }
 

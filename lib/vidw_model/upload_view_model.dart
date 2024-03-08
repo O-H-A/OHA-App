@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:oha/repository/upload_repository.dart';
 
@@ -22,8 +24,8 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> posting(Map<String, dynamic> data) async {
-    await _uploadRepository.posting(data).then((value) {
+  Future<int> posting(Map<String, dynamic> data, Uint8List? thumbnailData) async {
+    await _uploadRepository.posting(data, thumbnailData).then((value) {
       return value.statusCode;
       //setFrequentLocationData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {

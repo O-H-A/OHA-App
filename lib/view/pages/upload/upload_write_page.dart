@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -13,10 +14,15 @@ import '../../../app.dart';
 import '../../../network/api_url.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
+import '../../../utils/secret_key.dart';
 import '../../../vidw_model/location_view_model.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
 import '../location/location_setting_page.dart';
+
+import 'package:dio/dio.dart';
+
+import 'package:http_parser/http_parser.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -355,7 +361,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
-  void upload() async {
+  Future<void> upload() async {
     String content = _textController.text;
     String selectCategory = categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
@@ -369,34 +375,11 @@ class _UploadWritePageState extends State<UploadWritePage> {
       "locationDetail": selectLocation,
     };
 
-    //_uploadViewModel.posting(sendData);
-
-    var request = http.MultipartRequest('POST', Uri.parse(ApiUrl.posting));
-
-    Uint8List? imageBytes = await widget.selectImage.originBytes;
-
-    if (imageBytes != null) {
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'files',
-          imageBytes,
-          filename: 'image.jpg',
-        ),
-      );
-
-      var response = await request.send();
-
-      var responseString = await http.Response.fromStream(response);
-
-      print("Jehee Test : $responseString");
-      
-      if (response.statusCode == 200) {
-        print('Image upload successful');
-      } else {
-        print('Image upload failed with status: ${response.statusCode}');
-      }
-    } else {
-      print('Image bytes are null');
+    try {
+      await _uploadViewModel.posting(
+          sendData, await widget.selectImage.thumbnailData);
+    } catch (error) {
+      print('Error uploading: $error');
     }
   }
 
