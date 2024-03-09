@@ -32,6 +32,20 @@ Widget _buildCategoryWidget(int index) {
   }
 }
 
+Widget _buildCategoryTextWidget() {
+  return Padding(
+    padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+    child: const Text(
+      Strings.category,
+      style: TextStyle(
+          color: Colors.black,
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w600,
+          fontSize: 20),
+    ),
+  );
+}
+
 class _ImageVideoTabState extends State<ImageVideoTab> {
   @override
   Widget build(BuildContext context) {
@@ -39,18 +53,11 @@ class _ImageVideoTabState extends State<ImageVideoTab> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            Strings.category,
-            style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Pretendard",
-                fontWeight: FontWeight.w600,
-                fontSize: 20),
-          ),
+          _buildCategoryTextWidget(),
           Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 mainAxisSpacing: ScreenUtil().setWidth(12.0),
                 crossAxisSpacing: ScreenUtil().setHeight(12.0),
               ),

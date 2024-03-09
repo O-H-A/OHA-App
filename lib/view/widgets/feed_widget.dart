@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:oha/view/widgets/button_icon.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
@@ -73,6 +74,93 @@ class _FeedWidgetState extends State<FeedWidget> {
     );
   }
 
+  Widget _buildProfileWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: ScreenUtil().setWidth(28.0),
+                height: ScreenUtil().setHeight(28.0),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: SvgPicture.asset(Images.defaultProfile),
+                ),
+              ),
+              SizedBox(width: ScreenUtil().setWidth(8.0)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.nickName,
+                    style: const TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(UserColors.ui01),
+                    ),
+                  ),
+                  SizedBox(height: ScreenUtil().setHeight(3.0)),
+                  Text(
+                    widget.locationInfo,
+                    style: const TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Color(UserColors.ui04),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLikesWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Row(
+        children: [
+          const ButtonIcon(
+              icon: Icons.favorite_border, iconColor: Color(UserColors.ui01)),
+          Text(
+            widget.likesCount.toString() + Strings.likes,
+            style: const TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(UserColors.ui01),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescriptionTextWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Text(
+        widget.description,
+        style: const TextStyle(
+          fontFamily: "Pretendard",
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: Color(UserColors.ui01),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -83,51 +171,7 @@ class _FeedWidgetState extends State<FeedWidget> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: ScreenUtil().setWidth(28.0),
-                        height: ScreenUtil().setHeight(28.0),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: ClipOval(
-                          child: SvgPicture.asset(Images.defaultProfile),
-                        ),
-                      ),
-                      SizedBox(width: ScreenUtil().setWidth(8.0)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.nickName,
-                            style: const TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(UserColors.ui01),
-                            ),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(3.0)),
-                          Text(
-                            widget.locationInfo,
-                            style: const TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: Color(UserColors.ui04),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
-                ],
-              ),
+              _buildProfileWidget(),
               SizedBox(height: ScreenUtil().setHeight(16.0)),
               //here image not padding
               Image.network(
@@ -136,38 +180,21 @@ class _FeedWidgetState extends State<FeedWidget> {
                   width: double.infinity,
                   height: ScreenUtil().setHeight(390.0)),
               SizedBox(height: ScreenUtil().setHeight(12.0)),
-              Row(
-                children: [
-                  const Icon(Icons.favorite_border,
-                      color: Color(UserColors.ui01)),
-                  Text(
-                    widget.likesCount.toString() + Strings.likes,
-                    style: const TextStyle(
-                      fontFamily: "Pretendard",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(UserColors.ui01),
-                    ),
-                  ),
-                ],
-              ),
+              _buildLikesWidget(),
               SizedBox(height: ScreenUtil().setHeight(15.5)),
-              Text(
-                widget.description,
-                style: const TextStyle(
-                  fontFamily: "Pretendard",
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Color(UserColors.ui01),
-                ),
-              ),
+              _buildDescriptionTextWidget(),
               SizedBox(height: ScreenUtil().setHeight(12.0)),
-              Wrap(
-                spacing: ScreenUtil().setWidth(6.0),
-                runSpacing: ScreenUtil().setHeight(6.0),
-                children: widget.hashTag.map((hashTag) {
-                  return _buildHashTagWidget(hashTag);
-                }).toList(),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(22.0),
+                ),
+                child: Wrap(
+                  spacing: ScreenUtil().setWidth(6.0),
+                  runSpacing: ScreenUtil().setHeight(6.0),
+                  children: widget.hashTag.map((hashTag) {
+                    return _buildHashTagWidget(hashTag);
+                  }).toList(),
+                ),
               ),
               SizedBox(height: ScreenUtil().setHeight(24.0)),
             ],
