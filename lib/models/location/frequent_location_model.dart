@@ -3,14 +3,21 @@ class FrequentLocationModel {
   String message;
   List<LocationItem> data;
 
-  FrequentLocationModel({required this.statusCode, required this.message, required this.data});
+  FrequentLocationModel(
+      {required this.statusCode, required this.message, required this.data});
 
   factory FrequentLocationModel.fromJson(Map<String, dynamic> json) {
-    var list = json['data'] as List;
-    List<LocationItem> dataList = list.map((i) => LocationItem.fromJson(i)).toList();
+    var data = json['data'];
+    List<LocationItem> dataList = [];
+
+    if (data is List) {
+      dataList = data.map((item) => LocationItem.fromJson(item)).toList();
+    } else if (data is Map<String, dynamic>) {
+      dataList.add(LocationItem.fromJson(data));
+    }
 
     return FrequentLocationModel(
-      statusCode: json['statusCode'] ??  0,
+      statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
       data: dataList,
     );

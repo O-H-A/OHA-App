@@ -131,9 +131,7 @@ class NetworkManager {
           },
         ),
       );
-
-      print("Jehee: ${response.data}");
-
+      
       if (response.statusCode == 200) {
         print('Image upload successful');
       } else {
