@@ -121,28 +121,28 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-        child: Column(
-          children: [
-            SizedBox(height: ScreenUtil().setHeight(12.0)),
-            const WindyWidget(),
-            SizedBox(height: ScreenUtil().setHeight(43.0)),
-            _buildTabBarWidget(),
-            Expanded(
-              child: TabBarView(
-                controller: tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const <Widget>[
-                  HomeTab(),
-                  PopularityTab(),
-                  ImageVideoTab(),
-                  NowWeatherTab(),
-                ],
-              ),
+      body: Column(
+        children: [
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          const WindyWidget(),
+          SizedBox(height: ScreenUtil().setHeight(43.0)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+            child: _buildTabBarWidget(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: const <Widget>[
+                HomeTab(),
+                PopularityTab(),
+                ImageVideoTab(),
+                NowWeatherTab(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

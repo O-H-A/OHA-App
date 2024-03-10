@@ -36,6 +36,21 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     _weatherViewModel.fetchWeatherCount(sendData);
   }
 
+  Widget _buildNowWeatherNewsText() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: const Text(
+        Strings.nowWeatherNews,
+        style: TextStyle(
+          fontFamily: "Pretendard",
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Color(UserColors.ui01),
+        ),
+      ),
+    );
+  }
+
   void getRegionCode() {
     regionCode =
         _locationViewModel.getFrequentLocationData.data?.data[0].code ?? '0';
@@ -89,15 +104,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: ScreenUtil().setHeight(12.0)),
-            const Text(
-              Strings.nowWeatherNews,
-              style: TextStyle(
-                fontFamily: "Pretendard",
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Color(UserColors.ui01),
-              ),
-            ),
+            _buildNowWeatherNewsText(),
             SizedBox(height: ScreenUtil().setHeight(12.0)),
             Stack(
               alignment: Alignment.center,

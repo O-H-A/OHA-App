@@ -21,6 +21,21 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
   }
 
+  Widget _buildTodaySkyText() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: const Text(
+        Strings.todaySky,
+        style: TextStyle(
+          fontFamily: "Pretendard",
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Color(UserColors.ui01),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,15 +43,7 @@ class _HomeTabState extends State<HomeTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          const Text(
-            Strings.todaySky,
-            style: TextStyle(
-              fontFamily: "Pretendard",
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Color(UserColors.ui01),
-            ),
-          ),
+          _buildTodaySkyText(),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
           const FeedWidget(
             length: 6,

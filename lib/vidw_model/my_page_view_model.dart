@@ -17,7 +17,6 @@ class MyPageViewModel with ChangeNotifier {
 
   Future<void> changeNickName(Map<String, dynamic> data) async {
     await _mypageRepository.changeUserNickName(data).then((value) {
-      print("Jehee : ${value}");
       setMyPageData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setMyPageData(ApiResponse.error(error.toString()));
