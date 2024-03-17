@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oha/network/api_url.dart';
 import 'package:oha/network/network_manager.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
@@ -22,8 +23,33 @@ enum LoginType {
   naver,
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _storage = FlutterSecureStorage();
+  String? _loginInfo = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getLoginStorage();
+    });
+  }
+
+  _getLoginStorage() async {
+    _loginInfo = await _storage.read(key: 'login');
+
+    if (_loginInfo != null) {
+    } else {
+    }
+  }
 
   Future<void> _login(
     BuildContext context,
@@ -57,28 +83,36 @@ class LoginPage extends StatelessWidget {
                     result.replaceAll(RegExp(r'<[^>]*>'), '');
 
                 try {
-                  // Map<String, dynamic> jsonResult = json.decode(cleanedResult);
-                  // data.setLoginData(json.encode(jsonResult));
+                  Map<String, dynamic> jsonResult = json.decode(cleanedResult);
+                  data.setLoginData(json.encode(jsonResult));
 
-                  // if (data.loginData.data?.data.type == "new") {
-                  //   navigator.push(
-                  //     MaterialPageRoute(
-                  //       builder: (context) => const AgreementsPage(),
-                  //     ),
-                  //   );
-                  // } else {
-                  //   navigator.pushAndRemoveUntil(
-                  //     MaterialPageRoute(builder: (context) => const App()),
-                  //     (Route<dynamic> route) => false,
-                  //   );
-                  // }
+                  if (data.loginData.data?.data.type == "new") {
+                    navigator.push(
+                      MaterialPageRoute(
+                        builder: (context) => const AgreementsPage(),
+                      ),
+                    );
+                  } else {
+                    navigator.pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => const App()),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
 
-                  // await webViewCtrl?.loadUrl(
-                  //   urlRequest: URLRequest(url: Uri.parse("about:blank")),
-                  // );
+                  await _storage.write(
+                    key: 'login',
+                    value: "true",
+                  );
 
+                  await webViewCtrl?.loadUrl(
+                    urlRequest: URLRequest(url: Uri.parse("about:blank")),
+                  );
                 } catch (e) {
                   print("Error decoding JSON or accessing accessToken: $e");
+                  await _storage.write(
+                    key: 'login',
+                    value: "false",
+                  );
                 }
               }
             },
@@ -87,6 +121,10 @@ class LoginPage extends StatelessWidget {
       );
     } catch (e) {
       print("Error during login: $e");
+      await _storage.write(
+        key: 'login',
+        value: "false",
+      );
     }
   }
 
