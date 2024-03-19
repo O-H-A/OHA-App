@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/view/pages/home_page.dart';
 import 'package:oha/view/pages/location/location_app_bar_widget.dart';
 import 'package:oha/view/pages/location/location_find_button.dart';
 import 'package:provider/provider.dart';
-
-import '../../../network/api_response.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
@@ -22,7 +19,6 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
   List<String> _allLocationList = [];
   List<String> _displayLocationList = [];
   LocationViewModel _locationViewModel = LocationViewModel();
-  String _selectedLocation = "";
 
   @override
   void initState() {
@@ -52,7 +48,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
 
             if (districts != null) {
               for (final district in districts) {
-                String location = "$province $city $district";
+                String location = "$province $city ${district.address}";
                 locations.add(location);
               }
             }
