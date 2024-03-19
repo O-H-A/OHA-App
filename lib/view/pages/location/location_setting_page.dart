@@ -42,24 +42,24 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
     List<String> locations = [];
     final data = _locationViewModel.getLocationData.data?.data.locations;
 
-    // if (data != null) {
-    //   for (final province in data.keys) {
-    //     final cityMap = data[province];
+    if (data != null) {
+      for (final province in data.keys) {
+        final cityMap = data[province];
 
-    //     if (cityMap != null) {
-    //       for (final city in cityMap.keys) {
-    //         final districts = cityMap[city];
+        if (cityMap != null) {
+          for (final city in cityMap.keys) {
+            final districts = cityMap[city];
 
-    //         if (districts != null) {
-    //           for (final district in districts) {
-    //             String location = "$province $city $district";
-    //             locations.add(location);
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+            if (districts != null) {
+              for (final district in districts) {
+                String location = "$province $city ${district.address}";
+                locations.add(location);
+              }
+            }
+          }
+        }
+      }
+    }
 
     return locations;
   }
