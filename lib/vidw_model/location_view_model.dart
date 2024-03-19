@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:oha/models/location/frequent_location_model.dart';
 import 'package:oha/network/api_response.dart';
 
-import '../models/location/location_model.dart';
+import '../models/location/all_location_model.dart';
 import '../repository/location_repository.dart';
 
 class LocationViewModel with ChangeNotifier {
   final _locationRepository = LocationRepository();
 
-  ApiResponse<LocationModel> _locationData = ApiResponse.loading();
+  ApiResponse<AllLocationModel> _allLocationData = ApiResponse.loading();
   ApiResponse<FrequentLocationModel> _frequentLocationData =
       ApiResponse.loading();
 
-  ApiResponse<LocationModel> get getLocationData => _locationData;
+  ApiResponse<AllLocationModel> get getLocationData => _allLocationData;
   ApiResponse<FrequentLocationModel> get getFrequentLocationData =>
       _frequentLocationData;
 
   String _defaultLocation = "";
 
-  void setLocationData(ApiResponse<LocationModel> response) {
-    _locationData = response;
+  void setLocationData(ApiResponse<AllLocationModel> response) {
+    _allLocationData = response;
 
     notifyListeners();
   }
