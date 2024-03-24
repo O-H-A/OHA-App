@@ -16,8 +16,8 @@ class LocationSettingPage extends StatefulWidget {
 
 class _LocationSettingPageState extends State<LocationSettingPage> {
   final _controller = TextEditingController();
-  List<String> _allLocationList = [];
-  List<String> _displayLocationList = [];
+  List<Map<String, String>> _allLocationList = [];
+  List<Map<String, String>> _displayLocationList = [];
   LocationViewModel _locationViewModel = LocationViewModel();
 
   @override
@@ -34,29 +34,29 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
     super.dispose();
   }
 
-  List<String> _getAllLocations() {
-    List<String> locations = [];
+  List<Map<String, String>> _getAllLocations() {
+    List<Map<String, String>> locations = [];
     final data = _locationViewModel.getLocationData.data?.data.locations;
 
     if (data != null) {
       for (final province in data.keys) {
         final cityMap = data[province];
-
         if (cityMap != null) {
           for (final city in cityMap.keys) {
             final districts = cityMap[city];
-
             if (districts != null) {
               for (final district in districts) {
-                String location = "$province $city ${district.address}";
-                locations.add(location);
+                locations.add({
+                  'fullAddress': "$province $city ${district.address}",
+                  'address': district.address,
+                  'code': district.code,
+                });
               }
             }
           }
         }
       }
     }
-
     return locations;
   }
 
@@ -99,7 +99,9 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
               onChanged: (value) {
                 setState(() {
                   _displayLocationList = _allLocationList
-                      .where((location) => location.contains(value))
+                      .where((location) => location['fullAddress']!
+                          .toLowerCase()
+                          .contains(value.toLowerCase()))
                       .toList();
                 });
               },
@@ -123,31 +125,19 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                       ? _allLocationList.length
                       : _displayLocationList.length,
                   itemBuilder: (BuildContext context, int index) {
+                    final locationMap = (_displayLocationList.isEmpty)
+                        ? _allLocationList[index]
+                        : _displayLocationList[index];
+                    final locationDisplay = locationMap['fullAddress'] ?? '';
                     return Padding(
                       padding:
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: GestureDetector(
                         onTap: () {
-                          String selectedLocation =
-                              (_displayLocationList.isEmpty)
-                                  ? _allLocationList[index]
-                                  : _displayLocationList[index];
-
-                          List<String> locationParts =
-                              selectedLocation.split(' ');
-                          String address = locationParts.isNotEmpty
-                              ? locationParts.last
-                              : '';
-
-                          Navigator.pop(context, {
-                            'fullAddress': selectedLocation,
-                            'lastAddress': address
-                          });
+                          Navigator.pop(context, locationMap);
                         },
                         child: Text(
-                          (_displayLocationList.isEmpty)
-                              ? _allLocationList[index]
-                              : _displayLocationList[index],
+                          locationDisplay,
                           style: const TextStyle(
                             fontFamily: "Pretendard",
                             fontSize: 16,

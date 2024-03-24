@@ -89,14 +89,15 @@ class _LocationSettingBottomSheetContentState
 
     if (result != null) {
       String fullAddress = result['fullAddress'] ?? "";
-      String lastAddress = result['lastAddress'] ?? "";
+      String address = result['address'] ?? "";
+      String code = result['code'] ?? "";
 
-      Map<String, dynamic> sendData = {"address": fullAddress};
+      Map<String, dynamic> sendData = {"code": code};
 
       await _locationViewModel.addFrequentDistricts(sendData);
 
       setState(() {
-        _selectedLocations[index] = lastAddress;
+        _selectedLocations[index] = address;
         _fullLocations[index] = fullAddress;
       });
     }
