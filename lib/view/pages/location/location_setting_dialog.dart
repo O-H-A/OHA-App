@@ -145,7 +145,7 @@ class _LocationSettingBottomSheetContentState
             },
           );
 
-          Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+          Map<String, dynamic> sendData = {"code": _frequentRegionCode[index]};
           _locationViewModel.changeDefaultFrequentDistricts(sendData);
           _locationViewModel.setDefaultLocation(_selectedLocations[index]);
         }
