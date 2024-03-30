@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:oha/models/upload/upload_model.dart';
 
+import '../models/upload/upload_get_model.dart';
 import '../network/api_url.dart';
 import '../network/network_manager.dart';
 
@@ -12,6 +13,16 @@ class UploadRepository {
       dynamic response = await NetworkManager.instance
           .imagePost(ApiUrl.posting, data, thumbnailData);
       return UploadModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<UploadGetModel> posts() async {
+    try {
+      dynamic response = await NetworkManager.instance
+          .get(ApiUrl.posts);
+      return UploadGetModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

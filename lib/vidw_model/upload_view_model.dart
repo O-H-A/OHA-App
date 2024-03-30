@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/repository/upload_repository.dart';
 
+import '../models/upload/upload_get_model.dart';
 import '../network/api_response.dart';
 
 class UploadViewModel with ChangeNotifier {
@@ -13,6 +14,8 @@ class UploadViewModel with ChangeNotifier {
 
   List<String> get getKetwordList => _keywordList;
   String get getUploadLocation => _uploadLocation;
+
+  ApiResponse<UploadGetModel> uploadGetData = ApiResponse.loading();
 
   void setUploadKeywordList(String keyword) {
     _keywordList.add(keyword);
@@ -26,6 +29,10 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void _setUploadGetData(ApiResponse<UploadGetModel> response) {
+      uploadGetData = response;
+  }
+
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     await _uploadRepository.posting(data, thumbnailData).then((value) {
@@ -37,5 +44,17 @@ class UploadViewModel with ChangeNotifier {
     });
 
     return 400;
+  }
+
+  Future<int> posts() async {
+    int statusCode = 400;
+    await _uploadRepository.posts().then((value) {
+      _setUploadGetData(ApiResponse.complete(value));
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      _setUploadGetData(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
   }
 }
