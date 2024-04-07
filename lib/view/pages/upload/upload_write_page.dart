@@ -191,6 +191,10 @@ class _UploadWritePageState extends State<UploadWritePage> {
         return LocationInfoDialog();
       },
     );
+
+    setState(() {
+      
+    });
   }
 
   Widget _buildKeywordDefaultWidget() {
