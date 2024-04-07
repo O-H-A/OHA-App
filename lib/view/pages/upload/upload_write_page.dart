@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -367,10 +368,18 @@ class _UploadWritePageState extends State<UploadWritePage> {
     List<String> keyword = _uploadViewModel.getKetwordList;
     String selectLocation = _uploadViewModel.getUploadLocation;
 
+    print(
+        "Jehee ${content}   ${selectCategory}   ${keyword}   ${selectLocation}");
+
+    List<String> selectedKeywords = [];
+    for (int i = 0; i < min(keyword.length, 3); i++) {
+      selectedKeywords.add(keyword[i]);
+    }
+
     Map<String, dynamic> sendData = {
       "content": content,
       "categoryCode": selectCategory,
-      "keywords": [keyword[0], keyword[1], keyword[2]],
+      "keywords": selectedKeywords,
       "regionCode": "1111010200",
       "locationDetail": selectLocation,
     };
