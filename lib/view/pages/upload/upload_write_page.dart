@@ -43,6 +43,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
   int _categorySelectIndex = 0;
   final _textController = TextEditingController();
   UploadViewModel _uploadViewModel = UploadViewModel();
+  LocationViewModel _locationViewModel = LocationViewModel();
 
   /*
     구름 	CTGR_CLOUD
@@ -67,6 +68,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     super.initState();
 
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen:false);
 
     Future.delayed(Duration.zero, () {
       _uploadViewModel.getKetwordList.clear();
@@ -366,10 +368,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String content = _textController.text;
     String selectCategory = categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
-    String selectLocation = _uploadViewModel.getUploadLocation;
-
-    print(
-        "Jehee ${content}   ${selectCategory}   ${keyword}   ${selectLocation}");
+    String selectLocation = _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
     List<String> selectedKeywords = [];
     for (int i = 0; i < min(keyword.length, 3); i++) {

@@ -77,6 +77,35 @@ class LocationViewModel with ChangeNotifier {
     return list;
   }
 
+  String getCodeByAddress(String address) {
+    final addressParts = address.split(' ');
+    if (addressParts.length != 3) {
+      return "";
+    }
+
+    final province = addressParts[0];
+    final city = addressParts[1];
+    final district = addressParts[2]; 
+
+    try {
+      final cities = _allLocationData.data?.data.locations[province];
+      if (cities != null) {
+        final districts = cities[city];
+        if (districts != null) {
+          for (var location in districts) {
+            if (location.address == district) {
+              return location.code;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      return "";
+    }
+    return "";
+  }
+
+
   Future<int> fetchAllDistricts() async {
     int statusCode = 400;
     await _locationRepository.getAllDistricts().then((value) {
