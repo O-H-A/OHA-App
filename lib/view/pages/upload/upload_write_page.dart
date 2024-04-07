@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
   int _categorySelectIndex = 0;
   final _textController = TextEditingController();
   UploadViewModel _uploadViewModel = UploadViewModel();
+  LocationViewModel _locationViewModel = LocationViewModel();
 
   /*
     구름 	CTGR_CLOUD
@@ -66,6 +68,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     super.initState();
 
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen:false);
 
     Future.delayed(Duration.zero, () {
       _uploadViewModel.getKetwordList.clear();
@@ -188,6 +191,10 @@ class _UploadWritePageState extends State<UploadWritePage> {
         return LocationInfoDialog();
       },
     );
+
+    setState(() {
+      
+    });
   }
 
   Widget _buildKeywordDefaultWidget() {
@@ -365,12 +372,17 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String content = _textController.text;
     String selectCategory = categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
-    String selectLocation = _uploadViewModel.getUploadLocation;
+    String selectLocation = _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
+
+    List<String> selectedKeywords = [];
+    for (int i = 0; i < min(keyword.length, 3); i++) {
+      selectedKeywords.add(keyword[i]);
+    }
 
     Map<String, dynamic> sendData = {
       "content": content,
       "categoryCode": selectCategory,
-      "keywords": [keyword[0], keyword[1], keyword[2]],
+      "keywords": selectedKeywords,
       "regionCode": "1111010200",
       "locationDetail": selectLocation,
     };
