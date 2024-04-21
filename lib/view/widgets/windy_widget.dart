@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
-
 import '../../../../statics/images.dart';
 
 class WindyWidget extends StatelessWidget {
-  const WindyWidget({super.key});
+  final String neighborhood;
+  final String temperature;
+
+  const WindyWidget({
+    super.key,
+    required this.neighborhood,
+    required this.temperature,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +24,18 @@ class WindyWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "현재 논현동은",
-                style: TextStyle(
+              Text(
+                "현재 $neighborhood은",
+                style: const TextStyle(
                     color: Color(UserColors.ui01),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w600,
                     fontSize: 24),
               ),
               SizedBox(height: ScreenUtil().setHeight(12.0)),
-              const Text(
-                "35°C",
-                style: TextStyle(
+              Text(
+                "$temperature°C",
+                style: const TextStyle(
                     color: Color(UserColors.ui01),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w600,
@@ -46,7 +52,7 @@ class WindyWidget extends StatelessWidget {
               ),
             ],
           ),
-          SvgPicture.asset(Images.windy),
+          SvgPicture.asset(Images.cloudyDisable),
         ],
       ),
     );
