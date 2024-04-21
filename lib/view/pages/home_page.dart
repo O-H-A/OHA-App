@@ -6,11 +6,11 @@ import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
 import 'package:oha/view/pages/home/tab/popularity_tab.dart';
-import 'package:oha/view/pages/home/weather/windy_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
+import '../widgets/windy_widget.dart';
 import 'location/location_setting_dialog.dart';
 
 class HomePage extends StatefulWidget {
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage>
       body: Column(
         children: [
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          const WindyWidget(),
+          const WindyWidget(neighborhood: "논현동", temperature: "35"),
           SizedBox(height: ScreenUtil().setHeight(43.0)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),

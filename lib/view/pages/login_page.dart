@@ -47,8 +47,7 @@ class _LoginPageState extends State<LoginPage> {
     _loginInfo = await _storage.read(key: 'login');
 
     if (_loginInfo != null) {
-    } else {
-    }
+    } else {}
   }
 
   Future<void> _login(
@@ -85,8 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                 try {
                   Map<String, dynamic> jsonResult = json.decode(cleanedResult);
                   data.setLoginData(json.encode(jsonResult));
-
+ print("result : ${data.loginData.data?.data.accessToken}");
                   if (data.loginData.data?.data.type == "new") {
+                   
                     navigator.push(
                       MaterialPageRoute(
                         builder: (context) => const AgreementsPage(),
