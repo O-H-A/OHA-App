@@ -31,23 +31,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   String? _loginInfo = "";
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getLoginStorage();
-    });
-  }
-
-  _getLoginStorage() async {
-    _loginInfo = await _storage.read(key: 'login');
-
-    if (_loginInfo != null) {
-    } else {}
   }
 
   Future<void> _login(
@@ -84,7 +73,8 @@ class _LoginPageState extends State<LoginPage> {
                 try {
                   Map<String, dynamic> jsonResult = json.decode(cleanedResult);
                   data.setLoginData(json.encode(jsonResult));
- print("result : ${data.loginData.data?.data.accessToken}");
+                  print("result : ${data.loginData.data?.data.accessToken}");
+                  print("result : ${cleanedResult}");
                   if (data.loginData.data?.data.type == "new") {
                    
                     navigator.push(
@@ -137,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
       case LoginType.naver:
         return ApiUrl.naverLogin;
       case LoginType.apple:
-        return "";
+        return ApiUrl.appleLogin;
       default:
         throw Exception("Unsupported login type: $type");
     }
