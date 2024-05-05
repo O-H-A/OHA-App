@@ -344,7 +344,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
               Flexible(
                 child: Text(
                   text,
-                  style: const TextStyle(
+                  style: const TextStyle( 
                     color: Color(UserColors.ui01),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w500,
@@ -372,7 +372,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String content = _textController.text;
     String selectCategory = categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
-    String selectLocation = _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
+    String selectLocationCode = _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
     List<String> selectedKeywords = [];
     for (int i = 0; i < min(keyword.length, 3); i++) {
@@ -383,8 +383,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
       "content": content,
       "categoryCode": selectCategory,
       "keywords": selectedKeywords,
-      "regionCode": "1111010200",
-      "locationDetail": selectLocation,
+      "regionCode": selectLocationCode,
+      "locationDetail": _uploadViewModel.getUploadLocation,
     };
 
     try {

@@ -19,6 +19,7 @@ class LocationViewModel with ChangeNotifier {
       _frequentLocationData;
 
   String _defaultLocation = "";
+  String _defaultLocationCode = "";
 
   void setLocationData(ApiResponse<AllLocationModel> response) {
     _allLocationData = response;
@@ -79,10 +80,6 @@ class LocationViewModel with ChangeNotifier {
 
   String getCodeByAddress(String address) {
     final addressParts = address.split(' ');
-    if (addressParts.length != 3) {
-      return "";
-    }
-
     final province = addressParts[0];
     final city = addressParts[1];
     final district = addressParts[2]; 
@@ -156,6 +153,7 @@ class LocationViewModel with ChangeNotifier {
   Future<void> getDefaultFrequentDistricts() async {
     await _locationRepository.getDefaultFrequentlyDistricts().then((value) {
       setDefaultLocation(value.data[0].thirdAddress);
+      setDefaultLocationCode(value.data[0].code);
     }).onError((error, stackTrace) {});
   }
 
@@ -165,5 +163,13 @@ class LocationViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void setDefaultLocationCode(String code) {
+    _defaultLocationCode = code;
+
+    notifyListeners();
+  }
+
   String get getDefaultLocation => _defaultLocation;
+  
+  String get getDefaultLocationCode => _defaultLocationCode;
 }

@@ -127,11 +127,8 @@ class NetworkManager {
         serverUrl,
         data: formData,
         options: Options(
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "Accept": "application/json",
-            "Authorization": SecretKey.kakaoJWTKey,
-          },
+          headers:
+              await commonHeaders,
         ),
       );
 
