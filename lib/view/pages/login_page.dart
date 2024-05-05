@@ -77,9 +77,21 @@ class _LoginPageState extends State<LoginPage> {
                   data.setLoginData(json.encode(jsonResult));
                   print("result : ${data.loginData.data?.data.accessToken}");
                   print("result : ${cleanedResult}");
-                  await _storage.write(key: 'accessToken', value: data.loginData.data?.data.accessToken);
+                  await _storage.write(
+                      key: 'accessToken',
+                      value: data.loginData.data?.data.accessToken);
 
-                  if (data.loginData.data?.data.type == "new") {
+                  await _storage.write(
+                    key: 'login',
+                    value: "true",
+                  );
+
+                  if (data.loginData.data?.data.isJoined == false) {
+                    await _storage.write(
+                      key: 'login',
+                      value: "false",
+                    );
+
                     navigator.push(
                       MaterialPageRoute(
                         builder: (context) => const AgreementsPage(),
@@ -91,11 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                       (Route<dynamic> route) => false,
                     );
                   }
-
-                  await _storage.write(
-                    key: 'login',
-                    value: "true",
-                  );
 
                   await webViewCtrl?.loadUrl(
                     urlRequest: URLRequest(url: Uri.parse("about:blank")),

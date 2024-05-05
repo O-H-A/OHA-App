@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../statics/Colors.dart';
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
+import '../../../../vidw_model/location_view_model.dart';
+import '../../../../vidw_model/upload_view_model.dart';
 import '../../../widgets/feed_widget.dart';
 
 class HomeTab extends StatefulWidget {
@@ -16,9 +19,23 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  UploadViewModel _uploadViewModel = UploadViewModel();
+  LocationViewModel _locationViewModel = LocationViewModel();
+
   @override
   void initState() {
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     super.initState();
+
+    Map<String, dynamic> sendData = {
+      "regionCode": _locationViewModel.getDefaultLocationCode,
+      "categoryCode": "CTGR_CLOUD",
+      "offset": "0",
+      "size": "10",
+    };
+
+    _uploadViewModel.posts(sendData);
   }
 
   Widget _buildTodaySkyText() {

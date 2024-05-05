@@ -18,10 +18,10 @@ class UploadRepository {
     }
   }
 
-    Future<UploadGetModel> posts() async {
+    Future<UploadGetModel> posts(Map<String, dynamic> queryParams) async {
     try {
       dynamic response = await NetworkManager.instance
-          .get(ApiUrl.posts);
+          .getWithQuery(ApiUrl.posts, queryParams);
       return UploadGetModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

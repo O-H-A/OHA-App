@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -12,8 +11,6 @@ import 'api_response.dart';
 
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-
-
 
 class NetworkManager {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -130,14 +127,11 @@ class NetworkManager {
         serverUrl,
         data: formData,
         options: Options(
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "Accept": "application/json",
-            "Authorization": SecretKey.kakaoJWTKey,
-          },
+          headers:
+              await commonHeaders,
         ),
       );
-      
+
       if (response.statusCode == 200) {
         print('Image upload successful');
       } else {
@@ -233,6 +227,7 @@ class NetworkManager {
     switch (response.statusCode) {
       case 0:
       case 200:
+      case 201:
         return response.body;
       default:
         return ApiResponse.error;

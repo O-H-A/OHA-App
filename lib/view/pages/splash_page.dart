@@ -21,17 +21,15 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   LocationViewModel _locationViewModel = LocationViewModel();
-  UploadViewModel _uploadGetModel = UploadViewModel();
+
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    _uploadGetModel = Provider.of<UploadViewModel>(context, listen: false);
     _locationViewModel.fetchAllDistricts();
     _locationViewModel.fetchFrequentDistricts();
     _locationViewModel.getDefaultFrequentDistricts();
-    _uploadGetModel.posts();
     super.initState();
 
     Future.delayed(const Duration(seconds: 3), _checkLoginStatus);

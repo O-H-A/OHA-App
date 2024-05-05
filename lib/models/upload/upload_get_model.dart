@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class UploadGetModel {
   final int statusCode;
   final String message;
@@ -11,10 +9,13 @@ class UploadGetModel {
     required this.data,
   });
 
-  factory UploadGetModel.fromJson(Map<String, dynamic> json) => UploadGetModel(
-        statusCode: json['statusCode'],
-        message: json['message'],
-        data: List<UploadData>.from(json['data'].map((x) => UploadData.fromJson(x))),
+  factory UploadGetModel.fromJson(Map<String, dynamic>? json) => UploadGetModel(
+        statusCode: json?['statusCode'] ?? 0,
+        message: json?['message'] ?? '',
+        data: (json?['data'] as List<dynamic>?)
+                ?.map((e) => UploadData.fromJson(e))
+                .toList() ??
+            [],
       );
 }
 
@@ -59,26 +60,35 @@ class UploadData {
     required this.profileUrl,
   });
 
-  factory UploadData.fromJson(Map<String, dynamic> json) => UploadData(
-        postId: json['postId'],
-        userId: json['userId'],
-        userNickname: json['userNickname'],
-        likeUsers: List<int>.from(json['likeUsers'].map((x) => x)),
-        likeCount: json['likeCount'],
-        categoryCode: json['categoryCode'],
-        categoryName: json['categoryName'],
-        keywords: List<String>.from(json['keywords'].map((x) => x)),
-        content: json['content'],
-        regionCode: json['regionCode'],
-        firstAddress: json['firstAddress'],
-        secondAddress: json['secondAddress'],
-        thirdAddress: json['thirdAddress'],
-        locationDetail: json['locationDetail'],
-        regDtm: json['regDtm'],
-        updDtm: json['updDtm'],
-        files: List<FileData>.from(json['files'].map((x) => FileData.fromJson(x))),
-        profileUrl: json['profileUrl'],
-      );  
+  factory UploadData.fromJson(Map<String, dynamic>? json) => UploadData(
+        postId: json?['postId'] ?? 0,
+        userId: json?['userId'] ?? 0,
+        userNickname: json?['userNickname'] ?? '',
+        likeUsers: (json?['likeUsers'] as List<dynamic>?)
+                ?.map((e) => e as int)
+                .toList() ??
+            [],
+        likeCount: json?['likeCount'] ?? 0,
+        categoryCode: json?['categoryCode'] ?? '',
+        categoryName: json?['categoryName'] ?? '',
+        keywords: (json?['keywords'] as List<dynamic>?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [],
+        content: json?['content'] ?? '',
+        regionCode: json?['regionCode'] ?? 0,
+        firstAddress: json?['firstAddress'] ?? '',
+        secondAddress: json?['secondAddress'] ?? '',
+        thirdAddress: json?['thirdAddress'] ?? '',
+        locationDetail: json?['locationDetail'] ?? '',
+        regDtm: json?['regDtm'] ?? '',
+        updDtm: json?['updDtm'] ?? '',
+        files: (json?['files'] as List<dynamic>?)
+                ?.map((e) => FileData.fromJson(e))
+                .toList() ??
+            [],
+        profileUrl: json?['profileUrl'] ?? '',
+      );
 }
 
 class FileData {
@@ -92,9 +102,9 @@ class FileData {
     required this.seq,
   });
 
-  factory FileData.fromJson(Map<String, dynamic> json) => FileData(
-        url: json['url'],
-        thumbnailUrl: json['thumbnailUrl'],
-        seq: json['seq'],
+  factory FileData.fromJson(Map<String, dynamic>? json) => FileData(
+        url: json?['url'] ?? '',
+        thumbnailUrl: json?['thumbnailUrl'] ?? '',
+        seq: json?['seq'] ?? 0,
       );
 }

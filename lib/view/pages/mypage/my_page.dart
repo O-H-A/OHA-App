@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
@@ -25,6 +26,7 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   LoginViewModel _loginViewModel = LoginViewModel();
   MyPageViewModel _myPageViewModel = MyPageViewModel();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -37,13 +39,17 @@ class _MyPageState extends State<MyPage> {
   void onLogout() async {
     await _loginViewModel.logout().then((value) {
       if (value == 200) {
+        _storage.write(key: 'login', value: '');
+        _storage.write(key: 'accessToken', value: '');
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
           (Route<dynamic> route) => false,
         );
       }
-    }).onError((error, stackTrace) {});
+    }).onError((error, stackTrace) {
+    });
   }
 
   void showAgreementPage() {

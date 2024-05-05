@@ -46,9 +46,9 @@ class UploadViewModel with ChangeNotifier {
     return 400;
   }
 
-  Future<int> posts() async {
+  Future<int> posts(Map<String, dynamic> queryParams) async {
     int statusCode = 400;
-    await _uploadRepository.posts().then((value) {
+    await _uploadRepository.posts(queryParams).then((value) {
       _setUploadGetData(ApiResponse.complete(value));
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
