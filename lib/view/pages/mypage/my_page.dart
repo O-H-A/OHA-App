@@ -37,17 +37,19 @@ class _MyPageState extends State<MyPage> {
   }
 
   void onLogout() async {
-    await _storage.write(key: 'login', value: '');
-    await _storage.write(key: 'accessToken', value: '');
     await _loginViewModel.logout().then((value) {
       if (value == 200) {
+        _storage.write(key: 'login', value: '');
+        _storage.write(key: 'accessToken', value: '');
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
           (Route<dynamic> route) => false,
         );
       }
-    }).onError((error, stackTrace) {});
+    }).onError((error, stackTrace) {
+    });
   }
 
   void showAgreementPage() {
