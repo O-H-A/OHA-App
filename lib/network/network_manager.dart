@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
@@ -15,11 +16,16 @@ import 'package:http_parser/http_parser.dart';
 
 
 class NetworkManager {
-  Map<String, String> commonHeaders = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "AUTHORIZATION": SecretKey.kakaoJWTKey,
-  };
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  Future<Map<String, String>> get commonHeaders async {
+    String? accessToken = await _storage.read(key: 'accessToken');
+    return {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer $accessToken"
+    };
+  }
 
   static final NetworkManager _instance = NetworkManager._internal();
 
@@ -33,7 +39,7 @@ class NetworkManager {
     try {
       final response = await http.get(
         Uri.parse(serverUrl),
-        headers: commonHeaders,
+        headers: await commonHeaders,
       );
 
       responseJson = returnResponse(response);
@@ -59,7 +65,7 @@ class NetworkManager {
 
       final response = await http.get(
         uri,
-        headers: commonHeaders,
+        headers: await commonHeaders,
       );
 
       responseJson = returnResponse(response);
@@ -82,7 +88,7 @@ class NetworkManager {
 
       final response = await http.post(
         Uri.parse(serverUrl),
-        headers: commonHeaders,
+        headers: await commonHeaders,
         body: jsonData,
       );
 
@@ -138,10 +144,10 @@ class NetworkManager {
         print('Image upload failed with status: ${response.statusCode}');
       }
 
-      return response.data; // 이 부분은 상황에 맞게 반환하십시오.
+      return response.data;
     } catch (error) {
       print('Error uploading: $error');
-      throw error; // 이 부분은 상황에 맞게 처리하십시오.
+      throw error;
     }
   }
 
@@ -152,7 +158,7 @@ class NetworkManager {
 
       final response = await http.put(
         Uri.parse(serverUrl),
-        headers: commonHeaders,
+        headers: await commonHeaders,
         body: jsonData,
       );
 
@@ -180,7 +186,7 @@ class NetworkManager {
 
       final response = await http.delete(
         Uri.parse(serverUrl),
-        headers: commonHeaders,
+        headers: await commonHeaders,
         body: jsonData,
       );
 
@@ -206,7 +212,7 @@ class NetworkManager {
       List<int> imageBytes = await imageFile.readAsBytes();
       final response = await http.put(
         Uri.parse(serverUrl),
-        headers: commonHeaders,
+        headers: await commonHeaders,
         body: imageBytes,
       );
 

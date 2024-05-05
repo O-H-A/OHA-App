@@ -31,11 +31,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  LoginViewModel _loginViewModel = LoginViewModel();
+
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  String? _loginInfo = "";
 
   @override
   void initState() {
+    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     super.initState();
   }
 
@@ -75,8 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                   data.setLoginData(json.encode(jsonResult));
                   print("result : ${data.loginData.data?.data.accessToken}");
                   print("result : ${cleanedResult}");
+                  await _storage.write(key: 'accessToken', value: data.loginData.data?.data.accessToken);
+
                   if (data.loginData.data?.data.type == "new") {
-                   
                     navigator.push(
                       MaterialPageRoute(
                         builder: (context) => const AgreementsPage(),
@@ -162,9 +165,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel _loginViewModel = LoginViewModel();
-    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
