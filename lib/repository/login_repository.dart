@@ -18,7 +18,7 @@ class LoginRepository {
 
   Future<LogoutModel> logout() async {
     try {
-      dynamic response = await NetworkManager.instance.get(ApiUrl.logout);
+      dynamic response = await NetworkManager.instance.post(ApiUrl.logout, {});
       return LogoutModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
