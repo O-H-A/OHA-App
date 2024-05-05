@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/Colors.dart';
 import 'package:oha/view/pages/agreements/location_agreements_page.dart';
 import 'package:oha/view/pages/agreements/privacy_agreements_page.dart';
 import 'package:oha/view/pages/agreements/service_agreements_page.dart';
 import 'package:oha/view/pages/login_finish_page.dart';
+import 'package:provider/provider.dart';
 
+import '../../../app.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
+import '../../../vidw_model/login_view_model.dart';
 import '../../widgets/infinity_button.dart';
 
 class AgreementsPage extends StatefulWidget {
@@ -19,10 +23,34 @@ class AgreementsPage extends StatefulWidget {
 }
 
 class _AgreementsPageState extends State<AgreementsPage> {
+  LoginViewModel _loginViewModel = LoginViewModel();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   bool _allAgreements = false;
   bool _serviceAgreements = false;
   bool _privacyAgreements = false;
   bool _locationAgreements = false;
+
+  @override
+  void initState() {
+    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+    super.initState();
+  }
+
+  void _termsAgreeComplete() async {
+    _loginViewModel.termsAgree();
+
+    await _storage.write(
+      key: 'login',
+      value: "true",
+    );
+
+    if (!mounted) return; 
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const App()),
+    );
+  }
 
   Widget _buildAllAgreementsWidget() {
     return Stack(
@@ -224,6 +252,7 @@ class _AgreementsPageState extends State<AgreementsPage> {
                   textColor: _getAllAgreements()
                       ? Colors.white
                       : const Color(UserColors.ui06),
+                  callback: _termsAgreeComplete,
                 ),
               ),
             ),

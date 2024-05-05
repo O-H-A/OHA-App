@@ -8,7 +8,6 @@ import 'package:oha/repository/login_repository.dart';
 import '../models/login/login_model.dart';
 import '../models/login/logout_model.dart';
 
-
 class LoginViewModel with ChangeNotifier {
   final _loginRepository = LoginRepository();
 
@@ -40,6 +39,18 @@ class LoginViewModel with ChangeNotifier {
   Future<int> logout() async {
     int statusCode = 40;
     await _loginRepository.logout().then((value) {
+      setLogout(ApiResponse.complete(value));
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      setLogout(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
+  }
+
+  Future<int> termsAgree() async {
+    int statusCode = 400;
+    await _loginRepository.termsAgree().then((value) {
       setLogout(ApiResponse.complete(value));
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {

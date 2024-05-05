@@ -3,9 +3,9 @@ class Strings {
   static const String agreementsMainGuide = "오하 서비스 이용에 동의해 주세요";
   static const String agreementsSubGuide = "여러분의 개인정보와 서비스 이용 권리 잘 지켜드릴게요";
   static const String allAgreements = "모두 동의";
-  static const String requiredServiceAgreement = "(필수) 서비스 이용약관 동의";
-  static const String requiredPrivacyAgreement = "(필수) 개인정보 처리방침 동의";
-  static const String requiredLocationAgreement = "(필수) 위치정보 수집 동의";
+  static const String requiredServiceAgreement = "서비스 이용약관 동의";
+  static const String requiredPrivacyAgreement = "개인정보 처리방침 동의";
+  static const String requiredLocationAgreement = "위치정보 수집 동의";
   static const String serviceAgreement = "서비스 이용약관 동의";
   static const String privacyAgreement = "개인정보 처리방침 동의";
   static const String locationAgreement = "위치정보 수집 동의";

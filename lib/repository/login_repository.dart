@@ -24,4 +24,13 @@ class LoginRepository {
       rethrow;
     }
   }
+
+    Future<LogoutModel> termsAgree() async {
+    try {
+      dynamic response = await NetworkManager.instance.put(ApiUrl.termsAgree, {});
+      return LogoutModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
