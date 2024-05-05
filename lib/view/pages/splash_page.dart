@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/models/upload/upload_get_model.dart';
 import 'package:oha/statics/images.dart';
@@ -19,8 +20,9 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
- LocationViewModel _locationViewModel = LocationViewModel();
- UploadViewModel _uploadGetModel = UploadViewModel();
+  LocationViewModel _locationViewModel = LocationViewModel();
+  UploadViewModel _uploadGetModel = UploadViewModel();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -31,17 +33,29 @@ class _SplashPageState extends State<SplashPage> {
     _locationViewModel.getDefaultFrequentDistricts();
     _uploadGetModel.posts();
     super.initState();
+
+    Future.delayed(const Duration(seconds: 3), _checkLoginStatus);
+  }
+
+  void _checkLoginStatus() async {
+    String? loginInfo = await _storage.read(key: 'login');
+    if (!mounted) return;
+
+    if (loginInfo == 'true') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const App()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<void>.delayed(const Duration(seconds: 3)).then((_) async {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const LoginPage()),
-      );
-    });
     return Scaffold(
       body: SvgPicture.asset(
         Images.splashBg,

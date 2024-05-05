@@ -15,6 +15,7 @@ class ApiUrl {
       "http://152.67.219.168/api/auth/google/login";
   static const String kakaoLogin = "http://152.67.219.168/api/auth/kakao/login";
   static const String naverLogin = "http://152.67.219.168/api/auth/naver/login";
+  static const String appleLogin = "http://152.67.219.168/api/auth/apple/login";
   static const String refresh = "/api/auth/refresh";
   static const String logout = "http://152.67.219.168/api/auth/logout";
   static const String withDraw = "/api/auth/withdraw";
