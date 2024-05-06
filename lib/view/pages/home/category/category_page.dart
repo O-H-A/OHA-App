@@ -133,7 +133,6 @@ class _CategoryPageState extends State<CategoryPage>
             (viewType == ViewType.gridView)
                 ? CategoryGridWidget(imageList: imageS)
                 : const FeedWidget(
-                    length: 6,
                     nickName: "고독한 사진작가",
                     locationInfo: "2023년 10월 21일 논현동 거리",
                     likesCount: 3,
@@ -150,6 +149,7 @@ class _CategoryPageState extends State<CategoryPage>
                       "같은 하늘",
                       "노을"
                     ],
+                    imageUrl: '',
                   ),
           ],
         ),

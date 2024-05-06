@@ -30,12 +30,14 @@ class _HomeTabState extends State<HomeTab> {
 
     Map<String, dynamic> sendData = {
       "regionCode": _locationViewModel.getDefaultLocationCode,
-      "categoryCode": "CTGR_CLOUD",
       "offset": "0",
       "size": "10",
     };
 
     _uploadViewModel.posts(sendData);
+
+    print(
+        "Jehee 123 : ${_uploadViewModel.uploadGetData.data?.data[0].locationDetail}");
   }
 
   Widget _buildTodaySkyText() {
@@ -62,24 +64,31 @@ class _HomeTabState extends State<HomeTab> {
           SizedBox(height: ScreenUtil().setHeight(12.0)),
           _buildTodaySkyText(),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          const FeedWidget(
-            length: 6,
-            nickName: "고독한 사진작가",
-            locationInfo: "2023년 10월 21일 논현동 거리",
-            likesCount: 3,
-            description:
-                "지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요!",
-            hashTag: [
-              "구름",
-              "같은 하늘",
-              "노을",
-              "구름",
-              "같은 하늘",
-              "노을",
-              "구름",
-              "같은 하늘",
-              "노을"
-            ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: _uploadViewModel.uploadGetData.data?.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                return FeedWidget(
+                  nickName: _uploadViewModel
+                          .uploadGetData.data?.data[index].userNickname ??
+                      '',
+                  locationInfo: _uploadViewModel
+                          .uploadGetData.data?.data[index].locationDetail ??
+                      '',
+                  likesCount: _uploadViewModel
+                          .uploadGetData.data?.data[index].likeCount ??
+                      0,
+                  description: _uploadViewModel
+                          .uploadGetData.data?.data[index].content ??
+                      '',
+                  hashTag: _uploadViewModel
+                          .uploadGetData.data?.data[index].keywords ??
+                      [],
+                  imageUrl: _uploadViewModel
+                      .uploadGetData.data?.data[index].files[0].url ?? '',
+                );
+              },
+            ),
           ),
         ],
       ),
