@@ -62,7 +62,7 @@ class _LocationSettingBottomSheetContentState
         },
       );
     } else {
-      Map<String, dynamic> sendData = {"address": _fullLocations[index]};
+      Map<String, dynamic> sendData = {"code": _frequentRegionCode[index]};
       _locationViewModel.deleteFrequentDistricts(sendData);
 
       setState(() {
