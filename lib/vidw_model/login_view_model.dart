@@ -64,7 +64,6 @@ class LoginViewModel with ChangeNotifier {
     int statusCode = 400;
     await _loginRepository.refresh().then((value) {
       setLogout(ApiResponse.complete(value));
-      print("Jehee test : ${value}");
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
       setLogout(ApiResponse.error(error.toString()));

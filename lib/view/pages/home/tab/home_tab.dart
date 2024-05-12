@@ -35,9 +35,6 @@ class _HomeTabState extends State<HomeTab> {
     };
 
     _uploadViewModel.posts(sendData);
-
-    print(
-        "Jehee 123 : ${_uploadViewModel.uploadGetData.data?.data[0].locationDetail}");
   }
 
   Widget _buildTodaySkyText() {

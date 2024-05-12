@@ -23,6 +23,22 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
   LocationViewModel _locationViewModel = LocationViewModel();
   String regionCode = "";
 
+  final Map<String, String> weatherImageMap = {
+    "흐림": Images.cloudyEnable,
+    "구름 많음": Images.manyCloudEnable,
+    "구름 조금": Images.littleCloudyEnable,
+    "맑음": Images.sunnyEnable,
+    "비": Images.rainEnable,
+    "천둥": Images.thunderEnable,
+    "눈": Images.snowEnable,
+    "천둥 비": Images.thunderRainEnable,
+    "매우 추움": Images.veryColdEnable,
+    "매우 더움": Images.veryHotEnable,
+    "밤공기": Images.nightAirEnable,
+    "바람": Images.windEnable,
+    "무지개": Images.rainbowEnable
+  };
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +47,9 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
 
     getRegionCode();
-    Map<String, dynamic> sendData = {"regionCode": regionCode};
+    Map<String, dynamic> sendData = {
+      "regionCode": _locationViewModel.getDefaultLocationCode
+    };
 
     _weatherViewModel.fetchWeatherCount(sendData);
   }
@@ -60,6 +78,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     return Column(
       children: [
         SvgPicture.asset(imagePath),
+        SizedBox(height: ScreenUtil().setHeight(36.0)),
         Text(
           title,
           style: const TextStyle(
@@ -122,17 +141,17 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: ScreenUtil().setWidth(25.0)),
+                      horizontal: ScreenUtil().setWidth(46.0)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildWeatherInfoWIdget(
-                          Images.littleCloudyDisable, "약간 흐려요", 1132),
-                      _buildWeatherInfoWIdget(Images.cloudyDisable, "흐려요", 121),
-                      _buildWeatherInfoWIdget(
-                          Images.veryColdDisable, "매우 추워요", 30),
-                    ],
+                    children: _weatherViewModel.topThreeWeatherData
+                        .map((weatherData) {
+                      return _buildWeatherInfoWIdget(
+                          weatherImageMap[weatherData.weatherName] ?? '',
+                          weatherData.weatherName,
+                          weatherData.count);
+                    }).toList(),
                   ),
                 ),
               ],
