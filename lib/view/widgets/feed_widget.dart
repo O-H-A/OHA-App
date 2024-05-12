@@ -10,21 +10,21 @@ import '../../statics/images.dart';
 import '../../statics/strings.dart';
 
 class FeedWidget extends StatefulWidget {
-  final int length;
   final String nickName;
   final String locationInfo;
   final int likesCount;
   final String description;
   final List<String> hashTag;
+  final String imageUrl;
 
   const FeedWidget({
     Key? key,
-    required this.length,
     required this.nickName,
     required this.locationInfo,
     required this.likesCount,
     required this.description,
     required this.hashTag,
+    required this.imageUrl,
   }) : super(key: key);
 
   @override
@@ -163,44 +163,36 @@ class _FeedWidgetState extends State<FeedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: widget.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileWidget(),
-              SizedBox(height: ScreenUtil().setHeight(16.0)),
-              //here image not padding
-              Image.network(
-                  "https://mediahub.seoul.go.kr/wp-content/uploads/2020/03/53552dfe5d897d0a50138605f19628a6.jpg",
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: ScreenUtil().setHeight(390.0)),
-              SizedBox(height: ScreenUtil().setHeight(12.0)),
-              _buildLikesWidget(),
-              SizedBox(height: ScreenUtil().setHeight(15.5)),
-              _buildDescriptionTextWidget(),
-              SizedBox(height: ScreenUtil().setHeight(12.0)),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(22.0),
-                ),
-                child: Wrap(
-                  spacing: ScreenUtil().setWidth(6.0),
-                  runSpacing: ScreenUtil().setHeight(6.0),
-                  children: widget.hashTag.map((hashTag) {
-                    return _buildHashTagWidget(hashTag);
-                  }).toList(),
-                ),
-              ),
-              SizedBox(height: ScreenUtil().setHeight(24.0)),
-            ],
-          );
-        },
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildProfileWidget(),
+        SizedBox(height: ScreenUtil().setHeight(16.0)),
+        //here image not padding
+        Image.network(
+            widget.imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: ScreenUtil().setHeight(390.0)),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildLikesWidget(),
+        SizedBox(height: ScreenUtil().setHeight(15.5)),
+        _buildDescriptionTextWidget(),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ScreenUtil().setWidth(22.0),
+          ),
+          child: Wrap(
+            spacing: ScreenUtil().setWidth(6.0),
+            runSpacing: ScreenUtil().setHeight(6.0),
+            children: widget.hashTag.map((hashTag) {
+              return _buildHashTagWidget(hashTag);
+            }).toList(),
+          ),
+        ),
+        SizedBox(height: ScreenUtil().setHeight(24.0)),
+      ],
     );
   }
 }

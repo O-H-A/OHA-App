@@ -8,8 +8,10 @@ import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/vidw_model/weather_view_model.dart';
-import 'package:oha/view/pages/home/weather_register_page.dart';
+import 'package:oha/view/pages/home/weather/weather_register_page.dart';
 import 'package:provider/provider.dart';
+
+import '../weather/my_weather_register_page.dart';
 
 class NowWeatherTab extends StatefulWidget {
   const NowWeatherTab({super.key});
@@ -31,22 +33,21 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
 
     getRegionCode();
-    Map<String, dynamic> sendData = {"regionCode": regionCode};
+    Map<String, dynamic> sendData = {
+      "regionCode": _locationViewModel.getDefaultLocationCode
+    };
 
     _weatherViewModel.fetchWeatherCount(sendData);
   }
 
   Widget _buildNowWeatherNewsText() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-      child: const Text(
-        Strings.nowWeatherNews,
-        style: TextStyle(
-          fontFamily: "Pretendard",
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Color(UserColors.ui01),
-        ),
+    return const Text(
+      Strings.nowWeatherNews,
+      style: TextStyle(
+        fontFamily: "Pretendard",
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Color(UserColors.ui01),
       ),
     );
   }
@@ -60,6 +61,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     return Column(
       children: [
         SvgPicture.asset(imagePath),
+        SizedBox(height: ScreenUtil().setHeight(36.0)),
         Text(
           title,
           style: const TextStyle(
@@ -96,91 +98,146 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: ScreenUtil().setHeight(12.0)),
-            _buildNowWeatherNewsText(),
-            SizedBox(height: ScreenUtil().setHeight(12.0)),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(ScreenUtil().radius(8.0)),
-                    color: Colors.white,
-                  ),
-                  child: SizedBox(
-                    height: ScreenUtil().setHeight(182.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: ScreenUtil().setWidth(25.0)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildWeatherInfoWIdget(
-                          Images.littleCloudyDisable, "약간 흐려요", 1132),
-                      _buildWeatherInfoWIdget(Images.cloudyDisable, "흐려요", 121),
-                      _buildWeatherInfoWIdget(
-                          Images.veryColdDisable, "매우 추워요", 30),
-                    ],
-                  ),
-                ),
-              ],
+  Widget _buildNowWeatherWidget() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+            color: Colors.white,
+            border: Border.all(
+              color: const Color(UserColors.ui08),
+              width: ScreenUtil().setWidth(1.0),
             ),
-            GestureDetector(
-              onTap: () {
+          ),
+          child: SizedBox(
+            height: ScreenUtil().setHeight(182.0),
+          ),
+        ),
+        Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(46.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: _weatherViewModel.topThreeWeatherData.map((weatherData) {
+              return _buildWeatherInfoWIdget(
+                  Images.weatherImageMap[weatherData.weatherName] ?? '',
+                  weatherData.weatherName,
+                  weatherData.count);
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMyRegisterWeatherWidget() {
+    return GestureDetector(
+      onTap: (){
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const WeatherRegisterPage()),
-                );
-              },
-              child: Stack(
-                children: [
-                  SvgPicture.asset(Images.weatherRegistedBg),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: ScreenUtil().setHeight(155.0),
-                        left: ScreenUtil().setWidth(32.0)),
-                    child: Container(
-                      width: ScreenUtil().setWidth(139.0),
-                      height: ScreenUtil().setHeight(41.0),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(ScreenUtil().radius(8.0)),
-                        border: Border.all(
-                            color: const Color(UserColors.ui08),
-                            width: ScreenUtil().setWidth(1.0)),
-                        color: Colors.white,
-                      ),
-                      child: const Center(
-                        child: Text(
-                          Strings.register,
-                          style: TextStyle(
-                            fontFamily: "Pretendard",
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(UserColors.ui01),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+          context,
+          MaterialPageRoute(builder: (context) => const MyWeatherRegisterPage()),
+        );
+      },
+      child: Padding(
+        padding:  EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+                color: Colors.white,
+                border: Border.all(
+                  color: const Color(UserColors.primaryColor),
+                  width: ScreenUtil().setWidth(1.0),
+                ),
+              ),
+              child: SizedBox(
+                height: ScreenUtil().setHeight(50.0),
               ),
             ),
-            SizedBox(height: ScreenUtil().setHeight(100.0)),
+            const Text(
+              Strings.myWeatherInformation,
+              style: TextStyle(
+                fontFamily: "Pretendard",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(UserColors.primaryColor),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeatherRegisterWidget() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WeatherRegisterPage(editState: false)),
+        );
+      },
+      child: Stack(
+        children: [
+          SvgPicture.asset(Images.weatherRegistedBg),
+          Padding(
+            padding: EdgeInsets.only(
+                top: ScreenUtil().setHeight(155.0),
+                left: ScreenUtil().setWidth(32.0)),
+            child: Container(
+              width: ScreenUtil().setWidth(139.0),
+              height: ScreenUtil().setHeight(41.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+                border: Border.all(
+                    color: const Color(UserColors.ui08),
+                    width: ScreenUtil().setWidth(1.0)),
+                color: Colors.white,
+              ),
+              child: const Center(
+                child: Text(
+                  Strings.register,
+                  style: TextStyle(
+                    fontFamily: "Pretendard",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(UserColors.ui01),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: ScreenUtil().setHeight(12.0)),
+              _buildNowWeatherNewsText(),
+              SizedBox(height: ScreenUtil().setHeight(12.0)),
+              _buildNowWeatherWidget(),
+              _buildMyRegisterWeatherWidget(),
+              _buildWeatherRegisterWidget(),
+              SizedBox(height: ScreenUtil().setHeight(100.0)),
+            ],
+          ),
         ),
       ),
     );

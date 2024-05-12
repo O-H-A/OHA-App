@@ -1,7 +1,7 @@
 class PostingWeatherMyModel {
   int statusCode;
   String message;
-  PostingWeatherData data;
+  List<PostingWeatherData> data;
 
   PostingWeatherMyModel({
     required this.statusCode,
@@ -10,13 +10,15 @@ class PostingWeatherMyModel {
   });
 
   factory PostingWeatherMyModel.fromJson(Map<String, dynamic> json) {
+    var dataList = (json['data'] as List).map((item) => PostingWeatherData.fromJson(item)).toList();
     return PostingWeatherMyModel(
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
-      data: PostingWeatherData.fromJson(json['data']),
+      data: dataList,
     );
   }
 }
+
 
 class PostingWeatherData {
   int weatherId;

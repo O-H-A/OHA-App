@@ -5,16 +5,26 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/view/pages/home/weather_select_dialog.dart';
+import 'package:oha/view/pages/home/weather/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/weather_view_model.dart';
-import '../../widgets/back_close_app_bar.dart';
-import '../location/location_setting_dialog.dart';
+import '../../../../vidw_model/weather_view_model.dart';
+import '../../../widgets/back_close_app_bar.dart';
+import '../../../widgets/complete_dialog.dart';
+import '../../location/location_setting_dialog.dart';
 
 class WeatherRegisterPage extends StatefulWidget {
-  const WeatherRegisterPage({super.key});
+  final bool editState;
+  final String address;
+  final String weatherCode;
+
+  const WeatherRegisterPage({
+    Key? key,
+    required this.editState,
+    this.address = "",
+    this.weatherCode = "",
+  }) : super(key: key);
 
   @override
   State<WeatherRegisterPage> createState() => _WeatherRegisterPageState();
@@ -201,6 +211,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   Widget _buildCurrentLocation() {
     return GestureDetector(
       onTap: () async {
+        if (widget.editState == true) {
+          return;
+        }
+
         Map<String, String?>? result = await showModalBottomSheet(
           context: context,
           shape: const RoundedRectangleBorder(
@@ -240,12 +254,16 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
               const Icon(Icons.expand_more, color: Color(UserColors.ui06)),
               SizedBox(width: ScreenUtil().setWidth(10.0)),
               Text(
-                _selectThirdAddress,
-                style: const TextStyle(
+                (widget.editState == true)
+                    ? widget.address
+                    : _selectThirdAddress,
+                style: TextStyle(
                   fontFamily: "Pretendard",
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Color(UserColors.ui01),
+                  color: (widget.editState == true)
+                      ? Colors.grey
+                      : const Color(UserColors.ui01),
                 ),
               ),
             ],
@@ -399,17 +417,39 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   }
 
   void sendWeatherPosting() {
-    if (completeState()) {
-      Map<String, dynamic> sendData = {
-        "regionCode": _selectRegionCode,
-        "weatherCode": _selectWeatherCode
-      };
+    if (!completeState()) {return;}
 
-      _weatherViewModel.addWeatherPosting(sendData).then((response) {
-        if (response == 201) {
-        } else {}
-      }).catchError((error) {});
+    Map<String, dynamic> sendData = {
+      "regionCode": _selectRegionCode,
+      "weatherCode": _selectWeatherCode,
+    };
+
+    Future<int> responseFuture;
+    if (widget.editState) {
+      sendData['weatherId'] =
+          widget.weatherCode;
+      responseFuture = _weatherViewModel.editWeatherPosting(sendData);
+    } else {
+      responseFuture = _weatherViewModel.addWeatherPosting(sendData);
     }
+
+    responseFuture.then((response) {
+      if (response == 200 || response == 201) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          barrierColor: Colors.transparent,
+          builder: (BuildContext context) {
+            return CompleteDialog(
+                title: widget.editState
+                    ? Strings.editWeatherCompleteText
+                    : Strings.addWeatherCompleteText);
+          },
+        );
+      } else {
+      }
+    }).catchError((error) {
+    });
   }
 
   @override
@@ -494,7 +534,9 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                 backgroundColor: (completeState())
                     ? const Color(UserColors.primaryColor)
                     : const Color(UserColors.ui10),
-                text: Strings.register,
+                text: (widget.editState == true)
+                    ? Strings.editComple
+                    : Strings.register,
                 textSize: 16,
                 textWeight: FontWeight.w600,
                 textColor: (completeState())

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../app.dart';
 import '../../vidw_model/location_view_model.dart';
+import '../../vidw_model/login_view_model.dart';
 import '../../vidw_model/upload_view_model.dart';
 
 class SplashPage extends StatefulWidget {
@@ -21,12 +22,15 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   LocationViewModel _locationViewModel = LocationViewModel();
+  LoginViewModel _loginViewModel = LoginViewModel();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+    _loginViewModel.refresh();
     _locationViewModel.fetchAllDistricts();
     _locationViewModel.fetchFrequentDistricts();
     _locationViewModel.getDefaultFrequentDistricts();

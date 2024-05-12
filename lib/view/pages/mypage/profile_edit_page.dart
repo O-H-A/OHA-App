@@ -204,7 +204,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       context: context,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return const CompleteDialog(title: Strings.editComple);
+        return const CompleteDialog(title: Strings.editCompleText);
       },
     );
 
@@ -216,6 +216,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
+          titleText: Strings.deleteChangeHistory,
+          guideText: Strings.deleteChangeHistoryGuide,
           yesCallback: () => onChangeHistoryDeleteYes(context),
           noCallback: () => onChangeHistoryDeleteNo(context),
         );
