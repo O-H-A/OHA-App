@@ -25,22 +25,6 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
   LocationViewModel _locationViewModel = LocationViewModel();
   String regionCode = "";
 
-  final Map<String, String> weatherImageMap = {
-    "흐림": Images.cloudyEnable,
-    "구름 많음": Images.manyCloudEnable,
-    "구름 조금": Images.littleCloudyEnable,
-    "맑음": Images.sunnyEnable,
-    "비": Images.rainEnable,
-    "천둥": Images.thunderEnable,
-    "눈": Images.snowEnable,
-    "천둥 비": Images.thunderRainEnable,
-    "매우 추움": Images.veryColdEnable,
-    "매우 더움": Images.veryHotEnable,
-    "밤공기": Images.nightAirEnable,
-    "바람": Images.windEnable,
-    "무지개": Images.rainbowEnable
-  };
-
   @override
   void initState() {
     super.initState();
@@ -140,7 +124,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: _weatherViewModel.topThreeWeatherData.map((weatherData) {
               return _buildWeatherInfoWIdget(
-                  weatherImageMap[weatherData.weatherName] ?? '',
+                  Images.weatherImageMap[weatherData.weatherName] ?? '',
                   weatherData.weatherName,
                   weatherData.count);
             }).toList(),

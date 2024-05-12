@@ -81,4 +81,20 @@ class Images {
   static const String windEnable = "assets/images/wind_enable.svg";
   static const String veryColdEnable = "assets/images/very_cold_enable.svg";
   static const String rainbowEnable = "assets/images/rainbow_enable.svg";
+
+    static const Map<String, String> weatherImageMap = {
+    "흐림": Images.cloudyEnable,
+    "구름 많음": Images.manyCloudEnable,
+    "구름 조금": Images.littleCloudyEnable,
+    "맑음": Images.sunnyEnable,
+    "비": Images.rainEnable,
+    "천둥": Images.thunderEnable,
+    "눈": Images.snowEnable,
+    "천둥 비": Images.thunderRainEnable,
+    "매우 추움": Images.veryColdEnable,
+    "매우 더움": Images.veryHotEnable,
+    "밤공기": Images.nightAirEnable,
+    "바람": Images.windEnable,
+    "무지개": Images.rainbowEnable
+  };
 }
