@@ -172,4 +172,41 @@ class LocationViewModel with ChangeNotifier {
   String get getDefaultLocation => _defaultLocation;
   
   String get getDefaultLocationCode => _defaultLocationCode;
+
+  
+
+  List<String> getAddressByRegionCode(String regionCode) {
+  List<String> addresses = [];
+  final allLocationData = _allLocationData.data?.data.locations;
+  
+  allLocationData?.forEach((province, cities) {
+    cities.forEach((city, districts) {
+      districts.forEach((location) {
+        if (location.code == regionCode) {
+          addresses.add("${province} ${city} ${location.address}");
+        }
+      });
+    });
+  });
+
+  return addresses;
+}
+
+String getThirdAddressByRegionCode(String regionCode) {
+  final allLocationData = _allLocationData.data?.data.locations;
+  
+  String thirdAddress = "";
+  allLocationData?.forEach((province, cities) {
+    cities.forEach((city, districts) {
+      districts.forEach((location) {
+        if (location.code == regionCode) {
+          thirdAddress = location.address;
+        }
+      });
+    });
+  });
+
+  return thirdAddress;
+}
+
 }
