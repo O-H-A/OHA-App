@@ -4,6 +4,7 @@ import 'package:oha/models/weather/delete_weather_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
 
 import '../models/weather/add_weather_model.dart';
+import '../models/weather/edit_weather_model.dart';
 import '../models/weather/posting_weather_my_model.dart';
 import '../network/api_url.dart';
 import '../network/network_manager.dart';
@@ -24,6 +25,16 @@ class WeatherRepository {
       dynamic response =
           await NetworkManager.instance.post(ApiUrl.weather, data);
       return AddWeatherModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<EditWeatherModel> editWeatherPosting(Map<String, dynamic> queryParams) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.put(ApiUrl.weather, queryParams);
+      return EditWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

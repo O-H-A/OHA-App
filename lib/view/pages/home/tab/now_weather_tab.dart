@@ -181,7 +181,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const WeatherRegisterPage()),
+          MaterialPageRoute(builder: (context) => const WeatherRegisterPage(editState: false)),
         );
       },
       child: Stack(

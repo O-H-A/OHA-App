@@ -40,14 +40,16 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
         return DeleteDialog(
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
-          yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
+          yesCallback: () =>
+              onChangeHistoryDeleteYes(context, address, weatherId),
           noCallback: () => onChangeHistoryDeleteNo(context),
         );
       },
     );
   }
 
-  void onChangeHistoryDeleteYes(BuildContext context, String address, weatherId) {
+  void onChangeHistoryDeleteYes(
+      BuildContext context, String address, weatherId) {
     Map<String, dynamic> sendData = {
       "weatherId": weatherId,
     };
@@ -58,7 +60,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
           context: context,
           barrierColor: Colors.transparent,
           builder: (BuildContext context) {
-            return CompleteDialog(title: Strings.deleteWeatherCompleteText(address));
+            return CompleteDialog(
+                title: Strings.deleteWeatherCompleteText(address));
           },
         );
       } else {}
@@ -79,7 +82,17 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
       itemBuilder: (context, index) {
         var weather = weatherList[index];
         return GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WeatherRegisterPage(
+                        editState: true,
+                        address: _locationViewModel.getThirdAddressByRegionCode(
+                            weather.regionCode.toString()), 
+                      )),
+            );
+          },
           child: Padding(
             padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
             child: Stack(
@@ -152,7 +165,9 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const WeatherRegisterPage()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  const WeatherRegisterPage(editState: false)),
         );
       },
       child: Padding(

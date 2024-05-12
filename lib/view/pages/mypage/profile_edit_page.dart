@@ -204,7 +204,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       context: context,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return const CompleteDialog(title: Strings.editComple);
+        return const CompleteDialog(title: Strings.editCompleText);
       },
     );
 

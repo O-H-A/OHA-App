@@ -52,6 +52,15 @@ class WeatherViewModel with ChangeNotifier {
     }
   }
 
+    Future<int> editWeatherPosting(Map<String, dynamic> queryParams) async {
+    try {
+      final value = await _weatherRepository.editWeatherPosting(queryParams);
+      return value.statusCode;
+    } catch (error) {
+      return 400;
+    }
+  }
+
   Future<void> fetchWeatherPostingMy() async {
     await _weatherRepository.getWeatherPostingMy().then((value) {
       setWeatherPostingMy(ApiResponse.complete(value));

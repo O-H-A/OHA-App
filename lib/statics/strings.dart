@@ -141,11 +141,13 @@ class Strings {
   static const String locationChangeGuide2 = "현재 지역을 변경하시겠습니까?";
   static const String yes = "네";
   static const String no = "아니요";
-  static const String editComple = "수정되었습니다.";
+  static const String editComple = "수정 완료";
+  static const String editCompleText = "수정되었습니다.";
   static const String deleteChangeHistory = "변경내용 삭제";
   static const String deleteChangeHistoryGuide = "변경 내용을 삭제하시겠어요?\n지금 돌아가면 변경 내용이 삭제됩니다.";
   static const String myWeatherInformation = "나의 날씨 정보";
   static const String addWeatherCompleteText = "날씨 정보를 등록했습니다.";
+  static const String editWeatherCompleteText = "날씨 정보를 수정했습니다.";
   static const String deleteWeatherTitleText = "날씨 삭제";
 
   static String deleteWeatherGuideText(String address) {
