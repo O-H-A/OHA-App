@@ -5,13 +5,13 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/view/pages/home/weather_select_dialog.dart';
+import 'package:oha/view/pages/home/weather/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/weather_view_model.dart';
-import '../../widgets/back_close_app_bar.dart';
-import '../location/location_setting_dialog.dart';
+import '../../../../vidw_model/weather_view_model.dart';
+import '../../../widgets/back_close_app_bar.dart';
+import '../../location/location_setting_dialog.dart';
 
 class WeatherRegisterPage extends StatefulWidget {
   const WeatherRegisterPage({super.key});
