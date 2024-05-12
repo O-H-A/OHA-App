@@ -34,4 +34,14 @@ class LoginRepository {
       rethrow;
     }
   }
+
+    Future<LogoutModel> refresh() async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.get(ApiUrl.refresh);
+      return LogoutModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
