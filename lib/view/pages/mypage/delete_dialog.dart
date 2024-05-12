@@ -6,11 +6,15 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
 class DeleteDialog extends StatelessWidget {
+  final String titleText;
+  final String guideText;
   final VoidCallback yesCallback;
   final VoidCallback noCallback;
 
   const DeleteDialog({
     Key? key,
+    required this.titleText,
+    required this.guideText,
     this.yesCallback = _yesCallback,
     this.noCallback = _noCallback,
   }) : super(key: key);
@@ -65,7 +69,7 @@ class DeleteDialog extends StatelessWidget {
       ),
       child: Container(
         width: double.infinity,
-        height: ScreenUtil().setHeight(198.0),
+        height: ScreenUtil().setHeight(228.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
           color: Colors.white,
@@ -78,10 +82,10 @@ class DeleteDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
-                Strings.deleteChangeHistory,
+              Text(
+                titleText,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w600,
@@ -89,10 +93,10 @@ class DeleteDialog extends StatelessWidget {
                 ),
               ),
               SizedBox(height: ScreenUtil().setHeight(24.0)),
-              const Text(
-                Strings.deleteChangeHistoryGuide,
+              Text(
+                guideText,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:oha/models/weather/delete_weather_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
 
 import '../models/weather/add_weather_model.dart';
@@ -18,11 +19,11 @@ class WeatherRepository {
     }
   }
 
-  Future<AppWeatherModel> addWeatherPosting(Map<String, dynamic> data) async {
+  Future<AddWeatherModel> addWeatherPosting(Map<String, dynamic> data) async {
     try {
       dynamic response =
           await NetworkManager.instance.post(ApiUrl.weather, data);
-      return AppWeatherModel.fromJson(jsonDecode(response));
+      return AddWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }
@@ -33,6 +34,16 @@ class WeatherRepository {
       dynamic response =
           await NetworkManager.instance.get(ApiUrl.weatherPostingMy);
       return PostingWeatherMyModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DeleteWeatherModel> deleteMyWeather(Map<String, dynamic> queryParams) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.delete(ApiUrl.weather, queryParams);
+      return DeleteWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

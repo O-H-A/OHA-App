@@ -1,16 +1,16 @@
-class AppWeatherModel {
+class AddWeatherModel {
   int statusCode;
   String message;
   AddWeatherDataModel data;
 
-  AppWeatherModel({
+  AddWeatherModel({
     required this.statusCode,
     required this.message,
     required this.data,
   });
 
-  factory AppWeatherModel.fromJson(Map<String, dynamic> json) {
-    return AppWeatherModel(
+  factory AddWeatherModel.fromJson(Map<String, dynamic> json) {
+    return AddWeatherModel(
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
       data: AddWeatherDataModel.fromJson(json['data']),

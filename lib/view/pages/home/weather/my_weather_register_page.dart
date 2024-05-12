@@ -11,6 +11,8 @@ import '../../../../vidw_model/location_view_model.dart';
 import '../../../../vidw_model/weather_view_model.dart';
 import '../../../widgets/back_app_bar.dart';
 import '../../../widgets/button_icon.dart';
+import '../../../widgets/complete_dialog.dart';
+import '../../mypage/delete_dialog.dart';
 
 class MyWeatherRegisterPage extends StatefulWidget {
   const MyWeatherRegisterPage({Key? key}) : super(key: key);
@@ -29,6 +31,42 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     _weatherViewModel.fetchWeatherPostingMy();
+  }
+
+  void showDeleteDialog(String address, int weatherId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          titleText: Strings.deleteWeatherTitleText,
+          guideText: Strings.deleteWeatherGuideText(address),
+          yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
+          noCallback: () => onChangeHistoryDeleteNo(context),
+        );
+      },
+    );
+  }
+
+  void onChangeHistoryDeleteYes(BuildContext context, String address, weatherId) {
+    Map<String, dynamic> sendData = {
+      "weatherId": weatherId,
+    };
+    _weatherViewModel.deleteMyWeather(sendData).then((response) {
+      if (response == 200) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          barrierColor: Colors.transparent,
+          builder: (BuildContext context) {
+            return CompleteDialog(title: Strings.deleteWeatherCompleteText(address));
+          },
+        );
+      } else {}
+    }).catchError((error) {});
+  }
+
+  void onChangeHistoryDeleteNo(BuildContext context) {
+    Navigator.pop(context);
   }
 
   Widget _buildMyWeatherWidget() {
@@ -50,7 +88,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+                    borderRadius:
+                        BorderRadius.circular(ScreenUtil().radius(8.0)),
                     color: Colors.white,
                     border: Border.all(
                       color: const Color(UserColors.ui10),
@@ -62,7 +101,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(12.0)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -75,7 +115,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                           ),
                           SizedBox(width: ScreenUtil().setWidth(11.0)),
                           Text(
-                            _locationViewModel.getThirdAddressByRegionCode(weather.regionCode.toString()),
+                            _locationViewModel.getThirdAddressByRegionCode(
+                                weather.regionCode.toString()),
                             style: const TextStyle(
                               fontFamily: "Pretendard",
                               fontSize: 16,
@@ -88,7 +129,12 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                       ButtonIcon(
                         icon: Icons.close,
                         iconColor: Colors.black,
-                        callback: () {},
+                        callback: () {
+                          showDeleteDialog(
+                              _locationViewModel.getThirdAddressByRegionCode(
+                                  weather.regionCode.toString()),
+                              weather.weatherId);
+                        },
                       ),
                     ],
                   ),
@@ -129,7 +175,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
               child: Row(
                 children: [
                   ButtonIcon(

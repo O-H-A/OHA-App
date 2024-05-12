@@ -59,4 +59,20 @@ class WeatherViewModel with ChangeNotifier {
       setWeatherPostingMy(ApiResponse.error(error.toString()));
     });
   }
+
+  Future<int> deleteMyWeather(Map<String, dynamic> queryParams) async {
+    try {
+      final value = await _weatherRepository.deleteMyWeather(queryParams);
+      
+      if (value.statusCode == 200) {
+        int weatherId = queryParams['weatherId'];
+        _weatherPostingMy.data?.data
+            .removeWhere((item) => item.weatherId == weatherId);
+        notifyListeners();
+      }
+      return value.statusCode;
+    } catch (error) {
+      return 400;
+    }
+  }
 }
