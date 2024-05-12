@@ -91,13 +91,15 @@ class NetworkManager {
 
       responseJson = returnResponse(response);
 
+      responseJson = utf8.decode(response.bodyBytes);
+
       if (response.statusCode == 200) {
         print("POST 성공: ${response.body}");
       } else {
         print("POST 실패: ${response.statusCode}    ${responseJson}");
       }
 
-      return response;
+      return responseJson;
     } catch (error) {
       print("에러 발생: $error");
       return "";

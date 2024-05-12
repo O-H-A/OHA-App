@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../vidw_model/weather_view_model.dart';
 import '../../../widgets/back_close_app_bar.dart';
+import '../../../widgets/complete_dialog.dart';
 import '../../location/location_setting_dialog.dart';
 
 class WeatherRegisterPage extends StatefulWidget {
@@ -407,6 +408,14 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
       _weatherViewModel.addWeatherPosting(sendData).then((response) {
         if (response == 201) {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            barrierColor: Colors.transparent,
+            builder: (BuildContext context) {
+              return const CompleteDialog(title: Strings.addWeatherCompleteText);
+            },
+          );
         } else {}
       }).catchError((error) {});
     }

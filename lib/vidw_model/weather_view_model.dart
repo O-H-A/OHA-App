@@ -11,8 +11,10 @@ class WeatherViewModel with ChangeNotifier {
   ApiResponse<WeatherModel> _weatherCountData = ApiResponse.loading();
   ApiResponse<PostingWeatherMyModel> _weatherPostingMy = ApiResponse.loading();
 
-  List<WeatherData> get topThreeWeatherData => _weatherCountData.data?.data ?? [];
-  ApiResponse<PostingWeatherMyModel> get getWeatherPostingMy => _weatherPostingMy;
+  List<WeatherData> get topThreeWeatherData =>
+      _weatherCountData.data?.data ?? [];
+  ApiResponse<PostingWeatherMyModel> get getWeatherPostingMy =>
+      _weatherPostingMy;
 
   setWeatherCount(ApiResponse<WeatherModel> response) {
     _weatherCountData = response;
@@ -31,11 +33,10 @@ class WeatherViewModel with ChangeNotifier {
       var topThreeData = sortedData.take(3).toList();
 
       var filteredWeather = WeatherModel(
-        statusCode: value.statusCode,
-        message: value.message,
-        data: topThreeData
-      );
-      
+          statusCode: value.statusCode,
+          message: value.message,
+          data: topThreeData);
+
       setWeatherCount(ApiResponse.complete(filteredWeather));
     }).onError((error, stackTrace) {
       setWeatherCount(ApiResponse.error(error.toString()));
@@ -43,15 +44,12 @@ class WeatherViewModel with ChangeNotifier {
   }
 
   Future<int> addWeatherPosting(Map<String, dynamic> data) async {
-    await _weatherRepository.addWeatherPosting(data).then((value) {
+    try {
+      final value = await _weatherRepository.addWeatherPosting(data);
       return value.statusCode;
-      //setFrequentLocationData(ApiResponse.complete(value));
-    }).onError((error, stackTrace) {
-      //setFrequentLocationData(ApiResponse.error(error.toString()));
+    } catch (error) {
       return 400;
-    });
-
-    return 400;
+    }
   }
 
   Future<void> fetchWeatherPostingMy() async {
