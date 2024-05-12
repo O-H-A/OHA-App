@@ -12,6 +12,7 @@ class WeatherViewModel with ChangeNotifier {
   ApiResponse<PostingWeatherMyModel> _weatherPostingMy = ApiResponse.loading();
 
   List<WeatherData> get topThreeWeatherData => _weatherCountData.data?.data ?? [];
+  ApiResponse<PostingWeatherMyModel> get getWeatherPostingMy => _weatherPostingMy;
 
   setWeatherCount(ApiResponse<WeatherModel> response) {
     _weatherCountData = response;
@@ -53,8 +54,8 @@ class WeatherViewModel with ChangeNotifier {
     return 400;
   }
 
-  Future<void> fetchWeatherPostingMy(Map<String, dynamic> queryParams) async {
-    await _weatherRepository.getWeatherPostingMy(queryParams).then((value) {
+  Future<void> fetchWeatherPostingMy() async {
+    await _weatherRepository.getWeatherPostingMy().then((value) {
       setWeatherPostingMy(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setWeatherPostingMy(ApiResponse.error(error.toString()));

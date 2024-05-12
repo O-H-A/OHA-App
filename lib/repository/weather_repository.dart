@@ -27,11 +27,10 @@ class WeatherRepository {
     }
   }
 
-  Future<PostingWeatherMyModel> getWeatherPostingMy(
-      Map<String, dynamic> queryParams) async {
+  Future<PostingWeatherMyModel> getWeatherPostingMy() async {
     try {
       dynamic response = await NetworkManager.instance
-          .getWithQuery(ApiUrl.weatherPostingMy, queryParams);
+          .get(ApiUrl.weatherPostingMy);
       return PostingWeatherMyModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
