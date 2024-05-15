@@ -13,6 +13,7 @@ import 'package:oha/vidw_model/upload_view_model.dart';
 import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
+import 'package:oha/view/pages/error_page.dart';
 import 'package:oha/view/pages/home/category/category_detail_page.dart';
 import 'package:oha/view/pages/home/category/category_page.dart';
 import 'package:oha/view/pages/home_page.dart';
