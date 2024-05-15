@@ -40,7 +40,7 @@ class _AgreementsPageState extends State<AgreementsPage> {
     _loginViewModel.termsAgree();
 
     await _storage.write(
-      key: 'login',
+      key: Strings.loginKey,
       value: "true",
     );
 
