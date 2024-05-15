@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
+import '../statics/strings.dart';
 import '../utils/secret_key.dart';
 import 'api_response.dart';
 
@@ -16,11 +17,20 @@ class NetworkManager {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Future<Map<String, String>> get commonHeaders async {
-    String? accessToken = await _storage.read(key: 'accessToken');
+    String? accessToken = await _storage.read(key: Strings.accessTokenKey);
     return {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": "Bearer $accessToken"
+    };
+  }
+
+  Future<Map<String, String>> get refreshHeaders async {
+    String? refreshToken = await _storage.read(key: Strings.refreshTokenKey);
+    return {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer $refreshToken"
     };
   }
 
@@ -106,6 +116,28 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> refresh(String serverUrl) async {
+    dynamic responseJson;
+
+    try {
+      final response = await http.get(
+        Uri.parse(serverUrl),
+        headers: await refreshHeaders,
+      );
+
+      responseJson = returnResponse(response);
+
+      responseJson = utf8.decode(response.bodyBytes);
+
+      print("GET 성공: ${responseJson}");
+
+      return responseJson;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
       Uint8List? thumbnailData) async {
     Map<String, dynamic> sendData = userData;
@@ -129,8 +161,7 @@ class NetworkManager {
         serverUrl,
         data: formData,
         options: Options(
-          headers:
-              await commonHeaders,
+          headers: await commonHeaders,
         ),
       );
 

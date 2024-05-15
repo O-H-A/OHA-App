@@ -9,6 +9,7 @@ import 'package:oha/view/pages/login_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../app.dart';
+import '../../statics/strings.dart';
 import '../../vidw_model/location_view_model.dart';
 import '../../vidw_model/login_view_model.dart';
 import '../../vidw_model/upload_view_model.dart';
@@ -40,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _checkLoginStatus() async {
-    String? loginInfo = await _storage.read(key: 'login');
+    String? loginInfo = await _storage.read(key: Strings.loginKey);
     if (!mounted) return;
 
     if (loginInfo == 'true') {

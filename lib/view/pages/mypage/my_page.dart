@@ -39,7 +39,7 @@ class _MyPageState extends State<MyPage> {
   void onLogout() async {
     await _loginViewModel.logout().then((value) {
       if (value == 200) {
-        _storage.write(key: 'login', value: '');
+        _storage.write(key: Strings.loginKey, value: '');
         _storage.write(key: 'accessToken', value: '');
 
         Navigator.pushAndRemoveUntil(

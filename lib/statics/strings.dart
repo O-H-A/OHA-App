@@ -149,6 +149,11 @@ class Strings {
   static const String addWeatherCompleteText = "날씨 정보를 등록했습니다.";
   static const String editWeatherCompleteText = "날씨 정보를 수정했습니다.";
   static const String deleteWeatherTitleText = "날씨 삭제";
+  static const String accessTokenKey = "accessToken";
+  static const String refreshTokenKey = "refreshToken";
+  static const String loginKey = "login";
+  static const String internetErrorMainText = "인터넷이 연결되어 있지 않아요";
+  static const String internetErrorSubText = "연결 상태를 확인하고 다시 시도해 주세요.";
 
   static String deleteWeatherGuideText(String address) {
     return "등록하신 $address의 날씨정보를 삭제하시겠습니까?\n삭제 후 다시 $address의 날씨정보를 등록하실 수 있습니다.";

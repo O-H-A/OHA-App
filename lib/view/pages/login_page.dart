@@ -78,17 +78,21 @@ class _LoginPageState extends State<LoginPage> {
                   print("result : ${data.loginData.data?.data.accessToken}");
                   print("result : ${cleanedResult}");
                   await _storage.write(
-                      key: 'accessToken',
+                      key: Strings.accessTokenKey,
                       value: data.loginData.data?.data.accessToken);
 
                   await _storage.write(
-                    key: 'login',
+                      key: Strings.refreshTokenKey,
+                      value: data.loginData.data?.data.refreshToken);
+
+                  await _storage.write(
+                    key: Strings.loginKey,
                     value: "true",
                   );
 
                   if (data.loginData.data?.data.isJoined == false) {
                     await _storage.write(
-                      key: 'login',
+                      key: Strings.loginKey,
                       value: "false",
                     );
 
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                 } catch (e) {
                   print("Error decoding JSON or accessing accessToken: $e");
                   await _storage.write(
-                    key: 'login',
+                    key: Strings.loginKey,
                     value: "false",
                   );
                 }
@@ -122,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print("Error during login: $e");
       await _storage.write(
-        key: 'login',
+        key: Strings.loginKey,
         value: "false",
       );
     }
