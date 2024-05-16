@@ -7,6 +7,7 @@ import 'package:oha/repository/login_repository.dart';
 
 import '../models/login/login_model.dart';
 import '../models/login/logout_model.dart';
+import '../models/login/refresh_model.dart';
 
 class LoginViewModel with ChangeNotifier {
   final _loginRepository = LoginRepository();
@@ -16,6 +17,10 @@ class LoginViewModel with ChangeNotifier {
   ApiResponse<LoginModel> get loginData => _loginData;
 
   ApiResponse<LogoutModel> _logoutData = ApiResponse.loading();
+
+  ApiResponse<RefreshModel> _refreshData = ApiResponse.loading();
+
+  ApiResponse<RefreshModel> get refreshData => _refreshData;
 
   void setLoginData(String responseJson) {
     try {
@@ -34,6 +39,10 @@ class LoginViewModel with ChangeNotifier {
     _logoutData = response;
 
     notifyListeners();
+  }
+
+  void setRefresh(ApiResponse<RefreshModel> response) {
+    _refreshData = response;
   }
 
   Future<int> logout() async {
@@ -60,15 +69,15 @@ class LoginViewModel with ChangeNotifier {
     return statusCode;
   }
 
-  Future<int> refresh() async {
-    int statusCode = 400;
-    await _loginRepository.refresh().then((value) {
-      setLogout(ApiResponse.complete(value));
-      statusCode = value.statusCode;
+  Future<void> refresh() async {
+    await _loginRepository.refresh().then((result) {
+      if (result.statusCode == 200) {
+        setRefresh(ApiResponse.complete(result));
+      } else {
+        setRefresh(ApiResponse.error());
+      }
     }).onError((error, stackTrace) {
-      setLogout(ApiResponse.error(error.toString()));
-      statusCode = 400;
+      setRefresh(ApiResponse.error(error.toString()));
     });
-    return statusCode;
   }
 }

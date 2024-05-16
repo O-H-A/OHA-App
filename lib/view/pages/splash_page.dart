@@ -27,18 +27,30 @@ class _SplashPageState extends State<SplashPage> {
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  @override
-  void initState() {
-    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
-    _loginViewModel.refresh();
-    _locationViewModel.fetchAllDistricts();
-    _locationViewModel.fetchFrequentDistricts();
-    _locationViewModel.getDefaultFrequentDistricts();
-    super.initState();
+@override
+void initState() {
+  super.initState();
 
-    Future.delayed(const Duration(seconds: 3), _checkLoginStatus);
-  }
+  _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+  _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+
+  _loginViewModel.refresh().then((result) {
+    _storage.write(
+      key: Strings.accessTokenKey,
+      value: _loginViewModel.refreshData.data?.data.accessToken,
+    ).then((_) {
+      _locationViewModel.fetchAllDistricts();
+      _locationViewModel.fetchFrequentDistricts();
+      _locationViewModel.getDefaultFrequentDistricts();
+    });
+  }).catchError((error) {
+    _storage.write(key: Strings.loginKey, value: '').then((_) {
+    });
+  });
+
+  Future.delayed(const Duration(seconds: 3), _checkLoginStatus);
+}
+
 
   void _checkLoginStatus() async {
     String? loginInfo = await _storage.read(key: Strings.loginKey);

@@ -4,15 +4,25 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/statics/Colors.dart';
 
+import '../../app.dart';
 import '../../statics/strings.dart';
 
-class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key});
+class ErrorPage extends StatefulWidget {
+  final bool isNetworkError;
+  final VoidCallback? onRetry;
 
+  const ErrorPage({Key? key, required this.isNetworkError, this.onRetry})
+      : super(key: key);
+
+  @override
+  State<ErrorPage> createState() => _ErrorPageState();
+}
+
+class _ErrorPageState extends State<ErrorPage> {
   Widget _buildMainGuideText() {
-    return const Text(
-      Strings.internetErrorMainText,
-      style: TextStyle(
+    return Text(
+      (widget.isNetworkError == true) ? Strings.internetErrorMainText : Strings.apiErrorMainText,
+      style: const TextStyle(
         fontFamily: "Pretendard",
         fontSize: 24,
         fontWeight: FontWeight.w600,
@@ -22,13 +32,51 @@ class ErrorPage extends StatelessWidget {
   }
 
   Widget _buildSubGuideText() {
-    return const Text(
-      Strings.internetErrorSubText,
-      style: TextStyle(
+    return  Text(
+      (widget.isNetworkError == true) ? Strings.internetErrorSubText : Strings.apiErrorSubText,
+      style: const TextStyle(
         fontFamily: "Pretendard",
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: Color(UserColors.ui06),
+      ),
+    );
+  }
+
+  Widget _buildButtonWidget() {
+    return GestureDetector(
+      onTap: () {
+        if (widget.isNetworkError == true) {
+          if (widget.onRetry != null) {
+            widget.onRetry!();
+          }
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const App()),
+          );
+        }
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: ScreenUtil().setWidth(150.0),
+            height: ScreenUtil().setHeight(41.0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(ScreenUtil().radius(5.0)),
+                color: const Color(UserColors.primaryColor)),
+          ),
+          Text(
+            (widget.isNetworkError == true) ? Strings.retry : Strings.goHome,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -45,6 +93,7 @@ class ErrorPage extends StatelessWidget {
             SizedBox(height: ScreenUtil().setHeight(4.0)),
             _buildSubGuideText(),
             SizedBox(height: ScreenUtil().setHeight(22.0)),
+            _buildButtonWidget(),
           ],
         ),
       ),
