@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../models/login/login_model.dart';
 import '../models/login/logout_model.dart';
+import '../models/login/refresh_model.dart';
 import '../network/api_url.dart';
 import '../network/network_manager.dart';
 
@@ -35,11 +36,11 @@ class LoginRepository {
     }
   }
 
-    Future<LogoutModel> refresh() async {
+    Future<RefreshModel> refresh() async {
     try {
       dynamic response =
           await NetworkManager.instance.refresh(ApiUrl.refresh);
-      return LogoutModel.fromJson(jsonDecode(response));
+      return RefreshModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }
