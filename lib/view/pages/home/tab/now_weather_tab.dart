@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/vidw_model/weather_view_model.dart';
-import 'package:oha/view/pages/home/weather/weather_register_page.dart';
+import 'package:oha/view/pages/error_page.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../network/api_response.dart';
+import '../../../../vidw_model/location_view_model.dart';
+import '../../../../vidw_model/weather_view_model.dart';
 import '../weather/my_weather_register_page.dart';
+import '../weather/weather_register_page.dart';
 
 class NowWeatherTab extends StatefulWidget {
   const NowWeatherTab({super.key});
@@ -21,23 +21,35 @@ class NowWeatherTab extends StatefulWidget {
 }
 
 class _NowWeatherTabState extends State<NowWeatherTab> {
-  WeatherViewModel _weatherViewModel = WeatherViewModel();
-  LocationViewModel _locationViewModel = LocationViewModel();
   String regionCode = "";
+  VoidCallback? _retryCallback;
 
   @override
   void initState() {
     super.initState();
 
-    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final locationViewModel =
+          Provider.of<LocationViewModel>(context, listen: false);
+      final weatherViewModel =
+          Provider.of<WeatherViewModel>(context, listen: false);
 
-    getRegionCode();
-    Map<String, dynamic> sendData = {
-      "regionCode": _locationViewModel.getDefaultLocationCode
-    };
+      getRegionCode(locationViewModel);
+      Map<String, dynamic> sendData = {
+        "regionCode": locationViewModel.getDefaultLocationCode
+      };
 
-    _weatherViewModel.fetchWeatherCount(sendData);
+      try {
+        weatherViewModel.fetchWeatherCount(sendData).then((_) {
+          _retryCallback = null;
+        }).catchError((error) {
+          _retryCallback = () => weatherViewModel.fetchWeatherCount;
+        });
+        weatherViewModel.setWeatherCount(ApiResponse.loading());
+      } catch (error) {
+        _retryCallback = () => weatherViewModel.fetchWeatherCount;
+      }
+    });
   }
 
   Widget _buildNowWeatherNewsText() {
@@ -52,12 +64,12 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     );
   }
 
-  void getRegionCode() {
+  void getRegionCode(LocationViewModel locationViewModel) {
     regionCode =
-        _locationViewModel.getFrequentLocationData.data?.data[0].code ?? '0';
+        locationViewModel.getFrequentLocationData.data?.data[0].code ?? '0';
   }
 
-  Widget _buildWeatherInfoWIdget(String imagePath, String title, int count) {
+  Widget _buildWeatherInfoWidget(String imagePath, String title, int count) {
     return Column(
       children: [
         SvgPicture.asset(imagePath),
@@ -99,51 +111,64 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
   }
 
   Widget _buildNowWeatherWidget() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-            color: Colors.white,
-            border: Border.all(
-              color: const Color(UserColors.ui08),
-              width: ScreenUtil().setWidth(1.0),
-            ),
-          ),
-          child: SizedBox(
-            height: ScreenUtil().setHeight(182.0),
-          ),
-        ),
-        Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(46.0)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: _weatherViewModel.topThreeWeatherData.map((weatherData) {
-              return _buildWeatherInfoWIdget(
-                  Images.weatherImageMap[weatherData.weatherName] ?? '',
-                  weatherData.weatherName,
-                  weatherData.count);
-            }).toList(),
-          ),
-        ),
-      ],
+    return Consumer<WeatherViewModel>(
+      builder: (context, weatherViewModel, child) {
+        if (weatherViewModel.weatherCountData.status == Status.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (weatherViewModel.weatherCountData.status ==
+            Status.complete) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(UserColors.ui08),
+                    width: ScreenUtil().setWidth(1.0),
+                  ),
+                ),
+                child: SizedBox(
+                  height: ScreenUtil().setHeight(182.0),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: ScreenUtil().setWidth(46.0)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                      weatherViewModel.topThreeWeatherData.map((weatherData) {
+                    return _buildWeatherInfoWidget(
+                        Images.weatherImageMap[weatherData.weatherName] ?? '',
+                        weatherData.weatherName,
+                        weatherData.count);
+                  }).toList(),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return ErrorPage(isNetworkError: false, onRetry: _retryCallback);
+        }
+      },
     );
   }
 
   Widget _buildMyRegisterWeatherWidget() {
     return GestureDetector(
-      onTap: (){
-                Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const MyWeatherRegisterPage()),
+          MaterialPageRoute(
+              builder: (context) => const MyWeatherRegisterPage()),
         );
       },
       child: Padding(
-        padding:  EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
+        padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -181,7 +206,9 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const WeatherRegisterPage(editState: false)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  const WeatherRegisterPage(editState: false)),
         );
       },
       child: Stack(
@@ -219,6 +246,21 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     );
   }
 
+  Widget _buildCompleteWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildNowWeatherNewsText(),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildNowWeatherWidget(),
+        _buildMyRegisterWeatherWidget(),
+        _buildWeatherRegisterWidget(),
+        SizedBox(height: ScreenUtil().setHeight(100.0)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -229,13 +271,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: ScreenUtil().setHeight(12.0)),
-              _buildNowWeatherNewsText(),
-              SizedBox(height: ScreenUtil().setHeight(12.0)),
-              _buildNowWeatherWidget(),
-              _buildMyRegisterWeatherWidget(),
-              _buildWeatherRegisterWidget(),
-              SizedBox(height: ScreenUtil().setHeight(100.0)),
+              _buildCompleteWidget(),
             ],
           ),
         ),

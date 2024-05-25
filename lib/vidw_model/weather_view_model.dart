@@ -11,6 +11,8 @@ class WeatherViewModel with ChangeNotifier {
   ApiResponse<WeatherModel> _weatherCountData = ApiResponse.loading();
   ApiResponse<PostingWeatherMyModel> _weatherPostingMy = ApiResponse.loading();
 
+  ApiResponse<WeatherModel> get weatherCountData => _weatherCountData;
+
   List<WeatherData> get topThreeWeatherData =>
       _weatherCountData.data?.data ?? [];
   ApiResponse<PostingWeatherMyModel> get getWeatherPostingMy =>
@@ -18,6 +20,8 @@ class WeatherViewModel with ChangeNotifier {
 
   setWeatherCount(ApiResponse<WeatherModel> response) {
     _weatherCountData = response;
+
+    notifyListeners();
   }
 
   setWeatherPostingMy(ApiResponse<PostingWeatherMyModel> response) {
@@ -36,7 +40,6 @@ class WeatherViewModel with ChangeNotifier {
           statusCode: value.statusCode,
           message: value.message,
           data: topThreeData);
-
       setWeatherCount(ApiResponse.complete(filteredWeather));
     }).onError((error, stackTrace) {
       setWeatherCount(ApiResponse.error(error.toString()));
