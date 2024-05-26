@@ -23,12 +23,13 @@ class _DiaryPageState extends State<DiaryPage> {
   DateTime currentTime = DateTime.now();
   bool viewMonth = true;
   VoidCallback? _retryCallback;
+  DiaryViewModel diaryViewModel = DiaryViewModel();
 
   @override
   void initState() {
     super.initState();
 
-    final diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
 
     try {
       diaryViewModel.fetchMyDiary().then((_) {
