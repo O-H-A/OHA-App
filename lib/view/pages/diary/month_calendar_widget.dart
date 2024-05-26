@@ -7,6 +7,7 @@ import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
 
 import '../../../vidw_model/diary_view_model.dart';
+import 'diary_register_page.dart';
 
 class MonthCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
@@ -65,11 +66,24 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   }
 
   void _onDaySelected(int day) {
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    bool isRecord = recordedDays!.contains(day);
+
     setState(() {
       selectedDay =
           DateTime(widget.currentDate.year, widget.currentDate.month, day);
     });
     widget.onDateSelected(selectedDay!);
+
+    if (!isRecord) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryRegisterPage(selectDate: selected),
+        ),
+      );
+    }
   }
 
   Widget _buildDayWidget(int day, bool recorded, bool isSelected) {

@@ -7,12 +7,14 @@ import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
 
 import '../../../vidw_model/diary_view_model.dart';
+import 'diary_register_page.dart';
 
 class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
   final Function(DateTime) onDateSelected;
 
-  const WeekCalendarWidget({Key? key, required this.currentDate, required this.onDateSelected})
+  const WeekCalendarWidget(
+      {Key? key, required this.currentDate, required this.onDateSelected})
       : super(key: key);
 
   @override
@@ -40,7 +42,8 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   @override
   void initState() {
     super.initState();
-    firstDayOfWeek = widget.currentDate.subtract(Duration(days: widget.currentDate.weekday - 1));
+    firstDayOfWeek = widget.currentDate
+        .subtract(Duration(days: widget.currentDate.weekday - 1));
     daysList = List<int>.generate(7, (index) {
       DateTime day = firstDayOfWeek!.add(Duration(days: index));
       return day.day;
@@ -59,7 +62,8 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
     recordedDays = diaryEntries
         .where((entry) {
           DateTime entryDate = DateTime.parse(entry.setDate);
-          return entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+          return entryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
               entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
         })
         .map((entry) => DateTime.parse(entry.setDate).day)
@@ -67,10 +71,24 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   }
 
   void _onDaySelected(int day) {
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    bool isRecord = recordedDays!.contains(day);
+
     setState(() {
-      selectedDay = DateTime(firstDayOfWeek!.year, firstDayOfWeek!.month, day);
+      selectedDay =
+          DateTime(widget.currentDate.year, widget.currentDate.month, day);
     });
     widget.onDateSelected(selectedDay!);
+
+    if (!isRecord) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryRegisterPage(selectDate: selected),
+        ),
+      );
+    }
   }
 
   Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
@@ -95,7 +113,8 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
               child: Text(
                 day.toString(),
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,
                   fontSize: 13,

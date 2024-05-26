@@ -9,10 +9,12 @@ import 'package:oha/statics/strings.dart';
 import 'package:oha/vidw_model/diary_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
 import 'package:oha/view/pages/diary/week_calendar_widget.dart';
+import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/diary/my_diary_model.dart';
+import 'diary_register_page.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -320,8 +322,8 @@ class _DiaryPageState extends State<DiaryPage> {
 
   Widget _buildDiaryText() {
     return Row(
-      children: const [
-        Text(
+      children: [
+        const Text(
           Strings.diary,
           style: TextStyle(
             color: Colors.black,
@@ -330,7 +332,16 @@ class _DiaryPageState extends State<DiaryPage> {
             fontSize: 16,
           ),
         ),
-        Icon(Icons.add, color: Color(UserColors.ui04))
+        ButtonIcon(
+            icon: Icons.add,
+            iconColor: const Color(UserColors.ui04),
+            callback: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        DiaryRegisterPage(selectDate: selectedDate),
+                  ),
+                )),
       ],
     );
   }
