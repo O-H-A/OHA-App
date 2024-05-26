@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:oha/network/api_response.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/vidw_model/diary_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
 import 'package:oha/view/pages/diary/week_calendar_widget.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -19,6 +22,27 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   DateTime currentTime = DateTime.now();
   bool viewMonth = true;
+  VoidCallback? _retryCallback;
+
+  @override
+  void initState() {
+    super.initState();
+
+    print("Init");
+
+    final diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+
+    try {
+      diaryViewModel.fetchMyDiary().then((_) {
+        _retryCallback = null;
+      }).catchError((error) {
+        _retryCallback = () => diaryViewModel.fetchMyDiary();
+      });
+      diaryViewModel.setMyDiary(ApiResponse.loading());
+    } catch (error) {
+      _retryCallback = () => diaryViewModel.fetchMyDiary();
+    }
+  }
 
   String getCurrentTime() {
     return DateFormat('yyyy년 MM월', 'ko_KR').format(currentTime);
@@ -210,7 +234,9 @@ class _DiaryPageState extends State<DiaryPage> {
                 ],
               ),
               SizedBox(height: ScreenUtil().setHeight(18.0)),
-              (viewMonth) ? MonthCalendarWidget(currentDate: currentTime) : WeekCalendarWidget(currentDate: currentTime),
+              (viewMonth)
+                  ? MonthCalendarWidget(currentDate: currentTime)
+                  : WeekCalendarWidget(currentDate: currentTime),
               SizedBox(height: ScreenUtil().setHeight(22.0)),
               const Text(
                 Strings.posting,
