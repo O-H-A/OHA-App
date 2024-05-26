@@ -10,21 +10,24 @@ import '../../../vidw_model/diary_view_model.dart';
 
 class MonthCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
+  final Function(DateTime) onDateSelected;
 
-  const MonthCalendarWidget({Key? key, required this.currentDate}) : super(key: key);
-
+  const MonthCalendarWidget(
+      {Key? key, required this.currentDate, required this.onDateSelected})
+      : super(key: key);
   @override
   State<MonthCalendarWidget> createState() => _MonthCalendarWidgetState();
 }
 
 class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
-  DiaryViewModel? _diaryViewModel;
+  DiaryViewModel _diaryViewModel = DiaryViewModel();
   DateTime? firstDayOfMonth;
   int? firstWeekday;
   int? daysInMonth;
   List<int>? daysList;
   Set<int>? recordedDays;
   DateTime? today;
+  DateTime? selectedDay;
 
   List<String> weekDays = [
     Strings.monday,
@@ -39,61 +42,72 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   @override
   void initState() {
     super.initState();
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
 
-    firstDayOfMonth = DateTime(widget.currentDate.year, widget.currentDate.month, 1);
+    firstDayOfMonth =
+        DateTime(widget.currentDate.year, widget.currentDate.month, 1);
     firstWeekday = firstDayOfMonth!.weekday;
 
-    daysInMonth = DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
+    daysInMonth =
+        DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
 
     daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
-    today = DateTime.now();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _diaryViewModel = Provider.of<DiaryViewModel>(context);
-
-    final diaryEntries = _diaryViewModel!.diaryEntries;
+    final diaryEntries = _diaryViewModel.diaryEntries;
     recordedDays = diaryEntries
-        .where((entry) => DateTime.parse(entry.setDate).month == widget.currentDate.month)
+        .where((entry) =>
+            DateTime.parse(entry.setDate).month == widget.currentDate.month)
         .map((entry) => DateTime.parse(entry.setDate).day)
         .toSet();
+
+    today = DateTime.now();
+    selectedDay = today;
   }
 
-  Widget _buildDayWidget(int day, bool recorded, bool isToday) {
-    return Column(
-      children: [
-        (recorded)
-            ? SvgPicture.asset(Images.recordEnable)
-            : SvgPicture.asset(Images.recordDisable),
-        SizedBox(
-          height: ScreenUtil().setHeight(4.0),
-        ),
-        Container(
-          width: ScreenUtil().setWidth(20.0),
-          height: ScreenUtil().setHeight(20.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isToday ? Colors.black : Colors.transparent,
+  void _onDaySelected(int day) {
+    setState(() {
+      selectedDay =
+          DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    });
+    widget.onDateSelected(selectedDay!);
+  }
+
+  Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
+    return GestureDetector(
+      onTap: () => _onDaySelected(day),
+      child: Column(
+        children: [
+          (recorded)
+              ? SvgPicture.asset(Images.recordEnable)
+              : SvgPicture.asset(Images.recordDisable),
+          SizedBox(
+            height: ScreenUtil().setHeight(4.0),
           ),
-          child: Center(
-            child: Text(
-              day.toString(),
-              style: TextStyle(
-                color: isToday ? Colors.white : const Color(UserColors.ui01),
-                fontFamily: "Pretendard",
-                fontWeight: FontWeight.w400,
-                fontSize: 13,
+          Container(
+            width: ScreenUtil().setWidth(20.0),
+            height: ScreenUtil().setHeight(20.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? Colors.black : Colors.transparent,
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: TextStyle(
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          height: ScreenUtil().setHeight(5.0),
-        ),
-      ],
+          SizedBox(
+            height: ScreenUtil().setHeight(5.0),
+          ),
+        ],
+      ),
     );
   }
 
@@ -139,11 +153,11 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
                     return Container();
                   } else {
                     int day = index - firstWeekday! + 2;
-                    bool isToday = (day == today!.day &&
-                        widget.currentDate.month == today!.month &&
-                        widget.currentDate.year == today!.year);
+                    bool isSelected = (day == selectedDay!.day &&
+                        widget.currentDate.month == selectedDay!.month &&
+                        widget.currentDate.year == selectedDay!.year);
                     bool recorded = recordedDays!.contains(day);
-                    return _buildDayWidget(day, recorded, isToday);
+                    return _buildDayWidget(day, recorded, isSelected);
                   }
                 },
               ),

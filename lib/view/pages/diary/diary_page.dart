@@ -12,6 +12,8 @@ import 'package:oha/view/pages/diary/week_calendar_widget.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/diary/my_diary_model.dart';
+
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
 
@@ -23,23 +25,24 @@ class _DiaryPageState extends State<DiaryPage> {
   DateTime currentTime = DateTime.now();
   bool viewMonth = true;
   VoidCallback? _retryCallback;
-  DiaryViewModel diaryViewModel = DiaryViewModel();
+  DiaryViewModel _diaryViewModel = DiaryViewModel();
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
 
-    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
 
     try {
-      diaryViewModel.fetchMyDiary().then((_) {
+      _diaryViewModel.fetchMyDiary().then((_) {
         _retryCallback = null;
       }).catchError((error) {
-        _retryCallback = () => diaryViewModel.fetchMyDiary();
+        _retryCallback = () => _diaryViewModel.fetchMyDiary();
       });
-      diaryViewModel.setMyDiary(ApiResponse.loading());
+      _diaryViewModel.setMyDiary(ApiResponse.loading());
     } catch (error) {
-      _retryCallback = () => diaryViewModel.fetchMyDiary();
+      _retryCallback = () => _diaryViewModel.fetchMyDiary();
     }
   }
 
@@ -55,6 +58,12 @@ class _DiaryPageState extends State<DiaryPage> {
   void subCurrentTime() {
     currentTime =
         DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+  }
+
+  void onDateSelected(DateTime date) {
+    setState(() {
+      selectedDate = date;
+    });
   }
 
   Widget _buildCalendarTypeWidget(bool month, String type) {
@@ -84,7 +93,7 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
-  Widget _buildPostingImageWidget() {
+  Widget _buildPostingImageWidget(String fileUrl) {
     return Container(
       width: ScreenUtil().setWidth(92.0),
       height: ScreenUtil().setHeight(100.0),
@@ -96,8 +105,8 @@ class _DiaryPageState extends State<DiaryPage> {
       child: Padding(
         padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
         child: Center(
-          child: SvgPicture.asset(
-            Images.defaultProfile,
+          child: Image.network(
+            fileUrl,
           ),
         ),
       ),
@@ -244,7 +253,7 @@ class _DiaryPageState extends State<DiaryPage> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPostingImageWidget(),
+            _buildPostingImageWidget(""),
             SizedBox(width: ScreenUtil().setWidth(12.0)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,21 +335,21 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
-  Widget _buildDiaryWidget() {
+  Widget _buildDiaryWidget(MyDiary diary) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPostingImageWidget(),
+            _buildPostingImageWidget(diary.fileRelation![0].fileUrl),
             SizedBox(width: ScreenUtil().setWidth(12.0)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "베트남 여행 추억",
-                  style: TextStyle(
+                Text(
+                  diary.title,
+                  style: const TextStyle(
                     color: Colors.black,
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w500,
@@ -351,9 +360,9 @@ class _DiaryPageState extends State<DiaryPage> {
                   children: [
                     SvgPicture.asset(Images.location),
                     SizedBox(width: ScreenUtil().setWidth(3.0)),
-                    const Text(
-                      "베트남 푸꾸옥",
-                      style: TextStyle(
+                    Text(
+                      diary.location,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w500,
@@ -366,9 +375,9 @@ class _DiaryPageState extends State<DiaryPage> {
                   children: [
                     SvgPicture.asset(Images.heart),
                     SizedBox(width: ScreenUtil().setWidth(3.0)),
-                    const Text(
-                      "32",
-                      style: TextStyle(
+                    Text(
+                      diary.likes,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w500,
@@ -378,9 +387,9 @@ class _DiaryPageState extends State<DiaryPage> {
                     SizedBox(width: ScreenUtil().setWidth(3.0)),
                     SvgPicture.asset(Images.views),
                     SizedBox(width: ScreenUtil().setWidth(3.0)),
-                    const Text(
-                      "32",
-                      style: TextStyle(
+                    Text(
+                      diary.views,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w500,
@@ -400,6 +409,8 @@ class _DiaryPageState extends State<DiaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final diaries = _diaryViewModel.getDiariesByDate(selectedDate);
+
     return Scaffold(
       appBar: const NotificationAppBar(
         title: Strings.diary,
@@ -417,8 +428,10 @@ class _DiaryPageState extends State<DiaryPage> {
               _buildCalendarTypeContainerWidget(),
               SizedBox(height: ScreenUtil().setHeight(18.0)),
               (viewMonth)
-                  ? MonthCalendarWidget(currentDate: currentTime)
-                  : WeekCalendarWidget(currentDate: currentTime),
+                  ? MonthCalendarWidget(
+                      currentDate: currentTime, onDateSelected: onDateSelected)
+                  : WeekCalendarWidget(
+                      currentDate: currentTime, onDateSelected: onDateSelected),
               SizedBox(height: ScreenUtil().setHeight(22.0)),
               _buildPostingText(),
               SizedBox(height: ScreenUtil().setHeight(19.0)),
@@ -426,7 +439,7 @@ class _DiaryPageState extends State<DiaryPage> {
               SizedBox(height: ScreenUtil().setHeight(37.0)),
               _buildDiaryText(),
               SizedBox(height: ScreenUtil().setHeight(19.0)),
-              _buildDiaryWidget(),
+              ...diaries.map((diary) => _buildDiaryWidget(diary)).toList(),
               SizedBox(height: ScreenUtil().setHeight(150.0)),
             ],
           ),

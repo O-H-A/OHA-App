@@ -10,8 +10,9 @@ import '../../../vidw_model/diary_view_model.dart';
 
 class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
+  final Function(DateTime) onDateSelected;
 
-  const WeekCalendarWidget({Key? key, required this.currentDate})
+  const WeekCalendarWidget({Key? key, required this.currentDate, required this.onDateSelected})
       : super(key: key);
 
   @override
@@ -24,6 +25,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   List<int>? daysList;
   Set<int>? recordedDays;
   DateTime? today;
+  DateTime? selectedDay;
 
   List<String> weekDays = [
     Strings.monday,
@@ -45,6 +47,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
     });
 
     today = DateTime.now();
+    selectedDay = today;
   }
 
   @override
@@ -63,38 +66,48 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
         .toSet();
   }
 
-  Widget _buildDayWidget(int day, bool recorded, bool isToday) {
-    return Column(
-      children: [
-        (recorded)
-            ? SvgPicture.asset(Images.recordEnable)
-            : SvgPicture.asset(Images.recordDisable),
-        SizedBox(
-          height: ScreenUtil().setHeight(4.0),
-        ),
-        Container(
-          width: ScreenUtil().setWidth(20.0),
-          height: ScreenUtil().setHeight(20.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isToday ? Colors.black : Colors.transparent,
+  void _onDaySelected(int day) {
+    setState(() {
+      selectedDay = DateTime(firstDayOfWeek!.year, firstDayOfWeek!.month, day);
+    });
+    widget.onDateSelected(selectedDay!);
+  }
+
+  Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
+    return GestureDetector(
+      onTap: () => _onDaySelected(day),
+      child: Column(
+        children: [
+          (recorded)
+              ? SvgPicture.asset(Images.recordEnable)
+              : SvgPicture.asset(Images.recordDisable),
+          SizedBox(
+            height: ScreenUtil().setHeight(4.0),
           ),
-          child: Center(
-            child: Text(
-              day.toString(),
-              style: TextStyle(
-                color: isToday ? Colors.white : const Color(UserColors.ui01),
-                fontFamily: "Pretendard",
-                fontWeight: FontWeight.w400,
-                fontSize: 13,
+          Container(
+            width: ScreenUtil().setWidth(20.0),
+            height: ScreenUtil().setHeight(20.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? Colors.black : Colors.transparent,
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: TextStyle(
+                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          height: ScreenUtil().setHeight(5.0),
-        ),
-      ],
+          SizedBox(
+            height: ScreenUtil().setHeight(5.0),
+          ),
+        ],
+      ),
     );
   }
 
@@ -138,10 +151,10 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
                 itemBuilder: (context, index) {
                   int day = daysList![index];
                   bool recorded = recordedDays!.contains(day);
-                  bool isToday = (day == today!.day &&
-                      widget.currentDate.month == today!.month &&
-                      widget.currentDate.year == today!.year);
-                  return _buildDayWidget(day, recorded, isToday);
+                  bool isSelected = (day == selectedDay!.day &&
+                      firstDayOfWeek!.month == selectedDay!.month &&
+                      firstDayOfWeek!.year == selectedDay!.year);
+                  return _buildDayWidget(day, recorded, isSelected);
                 },
               ),
             ),
