@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:oha/network/api_response.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/vidw_model/diary_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
 import 'package:oha/view/pages/diary/week_calendar_widget.dart';
+import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
+import 'package:provider/provider.dart';
+
+import '../../../models/diary/my_diary_model.dart';
+import 'diary_register_page.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -19,6 +26,27 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   DateTime currentTime = DateTime.now();
   bool viewMonth = true;
+  VoidCallback? _retryCallback;
+  DiaryViewModel _diaryViewModel = DiaryViewModel();
+  DateTime selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+
+    try {
+      _diaryViewModel.fetchMyDiary().then((_) {
+        _retryCallback = null;
+      }).catchError((error) {
+        _retryCallback = () => _diaryViewModel.fetchMyDiary();
+      });
+      _diaryViewModel.setMyDiary(ApiResponse.loading());
+    } catch (error) {
+      _retryCallback = () => _diaryViewModel.fetchMyDiary();
+    }
+  }
 
   String getCurrentTime() {
     return DateFormat('yyyy년 MM월', 'ko_KR').format(currentTime);
@@ -32,6 +60,12 @@ class _DiaryPageState extends State<DiaryPage> {
   void subCurrentTime() {
     currentTime =
         DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+  }
+
+  void onDateSelected(DateTime date) {
+    setState(() {
+      selectedDate = date;
+    });
   }
 
   Widget _buildCalendarTypeWidget(bool month, String type) {
@@ -61,7 +95,7 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
-  Widget _buildPostingImageWidget() {
+  Widget _buildPostingImageWidget(String fileUrl) {
     return Container(
       width: ScreenUtil().setWidth(92.0),
       height: ScreenUtil().setHeight(100.0),
@@ -73,16 +107,321 @@ class _DiaryPageState extends State<DiaryPage> {
       child: Padding(
         padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
         child: Center(
-          child: SvgPicture.asset(
-            Images.defaultProfile,
+          child: Image.network(
+            fileUrl,
           ),
         ),
       ),
     );
   }
 
+  Widget _buildUserInfoWidget() {
+    return Row(
+      children: [
+        Container(
+          width: ScreenUtil().setWidth(28.0),
+          height: ScreenUtil().setHeight(28.0),
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: ClipOval(
+            child: SvgPicture.asset(Images.defaultProfile),
+          ),
+        ),
+        SizedBox(width: ScreenUtil().setWidth(14.0)),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              "User Name",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Pretendard",
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            Text(
+              "다이어리 등록 수 반응",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Pretendard",
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthChangeWidget() {
+    return Container(
+      width: double.infinity,
+      height: ScreenUtil().setHeight(53.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
+        color: Colors.white,
+        border: Border.all(color: const Color(UserColors.ui11)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left),
+                onPressed: () {
+                  setState(() {
+                    subCurrentTime();
+                  });
+                },
+              ),
+              Text(
+                getCurrentTime(),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right),
+                onPressed: () {
+                  setState(() {
+                    addCurrentTime();
+                  });
+                },
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: ScreenUtil().setWidth(15.0)),
+            child: Row(
+              children: [
+                SvgPicture.asset(Images.diaryCalendarEnable),
+                SizedBox(width: ScreenUtil().setWidth(15.0)),
+                SvgPicture.asset(Images.diaryFeedDisable),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalendarTypeContainerWidget() {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              viewMonth = true;
+            });
+          },
+          child: _buildCalendarTypeWidget(viewMonth, Strings.month),
+        ),
+        SizedBox(width: ScreenUtil().setWidth(6.0)),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              viewMonth = false;
+            });
+          },
+          child: _buildCalendarTypeWidget(!viewMonth, Strings.week),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPostingText() {
+    return const Text(
+      Strings.posting,
+      style: TextStyle(
+        color: Colors.black,
+        fontFamily: "Pretendard",
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+    );
+  }
+
+  Widget _buildPostingWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPostingImageWidget(""),
+            SizedBox(width: ScreenUtil().setWidth(12.0)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "영종도 일몰 이쁘다...",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(Images.location),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    const Text(
+                      "서울 인천 용종도 다리",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(Images.heart),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    const Text(
+                      "32",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    SvgPicture.asset(Images.views),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    const Text(
+                      "32",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
+        const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
+      ],
+    );
+  }
+
+  Widget _buildDiaryText() {
+    return Row(
+      children: [
+        const Text(
+          Strings.diary,
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: "Pretendard",
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+        ButtonIcon(
+            icon: Icons.add,
+            iconColor: const Color(UserColors.ui04),
+            callback: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        DiaryRegisterPage(selectDate: selectedDate),
+                  ),
+                )),
+      ],
+    );
+  }
+
+  Widget _buildDiaryWidget(MyDiary diary) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPostingImageWidget(diary.fileRelation![0].fileUrl),
+            SizedBox(width: ScreenUtil().setWidth(12.0)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  diary.title,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(Images.location),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    Text(
+                      diary.location,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(Images.heart),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    Text(
+                      diary.likes,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    SvgPicture.asset(Images.views),
+                    SizedBox(width: ScreenUtil().setWidth(3.0)),
+                    Text(
+                      diary.views,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
+        const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final diaries = _diaryViewModel.getDiariesByDate(selectedDate);
+
     return Scaffold(
       appBar: const NotificationAppBar(
         title: Strings.diary,
@@ -93,289 +432,25 @@ class _DiaryPageState extends State<DiaryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: ScreenUtil().setWidth(28.0),
-                    height: ScreenUtil().setHeight(28.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: ClipOval(
-                      child: SvgPicture.asset(Images.defaultProfile),
-                    ),
-                  ),
-                  SizedBox(width: ScreenUtil().setWidth(14.0)),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "User Name",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        "다이어리 등록 수 반응",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              _buildUserInfoWidget(),
               SizedBox(height: ScreenUtil().setHeight(36.0)),
-              Container(
-                width: double.infinity,
-                height: ScreenUtil().setHeight(53.0),
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(ScreenUtil().radius(10.0)),
-                  color: Colors.white,
-                  border: Border.all(color: const Color(UserColors.ui11)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.chevron_left),
-                          onPressed: () {
-                            setState(() {
-                              subCurrentTime();
-                            });
-                          },
-                        ),
-                        Text(
-                          getCurrentTime(),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.chevron_right),
-                          onPressed: () {
-                            setState(() {
-                              addCurrentTime();
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(right: ScreenUtil().setWidth(15.0)),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(Images.diaryCalendarEnable),
-                          SizedBox(width: ScreenUtil().setWidth(15.0)),
-                          SvgPicture.asset(Images.diaryFeedDisable),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildMonthChangeWidget(),
               SizedBox(height: ScreenUtil().setHeight(12.0)),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        viewMonth = true;
-                      });
-                    },
-                    child: _buildCalendarTypeWidget(viewMonth, Strings.month),
-                  ),
-                  SizedBox(width: ScreenUtil().setWidth(6.0)),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        viewMonth = false;
-                      });
-                    },
-                    child: _buildCalendarTypeWidget(!viewMonth, Strings.week),
-                  ),
-                ],
-              ),
+              _buildCalendarTypeContainerWidget(),
               SizedBox(height: ScreenUtil().setHeight(18.0)),
-              (viewMonth) ? MonthCalendarWidget(currentDate: currentTime) : WeekCalendarWidget(currentDate: currentTime),
+              (viewMonth)
+                  ? MonthCalendarWidget(
+                      currentDate: currentTime, onDateSelected: onDateSelected)
+                  : WeekCalendarWidget(
+                      currentDate: currentTime, onDateSelected: onDateSelected),
               SizedBox(height: ScreenUtil().setHeight(22.0)),
-              const Text(
-                Strings.posting,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
+              _buildPostingText(),
               SizedBox(height: ScreenUtil().setHeight(19.0)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPostingImageWidget(),
-                      SizedBox(width: ScreenUtil().setWidth(12.0)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "영종도 일몰 이쁘다...",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              SvgPicture.asset(Images.location),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "서울 인천 용종도 다리",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              SvgPicture.asset(Images.heart),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "32",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              SvgPicture.asset(Images.views),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "32",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
-                ],
-              ),
+              _buildPostingWidget(),
               SizedBox(height: ScreenUtil().setHeight(37.0)),
-              Row(
-                children: [
-                  const Text(
-                    Strings.diary,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Pretendard",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const Icon(Icons.add, color: Color(UserColors.ui04))
-                ],
-              ),
+              _buildDiaryText(),
               SizedBox(height: ScreenUtil().setHeight(19.0)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPostingImageWidget(),
-                      SizedBox(width: ScreenUtil().setWidth(12.0)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "베트남 여행 추억",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              SvgPicture.asset(Images.location),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "베트남 푸꾸옥",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              SvgPicture.asset(Images.heart),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "32",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              SvgPicture.asset(Images.views),
-                              SizedBox(width: ScreenUtil().setWidth(3.0)),
-                              const Text(
-                                "32",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
-                ],
-              ),
+              ...diaries.map((diary) => _buildDiaryWidget(diary)).toList(),
               SizedBox(height: ScreenUtil().setHeight(150.0)),
             ],
           ),

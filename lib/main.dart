@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/utils/secret_key.dart';
+import 'package:oha/vidw_model/diary_view_model.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
 import 'package:oha/vidw_model/login_view_model.dart';
 import 'package:oha/vidw_model/my_page_view_model.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => WeatherViewModel()),
         ChangeNotifierProvider(create: (_) => MyPageViewModel()),
         ChangeNotifierProvider(create: (_) => UploadViewModel()),
+        ChangeNotifierProvider(create: (_) => DiaryViewModel()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 840),

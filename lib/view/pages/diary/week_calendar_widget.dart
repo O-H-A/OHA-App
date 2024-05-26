@@ -4,35 +4,97 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:provider/provider.dart';
 
-class WeekCalendarWidget extends StatelessWidget {
+import '../../../vidw_model/diary_view_model.dart';
+import 'diary_register_page.dart';
+
+class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
+  final Function(DateTime) onDateSelected;
 
-  const WeekCalendarWidget({Key? key, required this.currentDate})
+  const WeekCalendarWidget(
+      {Key? key, required this.currentDate, required this.onDateSelected})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    DateTime firstDayOfWeek =
-        currentDate.subtract(Duration(days: currentDate.weekday - 1));
+  State<WeekCalendarWidget> createState() => _WeekCalendarWidgetState();
+}
 
-    final List<int> daysList = List<int>.generate(7, (index) {
-      DateTime day = firstDayOfWeek.add(Duration(days: index));
+class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
+  DiaryViewModel? _diaryViewModel;
+  DateTime? firstDayOfWeek;
+  List<int>? daysList;
+  Set<int>? recordedDays;
+  DateTime? today;
+  DateTime? selectedDay;
+
+  List<String> weekDays = [
+    Strings.monday,
+    Strings.tuesday,
+    Strings.wednesday,
+    Strings.thursday,
+    Strings.friday,
+    Strings.saturday,
+    Strings.sunday
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    firstDayOfWeek = widget.currentDate
+        .subtract(Duration(days: widget.currentDate.weekday - 1));
+    daysList = List<int>.generate(7, (index) {
+      DateTime day = firstDayOfWeek!.add(Duration(days: index));
       return day.day;
     });
 
-    List<String> weekDays = [
-      Strings.monday,
-      Strings.tuesday,
-      Strings.wednesday,
-      Strings.thursday,
-      Strings.friday,
-      Strings.saturday,
-      Strings.sunday
-    ];
+    today = DateTime.now();
+    selectedDay = today;
+  }
 
-    Widget _buildDayWidget(int day, bool recorded) {
-      return Column(
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _diaryViewModel = Provider.of<DiaryViewModel>(context);
+
+    final diaryEntries = _diaryViewModel!.diaryEntries;
+    recordedDays = diaryEntries
+        .where((entry) {
+          DateTime entryDate = DateTime.parse(entry.setDate);
+          return entryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
+        })
+        .map((entry) => DateTime.parse(entry.setDate).day)
+        .toSet();
+  }
+
+  void _onDaySelected(int day) {
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    bool isRecord = recordedDays!.contains(day);
+
+    setState(() {
+      selectedDay =
+          DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    });
+    widget.onDateSelected(selectedDay!);
+
+    if (!isRecord) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryRegisterPage(selectDate: selected),
+        ),
+      );
+    }
+  }
+
+  Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
+    return GestureDetector(
+      onTap: () => _onDaySelected(day),
+      child: Column(
         children: [
           (recorded)
               ? SvgPicture.asset(Images.recordEnable)
@@ -40,22 +102,36 @@ class WeekCalendarWidget extends StatelessWidget {
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
-          Text(
-            day.toString(),
-            style: const TextStyle(
-              color: Color(UserColors.ui01),
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
+          Container(
+            width: ScreenUtil().setWidth(20.0),
+            height: ScreenUtil().setHeight(20.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? Colors.black : Colors.transparent,
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: TextStyle(
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ),
           SizedBox(
             height: ScreenUtil().setHeight(5.0),
           ),
         ],
-      );
-    }
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       height: ScreenUtil().setHeight(129.0),
@@ -92,8 +168,12 @@ class WeekCalendarWidget extends StatelessWidget {
                     crossAxisCount: 7, childAspectRatio: 0.9),
                 itemCount: 7,
                 itemBuilder: (context, index) {
-                  int day = daysList[index];
-                  return _buildDayWidget(day, true);
+                  int day = daysList![index];
+                  bool recorded = recordedDays!.contains(day);
+                  bool isSelected = (day == selectedDay!.day &&
+                      firstDayOfWeek!.month == selectedDay!.month &&
+                      firstDayOfWeek!.year == selectedDay!.year);
+                  return _buildDayWidget(day, recorded, isSelected);
                 },
               ),
             ),

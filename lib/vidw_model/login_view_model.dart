@@ -69,15 +69,16 @@ class LoginViewModel with ChangeNotifier {
     return statusCode;
   }
 
-  Future<void> refresh() async {
-    await _loginRepository.refresh().then((result) {
-      if (result.statusCode == 200) {
-        setRefresh(ApiResponse.complete(result));
-      } else {
-        setRefresh(ApiResponse.error());
-      }
-    }).onError((error, stackTrace) {
-      setRefresh(ApiResponse.error(error.toString()));
-    });
+  Future<int> refresh() async {
+    final result = await _loginRepository.refresh();
+
+    if(result.statusCode == 200) {
+      setRefresh(ApiResponse.complete(result));
+    }
+    else {
+      setRefresh(ApiResponse.error());
+    }
+
+    return result.statusCode;
   }
 }

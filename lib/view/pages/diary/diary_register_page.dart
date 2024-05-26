@@ -10,7 +10,11 @@ import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
 
 class DiaryRegisterPage extends StatefulWidget {
-  const DiaryRegisterPage({super.key});
+  final DateTime selectDate;
+
+    const DiaryRegisterPage(
+      {Key? key, required this.selectDate})
+      : super(key: key);
 
   @override
   State<DiaryRegisterPage> createState() => _DiaryRegisterPageState();

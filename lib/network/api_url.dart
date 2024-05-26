@@ -52,4 +52,7 @@ class ApiUrl {
   static const String posts = "http://152.67.219.168/api/posting/posts";
   static const String post = "/api/posting/post/";
   static const String test = "/api/posting/test";
+
+  // Diary
+  static const String myDiary =  "http://152.67.219.168/api/diary/my";
 }

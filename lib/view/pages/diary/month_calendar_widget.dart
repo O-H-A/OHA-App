@@ -4,34 +4,92 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:provider/provider.dart';
 
-class MonthCalendarWidget extends StatelessWidget {
+import '../../../vidw_model/diary_view_model.dart';
+import 'diary_register_page.dart';
+
+class MonthCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
+  final Function(DateTime) onDateSelected;
 
-  const MonthCalendarWidget({Key? key, required this.currentDate}) : super(key: key);
+  const MonthCalendarWidget(
+      {Key? key, required this.currentDate, required this.onDateSelected})
+      : super(key: key);
+  @override
+  State<MonthCalendarWidget> createState() => _MonthCalendarWidgetState();
+}
+
+class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
+  DiaryViewModel _diaryViewModel = DiaryViewModel();
+  DateTime? firstDayOfMonth;
+  int? firstWeekday;
+  int? daysInMonth;
+  List<int>? daysList;
+  Set<int>? recordedDays;
+  DateTime? today;
+  DateTime? selectedDay;
+
+  List<String> weekDays = [
+    Strings.monday,
+    Strings.tuesday,
+    Strings.wednesday,
+    Strings.thursday,
+    Strings.friday,
+    Strings.saturday,
+    Strings.sunday
+  ];
 
   @override
-  Widget build(BuildContext context) {
-    DateTime firstDayOfMonth = DateTime(currentDate.year, currentDate.month, 1);
-    int firstWeekday = firstDayOfMonth.weekday;
+  void initState() {
+    super.initState();
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
 
-    int daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
+    firstDayOfMonth =
+        DateTime(widget.currentDate.year, widget.currentDate.month, 1);
+    firstWeekday = firstDayOfMonth!.weekday;
 
-    final List<int> daysList =
-        List<int>.generate(daysInMonth, (index) => index + 1);
+    daysInMonth =
+        DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
 
-    List<String> weekDays = [
-      Strings.monday,
-      Strings.tuesday,
-      Strings.wednesday,
-      Strings.thursday,
-      Strings.friday,
-      Strings.saturday,
-      Strings.sunday
-    ];
+    daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
-    Widget _buildDayWidget(int day, bool recorded) {
-      return Column(
+    final diaryEntries = _diaryViewModel.diaryEntries;
+    recordedDays = diaryEntries
+        .where((entry) =>
+            DateTime.parse(entry.setDate).month == widget.currentDate.month)
+        .map((entry) => DateTime.parse(entry.setDate).day)
+        .toSet();
+
+    today = DateTime.now();
+    selectedDay = today;
+  }
+
+  void _onDaySelected(int day) {
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    bool isRecord = recordedDays!.contains(day);
+
+    setState(() {
+      selectedDay =
+          DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    });
+    widget.onDateSelected(selectedDay!);
+
+    if (!isRecord) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryRegisterPage(selectDate: selected),
+        ),
+      );
+    }
+  }
+
+  Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
+    return GestureDetector(
+      onTap: () => _onDaySelected(day),
+      child: Column(
         children: [
           (recorded)
               ? SvgPicture.asset(Images.recordEnable)
@@ -39,22 +97,36 @@ class MonthCalendarWidget extends StatelessWidget {
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
-          Text(
-            day.toString(),
-            style: const TextStyle(
-              color: Color(UserColors.ui01),
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
+          Container(
+            width: ScreenUtil().setWidth(20.0),
+            height: ScreenUtil().setHeight(20.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? Colors.black : Colors.transparent,
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: TextStyle(
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ),
           SizedBox(
             height: ScreenUtil().setHeight(5.0),
           ),
         ],
-      );
-    }
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       height: ScreenUtil().setHeight(389.0),
@@ -89,13 +161,17 @@ class MonthCalendarWidget extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7, childAspectRatio: 0.9),
-                itemCount: daysList.length + firstWeekday - 1,
+                itemCount: daysList!.length + firstWeekday! - 1,
                 itemBuilder: (context, index) {
-                  if (index < firstWeekday - 1) {
+                  if (index < firstWeekday! - 1) {
                     return Container();
                   } else {
-                    int day = index - firstWeekday + 2;
-                    return _buildDayWidget(day, true);
+                    int day = index - firstWeekday! + 2;
+                    bool isSelected = (day == selectedDay!.day &&
+                        widget.currentDate.month == selectedDay!.month &&
+                        widget.currentDate.year == selectedDay!.year);
+                    bool recorded = recordedDays!.contains(day);
+                    return _buildDayWidget(day, recorded, isSelected);
                   }
                 },
               ),
