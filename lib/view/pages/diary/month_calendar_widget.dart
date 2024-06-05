@@ -13,9 +13,12 @@ class MonthCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
   final Function(DateTime) onDateSelected;
 
-  const MonthCalendarWidget(
-      {Key? key, required this.currentDate, required this.onDateSelected})
-      : super(key: key);
+  const MonthCalendarWidget({
+    Key? key,
+    required this.currentDate,
+    required this.onDateSelected,
+  }) : super(key: key);
+
   @override
   State<MonthCalendarWidget> createState() => _MonthCalendarWidgetState();
 }
@@ -37,42 +40,48 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
     Strings.thursday,
     Strings.friday,
     Strings.saturday,
-    Strings.sunday
+    Strings.sunday,
   ];
 
   @override
   void initState() {
     super.initState();
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    _updateCalendar();
+  }
 
-    firstDayOfMonth =
-        DateTime(widget.currentDate.year, widget.currentDate.month, 1);
-    firstWeekday = firstDayOfMonth!.weekday;
+  @override
+  void didUpdateWidget(covariant MonthCalendarWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.currentDate != widget.currentDate) {
+      _updateCalendar();
+    }
+  }
 
-    daysInMonth =
-        DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
+  void _updateCalendar() {
+    setState(() {
+      firstDayOfMonth = DateTime(widget.currentDate.year, widget.currentDate.month, 1);
+      firstWeekday = firstDayOfMonth!.weekday;
+      daysInMonth = DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
+      daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
-    daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
+      final diaryEntries = _diaryViewModel.diaryEntries;
+      recordedDays = diaryEntries
+          .where((entry) => DateTime.parse(entry.setDate).month == widget.currentDate.month)
+          .map((entry) => DateTime.parse(entry.setDate).day)
+          .toSet();
 
-    final diaryEntries = _diaryViewModel.diaryEntries;
-    recordedDays = diaryEntries
-        .where((entry) =>
-            DateTime.parse(entry.setDate).month == widget.currentDate.month)
-        .map((entry) => DateTime.parse(entry.setDate).day)
-        .toSet();
-
-    today = DateTime.now();
-    selectedDay = today;
+      today = DateTime.now();
+      selectedDay = today;
+    });
   }
 
   void _onDaySelected(int day) {
-    DateTime selected =
-        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    DateTime selected = DateTime(widget.currentDate.year, widget.currentDate.month, day);
     bool isRecord = recordedDays!.contains(day);
 
     setState(() {
-      selectedDay =
-          DateTime(widget.currentDate.year, widget.currentDate.month, day);
+      selectedDay = selected;
     });
     widget.onDateSelected(selectedDay!);
 
@@ -91,9 +100,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
       onTap: () => _onDaySelected(day),
       child: Column(
         children: [
-          (recorded)
-              ? SvgPicture.asset(Images.recordEnable)
-              : SvgPicture.asset(Images.recordDisable),
+          recorded ? SvgPicture.asset(Images.recordEnable) : SvgPicture.asset(Images.recordDisable),
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
@@ -108,8 +115,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
               child: Text(
                 day.toString(),
                 style: TextStyle(
-                  color:
-                      isSelected ? Colors.white : const Color(UserColors.ui01),
+                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,
                   fontSize: 13,
@@ -141,26 +147,30 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
           children: [
             Row(
               children: weekDays
-                  .map((day) => Expanded(
-                        child: Center(
-                          child: Text(
-                            day,
-                            style: const TextStyle(
-                              color: Color(UserColors.ui01),
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                            ),
+                  .map(
+                    (day) => Expanded(
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: const TextStyle(
+                            color: Color(UserColors.ui01),
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
                           ),
                         ),
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
             Expanded(
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7, childAspectRatio: 0.9),
+                  crossAxisCount: 7,
+                  childAspectRatio: 0.9,
+                ),
                 itemCount: daysList!.length + firstWeekday! - 1,
                 itemBuilder: (context, index) {
                   if (index < firstWeekday! - 1) {
