@@ -230,6 +230,28 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> postDelete(String serverUrl, String  postId) async {
+    dynamic responseJson;
+
+    try {
+      final uri = Uri.parse('$serverUrl/$postId');
+
+      final response = await http.delete(
+        uri,
+        headers: await commonHeaders,
+      );
+
+      responseJson = returnResponse(response);
+
+      print("DELETE 성공: ${responseJson}");
+
+      return responseJson;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   Future<http.Response> imagePut(String serverUrl, XFile? imageFile) async {
     try {
       if (imageFile == null) {

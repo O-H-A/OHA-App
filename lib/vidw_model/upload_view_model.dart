@@ -1,8 +1,6 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:oha/repository/upload_repository.dart';
-
 import '../models/upload/upload_get_model.dart';
 import '../network/api_response.dart';
 
@@ -19,18 +17,17 @@ class UploadViewModel with ChangeNotifier {
 
   void setUploadKeywordList(String keyword) {
     _keywordList.add(keyword);
-
     notifyListeners();
   }
 
   void setUploadLocation(String location) {
     _uploadLocation = location;
-
     notifyListeners();
   }
 
   void _setUploadGetData(ApiResponse<UploadGetModel> response) {
     uploadGetData = response;
+    notifyListeners();
   }
 
   Future<int> posting(
@@ -58,6 +55,16 @@ class UploadViewModel with ChangeNotifier {
 
   Future<int> like(Map<String, dynamic> data) async {
     final result = await _uploadRepository.like(data);
+    return result.statusCode;
+  }
+
+  Future<int> delete(String postId) async {
+    final result = await _uploadRepository.delete(postId);
+
+    if (result.statusCode == 200) {
+      uploadGetData.data?.data.removeWhere((item) => item.postId == int.parse(postId));
+      notifyListeners();
+    }
 
     return result.statusCode;
   }

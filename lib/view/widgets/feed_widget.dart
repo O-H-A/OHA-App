@@ -8,6 +8,7 @@ import '../../statics/strings.dart';
 import 'button_icon.dart';
 
 class FeedWidget extends StatefulWidget {
+  final int postId;
   final String nickName;
   final String locationInfo;
   final int likesCount;
@@ -16,8 +17,10 @@ class FeedWidget extends StatefulWidget {
   final String imageUrl;
   final VoidCallback? onLikePressed;
   final VoidCallback? onMorePressed;
+
   const FeedWidget({
     Key? key,
+    required this.postId,
     required this.nickName,
     required this.locationInfo,
     required this.likesCount,

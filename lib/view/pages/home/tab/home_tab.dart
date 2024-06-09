@@ -7,9 +7,10 @@ import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
 import '../../../../vidw_model/location_view_model.dart';
 import '../../../../vidw_model/upload_view_model.dart';
+import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
-import '../../../widgets/more_dialog.dart';
+import '../../mypage/delete_dialog.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -37,23 +38,70 @@ class _HomeTabState extends State<HomeTab> {
     _uploadViewModel.posts(sendData);
   }
 
-  void _onLikePressed() {
-  }
+  void _onLikePressed() {}
 
-  void _onMorePressed(String action) {
+  void _onMorePressed(int postId, String action) {
     switch (action) {
       case Strings.saveImage:
-        print('Save Image');
+        print('Save Image $postId');
         break;
       case Strings.edit:
-        print('Edit');
+        print('Edit $postId');
         break;
       case Strings.delete:
-        print('Delete');
+        print('Post ID to delete: $postId');
+        showDeleteDialog(postId);
         break;
       default:
         break;
     }
+  }
+
+  void showDeleteDialog(int postId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          titleText: Strings.postDeleteTitle,
+          guideText: Strings.postDeleteContent,
+          yesCallback: () => onDeleteYes(context, postId),
+          noCallback: () => onDeleteNo(context),
+        );
+      },
+    );
+  }
+
+  void onDeleteYes(BuildContext context, int postId) async {
+    print('Confirmed delete for post ID: $postId');
+
+    final response = await _uploadViewModel.delete(postId.toString());
+
+    if (response == 200) {
+      if (mounted) {
+        Navigator.pop(context);
+        showCompleteDialog();
+      }
+      print("Jehee test : $response");
+    } else {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      print('삭제 실패: $response');
+    }
+  }
+
+  void onDeleteNo(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void showCompleteDialog() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const CompleteDialog(title: Strings.postDeleteComplete);
+      },
+    );
   }
 
   Widget _buildTodaySkyText() {
@@ -81,30 +129,26 @@ class _HomeTabState extends State<HomeTab> {
           _buildTodaySkyText(),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
           Expanded(
-            child: ListView.builder(
-              itemCount: _uploadViewModel.uploadGetData.data?.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return FeedWidget(
-                  nickName: _uploadViewModel
-                          .uploadGetData.data?.data[index].userNickname ??
-                      '',
-                  locationInfo: _uploadViewModel
-                          .uploadGetData.data?.data[index].locationDetail ??
-                      '',
-                  likesCount: _uploadViewModel
-                          .uploadGetData.data?.data[index].likeCount ??
-                      0,
-                  description: _uploadViewModel
-                          .uploadGetData.data?.data[index].content ??
-                      '',
-                  hashTag: _uploadViewModel
-                          .uploadGetData.data?.data[index].keywords ??
-                      [],
-                  imageUrl: _uploadViewModel
-                          .uploadGetData.data?.data[index].files[0].url ??
-                      '',
-                  onLikePressed: _onLikePressed,
-                  onMorePressed: () => FourMoreDialog.show(context, _onMorePressed), // 여기서 콜백 전달
+            child: Consumer<UploadViewModel>(
+              builder: (context, uploadViewModel, child) {
+                var dataList = uploadViewModel.uploadGetData.data?.data ?? [];
+                return ListView.builder(
+                  itemCount: dataList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var data = dataList[index];
+                    return FeedWidget(
+                      postId: data.postId,
+                      nickName: data.userNickname,
+                      locationInfo: data.locationDetail,
+                      likesCount: data.likeCount,
+                      description: data.content,
+                      hashTag: data.keywords,
+                      imageUrl: data.files[0].url,
+                      onLikePressed: _onLikePressed,
+                      onMorePressed: () => FourMoreDialog.show(context,
+                          (action) => _onMorePressed(data.postId, action)),
+                    );
+                  },
                 );
               },
             ),

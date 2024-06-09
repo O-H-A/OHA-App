@@ -13,6 +13,7 @@ class FourMoreDialog {
           Navigator.of(context).pop();
           ReportDialog.show(context);
         } else {
+          Navigator.of(context).pop();
           onTap(title);
         }
       },
@@ -79,4 +80,3 @@ class FourMoreDialog {
     );
   }
 }
-  
