@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oha/models/weather/weather_model.dart';
-
 import '../models/weather/posting_weather_my_model.dart';
 import '../network/api_response.dart';
 import '../repository/weather_repository.dart';
@@ -20,13 +19,11 @@ class WeatherViewModel with ChangeNotifier {
 
   setWeatherCount(ApiResponse<WeatherModel> response) {
     _weatherCountData = response;
-
     notifyListeners();
   }
 
   setWeatherPostingMy(ApiResponse<PostingWeatherMyModel> response) {
     _weatherPostingMy = response;
-
     notifyListeners();
   }
 
@@ -34,7 +31,8 @@ class WeatherViewModel with ChangeNotifier {
     await _weatherRepository.getWeatherCount(queryParams).then((value) {
       var sortedData = List<WeatherData>.from(value.data)
         ..sort((a, b) => b.count.compareTo(a.count));
-      var topThreeData = sortedData.take(3).toList();
+      var filteredData = sortedData.where((item) => item.count > 0).toList();
+      var topThreeData = filteredData.take(3).toList();
 
       var filteredWeather = WeatherModel(
           statusCode: value.statusCode,
@@ -55,7 +53,7 @@ class WeatherViewModel with ChangeNotifier {
     }
   }
 
-    Future<int> editWeatherPosting(Map<String, dynamic> queryParams) async {
+  Future<int> editWeatherPosting(Map<String, dynamic> queryParams) async {
     try {
       final value = await _weatherRepository.editWeatherPosting(queryParams);
       return value.statusCode;
@@ -75,7 +73,7 @@ class WeatherViewModel with ChangeNotifier {
   Future<int> deleteMyWeather(Map<String, dynamic> queryParams) async {
     try {
       final value = await _weatherRepository.deleteMyWeather(queryParams);
-      
+
       if (value.statusCode == 200) {
         int weatherId = queryParams['weatherId'];
         _weatherPostingMy.data?.data

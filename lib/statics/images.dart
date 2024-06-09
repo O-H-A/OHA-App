@@ -81,6 +81,7 @@ class Images {
   static const String windEnable = "assets/images/wind_enable.svg";
   static const String veryColdEnable = "assets/images/very_cold_enable.svg";
   static const String rainbowEnable = "assets/images/rainbow_enable.svg";
+  static const String nowWeatherEmpty = "assets/images/now_weather_empty.svg";
 
     static const Map<String, String> weatherImageMap = {
     "흐림": Images.cloudyEnable,
