@@ -15,7 +15,9 @@ class UploadRepository {
     try {
       dynamic response = await NetworkManager.instance
           .imagePost(ApiUrl.posting, data, thumbnailData);
-      return UploadModel.fromJson(jsonDecode(response));
+
+      String responseBody = jsonEncode(response);
+      return UploadModel.fromJson(jsonDecode(responseBody));
     } catch (e) {
       rethrow;
     }
@@ -42,7 +44,8 @@ class UploadRepository {
 
   Future<UploadDeleteModel> delete(String postId) async {
     try {
-      dynamic response = await NetworkManager.instance.postDelete(ApiUrl.posting, postId);
+      dynamic response =
+          await NetworkManager.instance.postDelete(ApiUrl.posting, postId);
       return UploadDeleteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

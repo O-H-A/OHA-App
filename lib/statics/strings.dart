@@ -163,6 +163,7 @@ class Strings {
   static const String postDeleteTitle = "삭제";
   static const String postDeleteContent = "게시물을 삭제하시겠습니까?";
   static const String postDeleteComplete = "삭제가 완료되었습니다.";
+  static const String uploadComplete = "업로드가 완료되었습니다.";
 
   static String deleteWeatherGuideText(String address) {
     return "등록하신 $address의 날씨정보를 삭제하시겠습니까?\n삭제 후 다시 $address의 날씨정보를 등록하실 수 있습니다.";

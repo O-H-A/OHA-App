@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/repository/upload_repository.dart';
@@ -32,13 +33,9 @@ class UploadViewModel with ChangeNotifier {
 
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    await _uploadRepository.posting(data, thumbnailData).then((value) {
-      return value.statusCode;
-    }).onError((error, stackTrace) {
-      return 400;
-    });
+    final result = await _uploadRepository.posting(data, thumbnailData);
 
-    return 400;
+    return result.statusCode;
   }
 
   Future<int> posts(Map<String, dynamic> queryParams) async {
@@ -62,7 +59,8 @@ class UploadViewModel with ChangeNotifier {
     final result = await _uploadRepository.delete(postId);
 
     if (result.statusCode == 200) {
-      uploadGetData.data?.data.removeWhere((item) => item.postId == int.parse(postId));
+      uploadGetData.data?.data
+          .removeWhere((item) => item.postId == int.parse(postId));
       notifyListeners();
     }
 

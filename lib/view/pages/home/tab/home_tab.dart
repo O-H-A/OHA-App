@@ -81,7 +81,6 @@ class _HomeTabState extends State<HomeTab> {
         Navigator.pop(context);
         showCompleteDialog();
       }
-      print("Jehee test : $response");
     } else {
       if (mounted) {
         Navigator.pop(context);
