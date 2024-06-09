@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../statics/Colors.dart';
@@ -10,6 +8,8 @@ import '../../../../statics/strings.dart';
 import '../../../../vidw_model/location_view_model.dart';
 import '../../../../vidw_model/upload_view_model.dart';
 import '../../../widgets/feed_widget.dart';
+import '../../../widgets/four_more_dialog.dart';
+import '../../../widgets/more_dialog.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -19,8 +19,8 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  UploadViewModel _uploadViewModel = UploadViewModel();
-  LocationViewModel _locationViewModel = LocationViewModel();
+  late UploadViewModel _uploadViewModel;
+  late LocationViewModel _locationViewModel;
 
   @override
   void initState() {
@@ -38,6 +38,22 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void _onLikePressed() {
+  }
+
+  void _onMorePressed(String action) {
+    switch (action) {
+      case Strings.saveImage:
+        print('Save Image');
+        break;
+      case Strings.edit:
+        print('Edit');
+        break;
+      case Strings.delete:
+        print('Delete');
+        break;
+      default:
+        break;
+    }
   }
 
   Widget _buildTodaySkyText() {
@@ -88,6 +104,7 @@ class _HomeTabState extends State<HomeTab> {
                           .uploadGetData.data?.data[index].files[0].url ??
                       '',
                   onLikePressed: _onLikePressed,
+                  onMorePressed: () => FourMoreDialog.show(context, _onMorePressed), // 여기서 콜백 전달
                 );
               },
             ),

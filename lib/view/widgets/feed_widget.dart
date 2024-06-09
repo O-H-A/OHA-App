@@ -15,6 +15,7 @@ class FeedWidget extends StatefulWidget {
   final List<String> hashTag;
   final String imageUrl;
   final VoidCallback? onLikePressed;
+  final VoidCallback? onMorePressed;
   const FeedWidget({
     Key? key,
     required this.nickName,
@@ -24,6 +25,7 @@ class FeedWidget extends StatefulWidget {
     required this.hashTag,
     required this.imageUrl,
     this.onLikePressed,
+    this.onMorePressed,
   }) : super(key: key);
 
   @override
@@ -118,7 +120,11 @@ class _FeedWidgetState extends State<FeedWidget> {
               ),
             ],
           ),
-          const Icon(Icons.more_horiz, color: Color(UserColors.ui06))
+          ButtonIcon(
+            icon: Icons.more_horiz,
+            iconColor: const Color(UserColors.ui06),
+            callback: widget.onMorePressed ?? () {},
+          ),
         ],
       ),
     );
@@ -130,9 +136,9 @@ class _FeedWidgetState extends State<FeedWidget> {
       child: Row(
         children: [
           ButtonIcon(
-              icon: Icons.favorite_border,
-              iconColor: Color(UserColors.ui01),
-              callback: widget.onLikePressed ?? () {}, 
+            icon: Icons.favorite_border,
+            iconColor: Color(UserColors.ui01),
+            callback: widget.onLikePressed ?? () {},
           ),
           Text(
             widget.likesCount.toString() + Strings.likes,
@@ -170,8 +176,7 @@ class _FeedWidgetState extends State<FeedWidget> {
       children: [
         _buildProfileWidget(),
         SizedBox(height: ScreenUtil().setHeight(16.0)),
-        Image.network(
-            widget.imageUrl,
+        Image.network(widget.imageUrl,
             fit: BoxFit.cover,
             width: double.infinity,
             height: ScreenUtil().setHeight(390.0)),

@@ -89,6 +89,8 @@ class Strings {
   static const String sunnySky = "맑은 하늘";
   static const String saveImage = "이미지 저장하기";
   static const String report = "신고하기";
+  static const String edit = "수정하기";
+  static const String delete = "삭제하기";
   static const String doNotLink = "마음에 들지 않아요";
   static const String spam = "스팸";
   static const String nudityOrSexual = "나체 이미지 또는 성적 행위";
