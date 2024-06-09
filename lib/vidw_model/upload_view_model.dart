@@ -30,16 +30,14 @@ class UploadViewModel with ChangeNotifier {
   }
 
   void _setUploadGetData(ApiResponse<UploadGetModel> response) {
-      uploadGetData = response;
+    uploadGetData = response;
   }
 
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     await _uploadRepository.posting(data, thumbnailData).then((value) {
       return value.statusCode;
-      //setFrequentLocationData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
-      //setFrequentLocationData(ApiResponse.error(error.toString()));
       return 400;
     });
 
@@ -56,5 +54,11 @@ class UploadViewModel with ChangeNotifier {
       statusCode = 400;
     });
     return statusCode;
+  }
+
+  Future<int> like(Map<String, dynamic> data) async {
+    final result = await _uploadRepository.like(data);
+
+    return result.statusCode;
   }
 }

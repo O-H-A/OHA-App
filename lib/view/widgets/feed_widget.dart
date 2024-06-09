@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:oha/view/widgets/button_icon.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
+import 'button_icon.dart';
 
 class FeedWidget extends StatefulWidget {
   final String nickName;
@@ -16,7 +14,7 @@ class FeedWidget extends StatefulWidget {
   final String description;
   final List<String> hashTag;
   final String imageUrl;
-
+  final VoidCallback? onLikePressed;
   const FeedWidget({
     Key? key,
     required this.nickName,
@@ -25,6 +23,7 @@ class FeedWidget extends StatefulWidget {
     required this.description,
     required this.hashTag,
     required this.imageUrl,
+    this.onLikePressed,
   }) : super(key: key);
 
   @override
@@ -130,8 +129,11 @@ class _FeedWidgetState extends State<FeedWidget> {
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
       child: Row(
         children: [
-          const ButtonIcon(
-              icon: Icons.favorite_border, iconColor: Color(UserColors.ui01)),
+          ButtonIcon(
+              icon: Icons.favorite_border,
+              iconColor: Color(UserColors.ui01),
+              callback: widget.onLikePressed ?? () {}, 
+          ),
           Text(
             widget.likesCount.toString() + Strings.likes,
             style: const TextStyle(
@@ -168,7 +170,6 @@ class _FeedWidgetState extends State<FeedWidget> {
       children: [
         _buildProfileWidget(),
         SizedBox(height: ScreenUtil().setHeight(16.0)),
-        //here image not padding
         Image.network(
             widget.imageUrl,
             fit: BoxFit.cover,

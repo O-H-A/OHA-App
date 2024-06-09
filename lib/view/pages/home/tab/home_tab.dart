@@ -37,6 +37,9 @@ class _HomeTabState extends State<HomeTab> {
     _uploadViewModel.posts(sendData);
   }
 
+  void _onLikePressed() {
+  }
+
   Widget _buildTodaySkyText() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
@@ -82,7 +85,9 @@ class _HomeTabState extends State<HomeTab> {
                           .uploadGetData.data?.data[index].keywords ??
                       [],
                   imageUrl: _uploadViewModel
-                      .uploadGetData.data?.data[index].files[0].url ?? '',
+                          .uploadGetData.data?.data[index].files[0].url ??
+                      '',
+                  onLikePressed: _onLikePressed,
                 );
               },
             ),
