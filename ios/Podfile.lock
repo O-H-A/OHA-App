@@ -12,6 +12,8 @@ PODS:
   - flutter_naver_map (1.0.0):
     - Flutter
     - NMapsMap (= 3.16.2)
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
   - image_picker_ios (0.0.1):
@@ -43,6 +45,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_naver_map (from `.symlinks/plugins/flutter_naver_map/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
@@ -68,6 +71,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
   flutter_naver_map:
     :path: ".symlinks/plugins/flutter_naver_map/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
@@ -92,6 +97,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_naver_map: d1ee15e7a2fe5360a19640648ceed5abf79d82aa
+  flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   kakao_flutter_sdk_common: f1f155e0e8a195ec73e0f69acc0b0af510a0e926
@@ -107,4 +113,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7d6f72d7ea4a99c427af1c4cb06fdf7fd75fa132
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

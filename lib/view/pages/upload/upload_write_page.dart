@@ -17,6 +17,7 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../../utils/secret_key.dart';
 import '../../../vidw_model/location_view_model.dart';
+import '../../widgets/complete_dialog.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
 import '../location/location_setting_page.dart';
@@ -68,7 +69,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     super.initState();
 
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
-    _locationViewModel = Provider.of<LocationViewModel>(context, listen:false);
+    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
 
     Future.delayed(Duration.zero, () {
       _uploadViewModel.getKetwordList.clear();
@@ -192,9 +193,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
       },
     );
 
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   Widget _buildKeywordDefaultWidget() {
@@ -344,7 +343,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
               Flexible(
                 child: Text(
                   text,
-                  style: const TextStyle( 
+                  style: const TextStyle(
                     color: Color(UserColors.ui01),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w500,
@@ -372,7 +371,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String content = _textController.text;
     String selectCategory = categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
-    String selectLocationCode = _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
+    String selectLocationCode =
+        _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
     List<String> selectedKeywords = [];
     for (int i = 0; i < min(keyword.length, 3); i++) {
@@ -388,11 +388,31 @@ class _UploadWritePageState extends State<UploadWritePage> {
     };
 
     try {
-      await _uploadViewModel.posting(
+      final result = await _uploadViewModel.posting(
           sendData, await widget.selectImage.thumbnailData);
+
+      if (!mounted) return;
+
+      if (result == 201) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const App()),
+        );
+        showCompleteDialog();
+      }
     } catch (error) {
       print('Error uploading: $error');
     }
+  }
+
+  void showCompleteDialog() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const CompleteDialog(title: Strings.uploadComplete);
+      },
+    );
   }
 
   @override

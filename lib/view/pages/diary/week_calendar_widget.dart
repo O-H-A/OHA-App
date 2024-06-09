@@ -13,9 +13,11 @@ class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
   final Function(DateTime) onDateSelected;
 
-  const WeekCalendarWidget(
-      {Key? key, required this.currentDate, required this.onDateSelected})
-      : super(key: key);
+  const WeekCalendarWidget({
+    Key? key,
+    required this.currentDate,
+    required this.onDateSelected,
+  }) : super(key: key);
 
   @override
   State<WeekCalendarWidget> createState() => _WeekCalendarWidgetState();
@@ -36,48 +38,54 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
     Strings.thursday,
     Strings.friday,
     Strings.saturday,
-    Strings.sunday
+    Strings.sunday,
   ];
 
   @override
   void initState() {
     super.initState();
-    firstDayOfWeek = widget.currentDate
-        .subtract(Duration(days: widget.currentDate.weekday - 1));
-    daysList = List<int>.generate(7, (index) {
-      DateTime day = firstDayOfWeek!.add(Duration(days: index));
-      return day.day;
-    });
-
-    today = DateTime.now();
-    selectedDay = today;
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    _updateWeek();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _diaryViewModel = Provider.of<DiaryViewModel>(context);
+  void didUpdateWidget(covariant WeekCalendarWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.currentDate != widget.currentDate) {
+      _updateWeek();
+    }
+  }
 
-    final diaryEntries = _diaryViewModel!.diaryEntries;
-    recordedDays = diaryEntries
-        .where((entry) {
-          DateTime entryDate = DateTime.parse(entry.setDate);
-          return entryDate
-                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
-              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
-        })
-        .map((entry) => DateTime.parse(entry.setDate).day)
-        .toSet();
+  void _updateWeek() {
+    setState(() {
+      firstDayOfWeek = widget.currentDate
+          .subtract(Duration(days: widget.currentDate.weekday - 1));
+      daysList = List<int>.generate(7, (index) {
+        DateTime day = firstDayOfWeek!.add(Duration(days: index));
+        return day.day;
+      });
+
+      final diaryEntries = _diaryViewModel!.diaryEntries;
+      recordedDays = diaryEntries
+          .where((entry) {
+            DateTime entryDate = DateTime.parse(entry.setDate);
+            return entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+                entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
+          })
+          .map((entry) => DateTime.parse(entry.setDate).day)
+          .toSet();
+
+      today = DateTime.now();
+      selectedDay = today;
+    });
   }
 
   void _onDaySelected(int day) {
-    DateTime selected =
-        DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    DateTime selected = DateTime(widget.currentDate.year, widget.currentDate.month, day);
     bool isRecord = recordedDays!.contains(day);
 
     setState(() {
-      selectedDay =
-          DateTime(widget.currentDate.year, widget.currentDate.month, day);
+      selectedDay = selected;
     });
     widget.onDateSelected(selectedDay!);
 
@@ -96,9 +104,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
       onTap: () => _onDaySelected(day),
       child: Column(
         children: [
-          (recorded)
-              ? SvgPicture.asset(Images.recordEnable)
-              : SvgPicture.asset(Images.recordDisable),
+          recorded ? SvgPicture.asset(Images.recordEnable) : SvgPicture.asset(Images.recordDisable),
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
@@ -113,8 +119,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
               child: Text(
                 day.toString(),
                 style: TextStyle(
-                  color:
-                      isSelected ? Colors.white : const Color(UserColors.ui01),
+                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,
                   fontSize: 13,
