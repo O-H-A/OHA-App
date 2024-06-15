@@ -23,7 +23,7 @@ class UploadData {
   final int postId;
   final int userId;
   final String userNickname;
-  final List<int> likeUsers;
+  final bool isLike;
   final int likeCount;
   final String categoryCode;
   final String categoryName;
@@ -43,7 +43,7 @@ class UploadData {
     required this.postId,
     required this.userId,
     required this.userNickname,
-    required this.likeUsers,
+    required this.isLike,
     required this.likeCount,
     required this.categoryCode,
     required this.categoryName,
@@ -64,10 +64,7 @@ class UploadData {
         postId: json?['postId'] ?? 0,
         userId: json?['userId'] ?? 0,
         userNickname: json?['userNickname'] ?? '',
-        likeUsers: (json?['likeUsers'] as List<dynamic>?)
-                ?.map((e) => e as int)
-                .toList() ??
-            [],
+        isLike: json?['isLike'] ?? false,
         likeCount: json?['likeCount'] ?? 0,
         categoryCode: json?['categoryCode'] ?? '',
         categoryName: json?['categoryName'] ?? '',

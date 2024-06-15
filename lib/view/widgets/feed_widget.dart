@@ -12,6 +12,7 @@ class FeedWidget extends StatefulWidget {
   final String nickName;
   final String locationInfo;
   final int likesCount;
+  final bool isLike;
   final String description;
   final List<String> hashTag;
   final String imageUrl;
@@ -24,6 +25,7 @@ class FeedWidget extends StatefulWidget {
     required this.nickName,
     required this.locationInfo,
     required this.likesCount,
+    required this.isLike,
     required this.description,
     required this.hashTag,
     required this.imageUrl,
@@ -36,7 +38,25 @@ class FeedWidget extends StatefulWidget {
 }
 
 class _FeedWidgetState extends State<FeedWidget> {
-  ScrollController _scrollController = ScrollController();
+  late int _likesCount;
+  late bool _isLike;
+
+  @override
+  void initState() {
+    super.initState();
+    _likesCount = widget.likesCount;
+    _isLike = widget.isLike;
+  }
+
+  void _toggleLike() {
+    setState(() {
+      _isLike = !_isLike;
+      _likesCount += _isLike ? 1 : -1;
+    });
+    if (widget.onLikePressed != null) {
+      widget.onLikePressed!();
+    }
+  }
 
   TextSpan _buildTextSpan(String text) {
     return TextSpan(
@@ -139,12 +159,12 @@ class _FeedWidgetState extends State<FeedWidget> {
       child: Row(
         children: [
           ButtonIcon(
-            icon: Icons.favorite_border,
-            iconColor: Color(UserColors.ui01),
-            callback: widget.onLikePressed ?? () {},
+            icon: _isLike ? Icons.favorite : Icons.favorite_border,
+            iconColor: _isLike ? Colors.red : const Color(UserColors.ui01),
+            callback: () => _toggleLike(),
           ),
           Text(
-            widget.likesCount.toString() + Strings.likes,
+            '$_likesCount ${Strings.likes}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,

@@ -138,6 +138,7 @@ class _CategoryPageState extends State<CategoryPage>
                     nickName: "고독한 사진작가",
                     locationInfo: "2023년 10월 21일 논현동 거리",
                     likesCount: 3,
+                    isLike: false,
                     description:
                         "지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요!",
                     hashTag: [

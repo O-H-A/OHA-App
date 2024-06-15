@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/repository/upload_repository.dart';
 import '../models/upload/upload_get_model.dart';
+import '../models/upload/upload_like_model.dart';
 import '../network/api_response.dart';
 
 class UploadViewModel with ChangeNotifier {
@@ -15,6 +16,8 @@ class UploadViewModel with ChangeNotifier {
   String get getUploadLocation => _uploadLocation;
 
   ApiResponse<UploadGetModel> uploadGetData = ApiResponse.loading();
+
+  ApiResponse<UploadLikeModel> likeData = ApiResponse.loading();
 
   void setUploadKeywordList(String keyword) {
     _keywordList.add(keyword);
@@ -31,6 +34,11 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void _setLikeData(ApiResponse<UploadLikeModel> response) {
+    likeData = response;
+    notifyListeners();
+  }
+
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _uploadRepository.posting(data, thumbnailData);
@@ -42,6 +50,8 @@ class UploadViewModel with ChangeNotifier {
     int statusCode = 400;
     await _uploadRepository.posts(queryParams).then((value) {
       _setUploadGetData(ApiResponse.complete(value));
+
+      print("Jehee ${value.data[0].isLike}");
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
       _setUploadGetData(ApiResponse.error(error.toString()));
@@ -52,6 +62,7 @@ class UploadViewModel with ChangeNotifier {
 
   Future<int> like(Map<String, dynamic> data) async {
     final result = await _uploadRepository.like(data);
+    _setLikeData(ApiResponse.complete(result));
     return result.statusCode;
   }
 

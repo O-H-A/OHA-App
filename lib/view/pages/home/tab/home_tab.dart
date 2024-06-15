@@ -25,9 +25,9 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   void initState() {
+    super.initState();
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    super.initState();
 
     Map<String, dynamic> sendData = {
       "regionCode": _locationViewModel.getDefaultLocationCode,
@@ -38,7 +38,22 @@ class _HomeTabState extends State<HomeTab> {
     _uploadViewModel.posts(sendData);
   }
 
-  void _onLikePressed() {}
+  void _onLikePressed(int postId, bool isCurrentlyLiked) async {
+    print("Like pressed for postId: $postId");
+
+    Map<String, dynamic> data = {
+      "postId": postId,
+      "type": isCurrentlyLiked ? "U" : "L"
+    };
+
+    print("Jehee : ${isCurrentlyLiked}");
+
+    final statusCode = await _uploadViewModel.like(data);
+
+    if (statusCode == 200) {
+      setState(() {});
+    }
+  }
 
   void _onMorePressed(int postId, String action) {
     switch (action) {
@@ -140,10 +155,12 @@ class _HomeTabState extends State<HomeTab> {
                       nickName: data.userNickname,
                       locationInfo: data.locationDetail,
                       likesCount: data.likeCount,
+                      isLike: data.isLike,
                       description: data.content,
                       hashTag: data.keywords,
-                      imageUrl: data.files[0].url,
-                      onLikePressed: _onLikePressed,
+                      imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
+                      onLikePressed: () =>
+                          _onLikePressed(data.postId, data.isLike),
                       onMorePressed: () => FourMoreDialog.show(context,
                           (action) => _onMorePressed(data.postId, action)),
                     );
