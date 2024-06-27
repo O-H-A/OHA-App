@@ -181,62 +181,69 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: ScreenUtil().setHeight(86.0)),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(22.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    Strings.loginMainText,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Pretendard",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24,
-                    ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(22.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  Strings.loginMainText,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24,
                   ),
-                  SizedBox(height: ScreenUtil().setHeight(6.0)),
-                  RichText(
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: Strings.loginSubText1,
-                          style: TextStyle(
-                            color: Color(UserColors.primaryColor),
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(6.0)),
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: Strings.loginSubText1,
+                        style: TextStyle(
+                          color: Color(UserColors.primaryColor),
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
                         ),
-                        TextSpan(
-                          text: Strings.loginSubText2,
-                          style: TextStyle(
-                            color: Color(UserColors.ui06),
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
+                      ),
+                      TextSpan(
+                        text: Strings.loginSubText2,
+                        style: TextStyle(
+                          color: Color(UserColors.ui06),
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          SvgPicture.asset(Images.loginBg),
           SizedBox(height: ScreenUtil().setHeight(28.0)),
-          _buildLoginWidget(context, _loginViewModel, LoginType.kakao),
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          _buildLoginWidget(context, _loginViewModel, LoginType.apple),
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          _buildLoginWidget(context, _loginViewModel, LoginType.google),
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          _buildLoginWidget(context, _loginViewModel, LoginType.naver),
-          SizedBox(height: ScreenUtil().setHeight(166.0)),
+          Center(
+            child: SvgPicture.asset(Images.loginBg),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildLoginWidget(context, _loginViewModel, LoginType.kakao),
+                SizedBox(height: ScreenUtil().setHeight(12.0)),
+                _buildLoginWidget(context, _loginViewModel, LoginType.apple),
+                SizedBox(height: ScreenUtil().setHeight(12.0)),
+                _buildLoginWidget(context, _loginViewModel, LoginType.google),
+                SizedBox(height: ScreenUtil().setHeight(12.0)),
+                _buildLoginWidget(context, _loginViewModel, LoginType.naver),
+                SizedBox(height: ScreenUtil().setHeight(28.0)),
+              ],
+            ),
+          ),
         ],
       ),
     );
