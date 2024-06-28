@@ -5,6 +5,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/error_page.dart';
+import 'package:oha/view/widgets/loading_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../network/api_response.dart';
@@ -140,7 +141,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     return Consumer<WeatherViewModel>(
       builder: (context, weatherViewModel, child) {
         if (weatherViewModel.weatherCountData.status == Status.loading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LoadingWidget());
         } else if (weatherViewModel.weatherCountData.status ==
             Status.complete) {
           return Stack(
