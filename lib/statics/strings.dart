@@ -61,7 +61,8 @@ class Strings {
   static const String logout = "로그아웃";
   static const String add = "추가하기";
   static const String inputTitle = "제목을 입력해 주세요";
-  static const String titleHintText = "제목";
+  static const String hint150 = "150자 이내로 입력해 주세요.";
+  static const String hint300 = "300자 이내로 입력해 주세요.";
   static const String selectWeather = "날씨를 선택해 주세요";
   static const String inputContents = "내용을 입력해 주세요";
   static const String publicStatus = "공개 여부를 선택해 주세요";
@@ -176,6 +177,22 @@ class Strings {
   static const String mainWeatherVeryHot = "매우 더운 날씨에요\n열사병에 유의해야 해요";
   static const String mainWeatherVeryCold = "매우 추운 날씨에요\n강추위를 대비하여 외출해야해요";
   static const String mainWeatherSnowRain = "눈과 비가 함께 와요\n외투나 우산이 필요해요";
+
+  static const Map<String, String> weatherCodeMap = {
+    cloudy: "WTHR_CLOUDY",
+    littleCloudy: "WTHR_PARTLY_CLOUDY",
+    manyCloud: "WTHR_MOSTLY_CLOUDY",
+    sunny: "WTHR_CLEAR",
+    rain: "WTHR_RAIN",
+    thunder: "WTHR_THUNDER",
+    snow: "WTHR_SNOW",
+    thunderSnow: "WTHR_THUNDER_RAIN",
+    veryHot: "WTHR_VERY_HOT",
+    nightAir: "WTHR_NIGHT_AIR",
+    wind: "WTHR_WIND",
+    veryCold: "WTHR_VERY_COLD",
+    rainbow: "WTHR_RAINBOW",
+  };
 
   static const Map<String, String> mainWeatherStringMap = {
     "KMA_CLOUDY": mainWeatherCloudy,
