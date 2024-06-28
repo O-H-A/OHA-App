@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
@@ -10,7 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
-import '../widgets/windy_widget.dart';
+import '../widgets/main_weather_widget.dart';
 import 'location/location_setting_dialog.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,10 +30,12 @@ class _HomePageState extends State<HomePage>
     animationDuration: const Duration(milliseconds: 300),
   );
   LocationViewModel _locationViewModel = LocationViewModel();
+  WeatherViewModel _weatherViewModel = WeatherViewModel();
 
   @override
   void initState() {
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
+    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
     super.initState();
   }
 
@@ -124,10 +127,20 @@ class _HomePageState extends State<HomePage>
       body: Column(
         children: [
           SizedBox(height: ScreenUtil().setHeight(12.0)),
-          const WindyWidget(neighborhood: "논현동", temperature: "35"),
+          MainWeatherWidget(
+              neighborhood: _locationViewModel.getDefaultLocation,
+              temperature:
+                  _weatherViewModel.defaultWeatherData.data?.data.hourlyTemp ??
+                      '',
+              widgetType:
+                  _weatherViewModel.defaultWeatherData.data?.data.widget ?? '',
+              probPrecip:
+                  _weatherViewModel.defaultWeatherData.data?.data.probPrecip ??
+                      ''),
           SizedBox(height: ScreenUtil().setHeight(43.0)),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+            padding:
+                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
             child: _buildTabBarWidget(),
           ),
           Expanded(

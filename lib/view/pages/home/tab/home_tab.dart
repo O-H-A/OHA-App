@@ -46,8 +46,6 @@ class _HomeTabState extends State<HomeTab> {
       "type": isCurrentlyLiked ? "U" : "L"
     };
 
-    print("Jehee : ${isCurrentlyLiked}");
-
     final statusCode = await _uploadViewModel.like(data);
 
     if (statusCode == 200) {

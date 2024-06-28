@@ -44,6 +44,7 @@ class ApiUrl {
   static const String weatherDelete = "/api/posting/weather/";
   static const String weatherPostingMy =
       "http://152.67.219.168/api/posting/weather/my";
+  static const String defaultWeather = "http://152.67.219.168/api/common/weather/datas";
 
   // Upload
   static const String posting = "http://152.67.219.168/api/posting/post";

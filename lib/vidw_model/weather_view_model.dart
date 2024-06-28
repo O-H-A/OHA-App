@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:oha/models/weather/default_weather_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
 import '../models/weather/posting_weather_my_model.dart';
 import '../network/api_response.dart';
@@ -9,8 +10,11 @@ class WeatherViewModel with ChangeNotifier {
 
   ApiResponse<WeatherModel> _weatherCountData = ApiResponse.loading();
   ApiResponse<PostingWeatherMyModel> _weatherPostingMy = ApiResponse.loading();
+  ApiResponse<DefaultWeatherModel> _defaultWeatherData = ApiResponse.loading();
 
   ApiResponse<WeatherModel> get weatherCountData => _weatherCountData;
+
+  ApiResponse<DefaultWeatherModel> get defaultWeatherData => _defaultWeatherData;
 
   List<WeatherData> get topThreeWeatherData =>
       _weatherCountData.data?.data ?? [];
@@ -24,6 +28,11 @@ class WeatherViewModel with ChangeNotifier {
 
   setWeatherPostingMy(ApiResponse<PostingWeatherMyModel> response) {
     _weatherPostingMy = response;
+    notifyListeners();
+  }
+
+  setDefaultWeatherData(ApiResponse<DefaultWeatherModel> response) {
+    _defaultWeatherData = response;
     notifyListeners();
   }
 
@@ -78,8 +87,17 @@ class WeatherViewModel with ChangeNotifier {
         int weatherId = queryParams['weatherId'];
         _weatherPostingMy.data?.data
             .removeWhere((item) => item.weatherId == weatherId);
-        notifyListeners();
       }
+      return value.statusCode;
+    } catch (error) {
+      return 400;
+    }
+  }
+
+  Future<int> getDefaultWeather() async {
+    try {
+      final value = await _weatherRepository.defaultWeather();
+      setDefaultWeatherData(ApiResponse.complete(value));
       return value.statusCode;
     } catch (error) {
       return 400;
