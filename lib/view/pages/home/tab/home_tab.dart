@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../statics/Colors.dart';
+import '../../../../network/api_response.dart';
+import '../../../../statics/colors.dart';
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
 import '../../../../vidw_model/location_view_model.dart';
@@ -10,7 +11,9 @@ import '../../../../vidw_model/upload_view_model.dart';
 import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
+import '../../../widgets/loading_widget.dart';
 import '../../mypage/delete_dialog.dart';
+import '../../error_page.dart'; // ErrorPage import
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -35,7 +38,18 @@ class _HomeTabState extends State<HomeTab> {
       "size": "10",
     };
 
-    _uploadViewModel.posts(sendData);
+    _uploadViewModel.posts(sendData).catchError((error) {
+      _navigateToErrorPage(context);
+    });
+  }
+
+  void _navigateToErrorPage(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ErrorPage(isNetworkError: false),
+      ),
+    );
   }
 
   void _onLikePressed(int postId, bool isCurrentlyLiked) async {
@@ -131,6 +145,54 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  Widget _buildLoadingWidget() {
+    return const LoadingWidget();
+  }
+
+  Widget _buildCompleteWidget() {
+    return Consumer<UploadViewModel>(
+      builder: (context, uploadViewModel, child) {
+        var dataList = uploadViewModel.uploadGetData.data?.data ?? [];
+        return ListView.builder(
+          itemCount: dataList.length,
+          itemBuilder: (BuildContext context, int index) {
+            var data = dataList[index];
+            return FeedWidget(
+              postId: data.postId,
+              nickName: data.userNickname,
+              locationInfo: data.locationDetail,
+              likesCount: data.likeCount,
+              isLike: data.isLike,
+              description: data.content,
+              hashTag: data.keywords,
+              imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
+              onLikePressed: () => _onLikePressed(data.postId, data.isLike),
+              onMorePressed: () => FourMoreDialog.show(
+                  context, (action) => _onMorePressed(data.postId, action)),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildBody() {
+    return Consumer<UploadViewModel>(
+      builder: (context, uploadViewModel, child) {
+        switch (uploadViewModel.uploadGetData.status) {
+          case Status.loading:
+            return _buildLoadingWidget();
+          case Status.complete:
+            return _buildCompleteWidget();
+          case Status.error:
+          default:
+            _navigateToErrorPage(context);
+            return Container();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,31 +203,7 @@ class _HomeTabState extends State<HomeTab> {
           _buildTodaySkyText(),
           SizedBox(height: ScreenUtil().setHeight(12.0)),
           Expanded(
-            child: Consumer<UploadViewModel>(
-              builder: (context, uploadViewModel, child) {
-                var dataList = uploadViewModel.uploadGetData.data?.data ?? [];
-                return ListView.builder(
-                  itemCount: dataList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    var data = dataList[index];
-                    return FeedWidget(
-                      postId: data.postId,
-                      nickName: data.userNickname,
-                      locationInfo: data.locationDetail,
-                      likesCount: data.likeCount,
-                      isLike: data.isLike,
-                      description: data.content,
-                      hashTag: data.keywords,
-                      imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
-                      onLikePressed: () =>
-                          _onLikePressed(data.postId, data.isLike),
-                      onMorePressed: () => FourMoreDialog.show(context,
-                          (action) => _onMorePressed(data.postId, action)),
-                    );
-                  },
-                );
-              },
-            ),
+            child: _buildBody(),
           ),
         ],
       ),

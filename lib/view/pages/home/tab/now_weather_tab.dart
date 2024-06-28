@@ -141,7 +141,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
     return Consumer<WeatherViewModel>(
       builder: (context, weatherViewModel, child) {
         if (weatherViewModel.weatherCountData.status == Status.loading) {
-          return const Center(child: LoadingWidget());
+          return const LoadingWidget();
         } else if (weatherViewModel.weatherCountData.status ==
             Status.complete) {
           return Stack(
