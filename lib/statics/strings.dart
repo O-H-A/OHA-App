@@ -61,7 +61,8 @@ class Strings {
   static const String logout = "로그아웃";
   static const String add = "추가하기";
   static const String inputTitle = "제목을 입력해 주세요";
-  static const String titleHintText = "제목";
+  static const String hint150 = "150자 이내로 입력해 주세요.";
+  static const String hint300 = "300자 이내로 입력해 주세요.";
   static const String selectWeather = "날씨를 선택해 주세요";
   static const String inputContents = "내용을 입력해 주세요";
   static const String publicStatus = "공개 여부를 선택해 주세요";
@@ -146,7 +147,8 @@ class Strings {
   static const String editComple = "수정 완료";
   static const String editCompleText = "수정되었습니다.";
   static const String deleteChangeHistory = "변경내용 삭제";
-  static const String deleteChangeHistoryGuide = "변경 내용을 삭제하시겠어요?\n지금 돌아가면 변경 내용이 삭제됩니다.";
+  static const String deleteChangeHistoryGuide =
+      "변경 내용을 삭제하시겠어요?\n지금 돌아가면 변경 내용이 삭제됩니다.";
   static const String myWeatherInformation = "나의 날씨 정보";
   static const String addWeatherCompleteText = "날씨 정보를 등록했습니다.";
   static const String editWeatherCompleteText = "날씨 정보를 수정했습니다.";
@@ -166,6 +168,47 @@ class Strings {
   static const String uploadComplete = "업로드가 완료되었습니다.";
   static const String nowWeatherEmptyGuide1 = "등록된 날씨 정보가 없어요.";
   static const String nowWeatherEmptyGuide2 = "지금 날씨 정보를 등록해 보세요!";
+  static const String mainWeatherCloudy = "구름이 조금 있는 날씨에요\n일교차가 심할 수 있어요";
+  static const String mainWeatherSunny = "매우 화창한 날씨에요\n야외할동하기 좋아요";
+  static const String mainWeatherWindy = "바람이 많이 불어요\n외투가 필요한 날씨에요";
+  static const String mainWeatherRain = "비가 오는 날씨에요\n외투나 우산이 필요해요";
+  static const String mainWeatherSnow = "눈이 오는 날씨에요\n길이 미끄러울 수 있어 조심해야해요";
+  static const String mainWeatherThunderRain = "천둥비가 오는 날씨에요\n외투나 우산이 필요해요";
+  static const String mainWeatherVeryHot = "매우 더운 날씨에요\n열사병에 유의해야 해요";
+  static const String mainWeatherVeryCold = "매우 추운 날씨에요\n강추위를 대비하여 외출해야해요";
+  static const String mainWeatherSnowRain = "눈과 비가 함께 와요\n외투나 우산이 필요해요";
+
+  static const Map<String, String> weatherCodeMap = {
+    cloudy: "WTHR_CLOUDY",
+    littleCloudy: "WTHR_PARTLY_CLOUDY",
+    manyCloud: "WTHR_MOSTLY_CLOUDY",
+    sunny: "WTHR_CLEAR",
+    rain: "WTHR_RAIN",
+    thunder: "WTHR_THUNDER",
+    snow: "WTHR_SNOW",
+    thunderSnow: "WTHR_THUNDER_RAIN",
+    veryHot: "WTHR_VERY_HOT",
+    nightAir: "WTHR_NIGHT_AIR",
+    wind: "WTHR_WIND",
+    veryCold: "WTHR_VERY_COLD",
+    rainbow: "WTHR_RAINBOW",
+  };
+
+  static const Map<String, String> mainWeatherStringMap = {
+    "KMA_CLOUDY": mainWeatherCloudy,
+    "KMA_CLEAR": mainWeatherSunny,
+    "KMA_RAIN": mainWeatherRain,
+    "KMA_THUNDER_RAIN": mainWeatherThunderRain,
+    "KMA_SNOW": mainWeatherSnow,
+    "KMA_COLD": mainWeatherVeryCold,
+    "KMA_HOT": mainWeatherVeryHot,
+    "KMA_WINDY": mainWeatherWindy,
+    "KMA_RAIN_SNOW": mainWeatherSnowRain,
+  };
+
+  static String getProbPrecip(String probPrecip) {
+    return "구름이 많은 날씨에요\n강수 확률은 $probPrecip%에요";
+  }
 
   static String deleteWeatherGuideText(String address) {
     return "등록하신 $address의 날씨정보를 삭제하시겠습니까?\n삭제 후 다시 $address의 날씨정보를 등록하실 수 있습니다.";

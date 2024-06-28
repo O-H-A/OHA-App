@@ -3,19 +3,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import '../../../../statics/images.dart';
+import '../../statics/strings.dart';
 
-class WindyWidget extends StatelessWidget {
+class MainWeatherWidget extends StatelessWidget {
   final String neighborhood;
   final String temperature;
+  final String widgetType;
+  final String probPrecip;
 
-  const WindyWidget({
+  const MainWeatherWidget({
     super.key,
     required this.neighborhood,
     required this.temperature,
+    required this.widgetType,
+    this.probPrecip = "",
   });
 
   @override
   Widget build(BuildContext context) {
+    final String widgetImage =
+        Images.mainWeatherImageMap[widgetType] ?? Images.littleCloudyEnable;
+    String weatherName;
+
+    if (widgetType == "KMA_MOSTLY_CLOUDY" && probPrecip.isNotEmpty) {
+      weatherName = Strings.getProbPrecip(probPrecip);
+    } else {
+      weatherName = Strings.mainWeatherStringMap[widgetType] ?? Strings.mainWeatherCloudy;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
       child: Row(
@@ -35,24 +50,26 @@ class WindyWidget extends StatelessWidget {
               SizedBox(height: ScreenUtil().setHeight(12.0)),
               Text(
                 "$temperature°C",
-                style: const TextStyle(
-                    color: Color(UserColors.ui01),
+                style: TextStyle(
+                    color: const Color(UserColors.ui01),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w600,
-                    fontSize: 24),
+                    fontSize: ScreenUtil().setSp(35.0)),
               ),
               SizedBox(height: ScreenUtil().setHeight(12.0)),
-              const Text(
-                "바람이 많이 불어요\n외투가 필요한 날씨에요",
+              Text(
+                weatherName,
                 style: TextStyle(
-                    color: Color(UserColors.ui04),
+                    color: const Color(UserColors.ui04),
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w600,
-                    fontSize: 14),
+                    fontSize: ScreenUtil().setSp(14.0)),
               ),
             ],
           ),
-          SvgPicture.asset(Images.cloudyDisable),
+          SvgPicture.asset(widgetImage,
+              width: ScreenUtil().setWidth(125),
+              height: ScreenUtil().setHeight(165)),
         ],
       ),
     );

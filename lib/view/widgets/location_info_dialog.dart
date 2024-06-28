@@ -188,7 +188,7 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: const Color(UserColors.ui11),
-                hintText: Strings.titleHintText,
+                hintText: "Strings.titleHintText",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,

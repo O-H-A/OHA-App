@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:oha/models/weather/default_weather_model.dart';
 import 'package:oha/models/weather/delete_weather_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
 
@@ -30,7 +31,8 @@ class WeatherRepository {
     }
   }
 
-    Future<EditWeatherModel> editWeatherPosting(Map<String, dynamic> queryParams) async {
+  Future<EditWeatherModel> editWeatherPosting(
+      Map<String, dynamic> queryParams) async {
     try {
       dynamic response =
           await NetworkManager.instance.put(ApiUrl.weather, queryParams);
@@ -50,11 +52,22 @@ class WeatherRepository {
     }
   }
 
-  Future<DeleteWeatherModel> deleteMyWeather(Map<String, dynamic> queryParams) async {
+  Future<DeleteWeatherModel> deleteMyWeather(
+      Map<String, dynamic> queryParams) async {
     try {
       dynamic response =
           await NetworkManager.instance.delete(ApiUrl.weather, queryParams);
       return DeleteWeatherModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DefaultWeatherModel> defaultWeather() async {
+    try {
+      dynamic response =  
+          await NetworkManager.instance.get(ApiUrl.defaultWeather);
+      return DefaultWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/models/upload/upload_get_model.dart';
 import 'package:oha/statics/images.dart';
+import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/login_page.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   LocationViewModel _locationViewModel = LocationViewModel();
   LoginViewModel _loginViewModel = LoginViewModel();
+  WeatherViewModel _weatherViewModel = WeatherViewModel();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
@@ -33,6 +35,7 @@ class _SplashPageState extends State<SplashPage> {
 
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
 
     _loginViewModel.refresh().then((result) {
       _storage
@@ -54,6 +57,7 @@ class _SplashPageState extends State<SplashPage> {
         _locationViewModel.fetchAllDistricts();
         _locationViewModel.fetchFrequentDistricts();
         _locationViewModel.getDefaultFrequentDistricts();
+        _weatherViewModel.getDefaultWeather();
       });
     }).catchError((error) {
       _storage.write(key: Strings.loginKey, value: '').then((_) {});

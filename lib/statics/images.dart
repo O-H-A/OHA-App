@@ -82,8 +82,17 @@ class Images {
   static const String veryColdEnable = "assets/images/very_cold_enable.svg";
   static const String rainbowEnable = "assets/images/rainbow_enable.svg";
   static const String nowWeatherEmpty = "assets/images/now_weather_empty.svg";
+  static const String snowRain = "assets/images/snow_rain.svg";
+  static const String loading_1 = "assets/images/loading_1.svg";
+  static const String loading_2 = "assets/images/loading_2.svg";
+  static const String loading_3 = "assets/images/loading_3.svg";
+  static const String loading_4 = "assets/images/loading_4.svg";
+  static const String loading_5 = "assets/images/loading_5.svg";
+  static const String loading_6 = "assets/images/loading_6.svg";
+  static const String loading_7 = "assets/images/loading_7.svg";
+  static const String loading_8 = "assets/images/loading_8.svg";
 
-    static const Map<String, String> weatherImageMap = {
+  static const Map<String, String> weatherImageMap = {
     "흐림": Images.cloudyEnable,
     "구름 많음": Images.manyCloudEnable,
     "구름 조금": Images.littleCloudyEnable,
@@ -97,5 +106,18 @@ class Images {
     "밤공기": Images.nightAirEnable,
     "바람": Images.windEnable,
     "무지개": Images.rainbowEnable
+  };
+
+  static const Map<String, String> mainWeatherImageMap = {
+    "KMA_CLOUDY": cloudyEnable,
+    "KMA_MOSTLY_CLOUDY": manyCloudEnable,
+    "KMA_CLEAR": sunnyEnable,
+    "KMA_RAIN": rainEnable,
+    "KMA_THUNDER_RAIN": thunderEnable,
+    "KMA_SNOW": snowEnable,
+    "KMA_COLD": veryColdEnable,
+    "KMA_HOT": veryHotEnable,
+    "KMA_WINDY": windEnable,
+    "KMA_RAIN_SNOW": snowRain,
   };
 }

@@ -41,36 +41,6 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   List<String> _frequentRegionCode = ["", "", "", ""];
   List<String> _frequentThirdAddress = ["", "", "", ""];
 
-  /*
-    흐림	WTHR_CLOUDY
-    약간 흐림	WTHR_PARTLY_CLOUDY
-    구름 많음	WTHR_MOSTLY_CLOUDY
-    맑음	WTHR_CLEAR
-    비	WTHR_RAIN
-    천둥	WTHR_THUNDER
-    눈	WTHR_SNOW
-    천둥 비	WTHR_THUNDER_RAIN
-    매우 더움	WTHR_VERY_HOT
-    밤공기	WTHR_NIGHT_AIR
-    바람	WTHR_WIND
-    매우 추움	WTHR_VERY_COLD
-    무지개	WTHR_RAINBOW
-  */
-
-  final String cloudy = "WTHR_CLOUDY";
-  final String littleCloudy = "WTHR_PARTLY_CLOUDY";
-  final String manyCloud = "WTHR_MOSTLY_CLOUDY";
-  final String sunny = "WTHR_CLEAR";
-  final String rain = "WTHR_RAIN";
-  final String thunder = "WTHR_THUNDER";
-  final String snow = "WTHR_SNOW";
-  final String thunderSnow = "WTHR_THUNDER_RAIN";
-  final String veryHot = "WTHR_VERY_HOT";
-  final String nightAir = "WTHR_NIGHT_AIR";
-  final String wind = "WTHR_WIND";
-  final String veryCold = "WTHR_VERY_COLD";
-  final String rainbow = "WTHR_RAINBOW";
-
   @override
   void initState() {
     super.initState();
@@ -285,7 +255,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       setState(() {
         _selectTitle = result['title'];
         _selectImage = result['image'];
-        _selectWeatherCode = getWeatherCode(_selectTitle);
+        _selectWeatherCode = Strings.weatherCodeMap[_selectTitle] ?? "";
       });
     }
   }
@@ -381,39 +351,6 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
         _selectTitle != "" &&
         _selectThirdAddress != "" &&
         _selectRegionCode != "";
-  }
-
-  String getWeatherCode(String title) {
-    switch (title) {
-      case Strings.cloudy:
-        return cloudy;
-      case Strings.littleCloudy:
-        return littleCloudy;
-      case Strings.manyCloud:
-        return manyCloud;
-      case Strings.sunny:
-        return sunny;
-      case Strings.rain:
-        return rain;
-      case Strings.thunder:
-        return thunder;
-      case Strings.snow:
-        return snow;
-      case Strings.thunderSnow:
-        return thunderSnow;
-      case Strings.veryHot:
-        return veryHot;
-      case Strings.nightAir:
-        return nightAir;
-      case Strings.wind:
-        return wind;
-      case Strings.veryCold:
-        return veryCold;
-      case Strings.rainbow:
-        return rainbow;
-      default:
-        return "";
-    }
   }
 
   void sendWeatherPosting() {
