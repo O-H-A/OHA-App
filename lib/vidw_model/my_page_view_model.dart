@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:oha/models/my_page/my_page_model.dart';
+import 'package:oha/models/my_page/name_update_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
 import 'package:oha/repository/my_page_repository.dart';
 
@@ -9,9 +9,9 @@ import '../repository/weather_repository.dart';
 class MyPageViewModel with ChangeNotifier {
   final _mypageRepository = MyPageRepository();
 
-  ApiResponse<MyPageModel> _MyPageData = ApiResponse.loading();
+  ApiResponse<NameUpdateModel> _MyPageData = ApiResponse.loading();
 
-  setMyPageData(ApiResponse<MyPageModel> response) {
+  setMyPageData(ApiResponse<NameUpdateModel> response) {
     _MyPageData = response;
   }
 

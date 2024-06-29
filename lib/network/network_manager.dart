@@ -18,6 +18,7 @@ class NetworkManager {
 
   Future<Map<String, String>> get commonHeaders async {
     String? accessToken = await _storage.read(key: Strings.accessTokenKey);
+    print("JKehee : ${accessToken}");
     return {
       "Content-Type": "application/json",
       "Accept": "application/json",
