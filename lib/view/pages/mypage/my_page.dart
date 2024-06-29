@@ -48,8 +48,7 @@ class _MyPageState extends State<MyPage> {
           (Route<dynamic> route) => false,
         );
       }
-    }).onError((error, stackTrace) {
-    });
+    }).onError((error, stackTrace) {});
   }
 
   void showAgreementPage() {
@@ -70,31 +69,34 @@ class _MyPageState extends State<MyPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SvgPicture.asset(Images.defaultProfile),
+          (_myPageViewModel.myInfoData.data?.data.profileUrl?.isEmpty ?? true)
+              ? SvgPicture.asset(Images.defaultProfile)
+              : Image.network(
+                  _myPageViewModel.myInfoData.data?.data.profileUrl ?? ""),
           SizedBox(width: ScreenUtil().setWidth(12.0)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "User A",
-                style: const TextStyle(
+                _myPageViewModel.myInfoData.data?.data.name ?? '',
+                style: TextStyle(
                   fontFamily: "Pretendard",
-                  fontSize: 24,
+                  fontSize: ScreenUtil().setSp(24.0),
                   fontWeight: FontWeight.w700,
-                  color: Color(UserColors.ui01),
+                  color: const Color(UserColors.ui01),
                 ),
               ),
               GestureDetector(
                 onTap: () {
                   return;
                 },
-                child: const Text(
-                  Strings.loginedWithKakao,
+                child: Text(
+                  Strings.loginProviderMap["NAVER"] ?? Strings.loginedWithKakao,
                   style: TextStyle(
                     fontFamily: "Pretendard",
-                    fontSize: 14,
+                    fontSize: ScreenUtil().setSp(14.0),
                     fontWeight: FontWeight.w500,
-                    color: Color(UserColors.ui06),
+                    color: const Color(UserColors.ui06),
                   ),
                 ),
               ),

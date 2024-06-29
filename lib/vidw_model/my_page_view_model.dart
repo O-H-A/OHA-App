@@ -10,15 +10,17 @@ import '../repository/weather_repository.dart';
 class MyPageViewModel with ChangeNotifier {
   final _mypageRepository = MyPageRepository();
 
-  ApiResponse<NameUpdateModel> _MyPageData = ApiResponse.loading();
-  ApiResponse<MyInfoModel> _myInfo = ApiResponse.loading();
+  ApiResponse<NameUpdateModel> myPageData = ApiResponse.loading();
+  ApiResponse<MyInfoModel> myInfoData = ApiResponse.loading();
 
   setMyPageData(ApiResponse<NameUpdateModel> response) {
-    _MyPageData = response;
+    myPageData = response;
+    notifyListeners();
   }
 
   setMyInfoData(ApiResponse<MyInfoModel> response) {
-    _myInfo = response;
+    myInfoData = response;
+    notifyListeners();
   }
 
   Future<void> changeNickName(Map<String, dynamic> data) async {
@@ -31,7 +33,7 @@ class MyPageViewModel with ChangeNotifier {
 
   Future<void> myInfo() async {
     await _mypageRepository.myInfo().then((value) {
-      setMyInfoData(ApiResponse.complete());
+      setMyInfoData(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setMyInfoData(ApiResponse.error(error.toString()));
     });

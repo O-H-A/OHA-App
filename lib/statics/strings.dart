@@ -206,6 +206,13 @@ class Strings {
     "KMA_RAIN_SNOW": mainWeatherSnowRain,
   };
 
+  static const Map<String, String> loginProviderMap = {
+    "NAVER": loginedWithNaver,
+    "KAKAO": loginedWithKakao,
+    "GOOGLE": loginedWithGoogle,
+    "APPLE": loginedWithApple,
+  };
+
   static String getProbPrecip(String probPrecip) {
     return "구름이 많은 날씨에요\n강수 확률은 $probPrecip%에요";
   }

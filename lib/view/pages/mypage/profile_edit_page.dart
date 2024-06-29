@@ -54,9 +54,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       onTap: () {
         getProfileImage(ImageSource.gallery);
       },
-      child: _getProfileImage == null
-          ? SvgPicture.asset(Images.myPageDefaultProfile)
-          : Container(
+      child: _getProfileImage != null
+          ? Container(
               width: ScreenUtil().setWidth(100.0),
               height: ScreenUtil().setHeight(100.0),
               decoration: const BoxDecoration(
@@ -65,7 +64,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               child: ClipOval(
                 child: Image.file(File(_getProfileImage!.path)),
               ),
-            ),
+            )
+          : (_myPageViewModel.myInfoData.data?.data.profileUrl?.isEmpty ?? true)
+              ? SvgPicture.asset(Images.defaultProfile)
+              : Container(
+                  width: ScreenUtil().setWidth(100.0),
+                  height: ScreenUtil().setHeight(100.0),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: ClipOval(
+                    child: Image.network(
+                      _myPageViewModel.myInfoData.data?.data.profileUrl ?? "",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
     );
   }
 
@@ -122,22 +136,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   Widget _buildCurrentNickNameWidget() {
     return Row(
-      children: const [
-        Text(
+      children: [
+       Text(
           Strings.currentNickName,
           style: TextStyle(
-              color: Color(UserColors.ui06),
+              color: const Color(UserColors.ui06),
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w500,
-              fontSize: 12),
+              fontSize: ScreenUtil().setSp(12.0)),//
         ),
         Text(
-          "User A",
+          _myPageViewModel.myInfoData.data?.data.name ?? '',
           style: TextStyle(
-              color: Color(UserColors.ui06),
+              color: const Color(UserColors.ui06),
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w500,
-              fontSize: 12),
+              fontSize: ScreenUtil().setSp(12.0)),
         ),
       ],
     );

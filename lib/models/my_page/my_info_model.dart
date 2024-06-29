@@ -44,7 +44,7 @@ class MyInfoData {
       providerType: json['providerType'] ?? '',
       email: json['email'] ?? '',
       name: json['name'] ?? '',
-      profileUrl: json['profileUrl'] ?? '',
+      profileUrl: json['profileUrl'],
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
     );
