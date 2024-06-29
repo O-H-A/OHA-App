@@ -183,6 +183,7 @@ class Strings {
   static const String logoutComplete = "로그아웃 되었습니다.";
   static const String withDrawComplete = "탈퇴 되었습니다.";
   static const String postEmptyGuide = "아직 등록된 게시물이 없어요.\n아래 업로드 버튼을 눌러 첫 게시물을 업로드해 보세요!";
+  static const String complete = "완료";
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",

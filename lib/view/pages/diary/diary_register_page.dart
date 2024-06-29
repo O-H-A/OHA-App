@@ -13,6 +13,7 @@ import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
 
+import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
 import '../home/weather/weather_select_dialog.dart';
 
@@ -34,18 +35,41 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final ImagePicker picker = ImagePicker();
   String _selectTitle = "";
   String _selectImage = "";
+  String _writeDay = "";
+
+  @override
+  void initState() {
+    _writeDay = _getToday();
+
+    super.initState();
+  }
 
   String _getToday() {
     return DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(DateTime.now());
   }
 
-  Future getImage(ImageSource imageSource) async {
+  String _addWeekday(String date) {
+    DateTime parsedDate = DateFormat('yyyy년 MM월 dd일').parse(date);
+    String weekday = DateFormat('E', 'ko_KR').format(parsedDate);
+    return '$date ($weekday)';
+  }
+
+  Future _getImage(ImageSource imageSource) async {
     final XFile? pickedFile =
         await picker.pickImage(source: imageSource, imageQuality: 30);
 
     if (pickedFile != null) {
       setState(() {
         uploadImage = XFile(pickedFile.path);
+      });
+    }
+  }
+
+  void _showDatePicker() async {
+    final selectedDate = await DatePicker.show(context);
+    if (selectedDate != null) {
+      setState(() {
+        _writeDay = _addWeekday(selectedDate);
       });
     }
   }
@@ -121,7 +145,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           ),
         ],
       ),
-      callback: () => getImage(ImageSource.gallery),
+      callback: () => _getImage(ImageSource.gallery),
     );
   }
 
@@ -331,20 +355,20 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          titleSpacing: ScreenUtil().setWidth(22.0),
-          title: Container(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        titleSpacing: ScreenUtil().setWidth(22.0),
+        title: GestureDetector(
+          onTap: () => _showDatePicker(),
+          child: UserContainer(
             width: ScreenUtil().setWidth(149.0),
             height: ScreenUtil().setHeight(35.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ScreenUtil().radius(18.0)),
-              color: Colors.white,
-              border: Border.all(color: const Color(UserColors.ui08)),
-            ),
+            backgroundColor: Colors.white,
+            borderRadius: ScreenUtil().radius(18.0),
+            borderColor: const Color(UserColors.ui08),
             child: Center(
               child: Text(
-                _getToday(),
+                _writeDay,
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Pretendard",
@@ -354,11 +378,13 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
               ),
             ),
           ),
-          leading: ButtonIcon(
-            icon: Icons.close,
-            iconColor: Colors.black,
-            callback: () => Navigator.pop(context),
-          )),
+        ),
+        leading: ButtonIcon(
+          icon: Icons.close,
+          iconColor: Colors.black,
+          callback: () => Navigator.pop(context),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
