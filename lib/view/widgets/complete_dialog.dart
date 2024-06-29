@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/images.dart';
@@ -18,6 +16,15 @@ class CompleteDialog extends StatefulWidget {
 
   @override
   State<CompleteDialog> createState() => _CompleteDialogState();
+
+  static void showCompleteDialog(BuildContext context, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CompleteDialog(title: title);
+      },
+    );
+  }
 }
 
 class _CompleteDialogState extends State<CompleteDialog> {

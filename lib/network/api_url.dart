@@ -19,7 +19,7 @@ class ApiUrl {
   static const String termsAgree = "http://152.67.219.168/api/auth/termsagree";
   static const String refresh = "http://152.67.219.168/api/auth/refresh";
   static const String logout = "http://152.67.219.168/api/auth/logout";
-  static const String withDraw = "/api/auth/withdraw";
+  static const String withDraw = "http://152.67.219.168/api/auth/withdraw";
   static const String termsagree = "/api/auth/termsagree";
 
   // Location

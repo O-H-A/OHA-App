@@ -18,7 +18,6 @@ class NetworkManager {
 
   Future<Map<String, String>> get commonHeaders async {
     String? accessToken = await _storage.read(key: Strings.accessTokenKey);
-    print("JKehee : ${accessToken}");
     return {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -205,12 +204,12 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> delete(
-      String serverUrl, Map<String, dynamic> userData) async {
+  Future<dynamic> delete(String serverUrl,
+      [Map<String, dynamic>? userData]) async {
     dynamic responseJson;
 
     try {
-      String jsonData = jsonEncode(userData);
+      String jsonData = jsonEncode(userData ?? {});
 
       final response = await http.delete(
         Uri.parse(serverUrl),
@@ -231,7 +230,7 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> postDelete(String serverUrl, String  postId) async {
+  Future<dynamic> postDelete(String serverUrl, String postId) async {
     dynamic responseJson;
 
     try {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:oha/models/login/with_draw_model.dart';
 
 import 'package:oha/network/api_response.dart';
 import 'package:oha/repository/login_repository.dart';
@@ -21,6 +22,8 @@ class LoginViewModel with ChangeNotifier {
   ApiResponse<RefreshModel> _refreshData = ApiResponse.loading();
 
   ApiResponse<RefreshModel> get refreshData => _refreshData;
+
+  ApiResponse<WithDrawModel> withDrawData = ApiResponse.loading();
 
   void setLoginData(String responseJson) {
     try {
@@ -43,6 +46,10 @@ class LoginViewModel with ChangeNotifier {
 
   void setRefresh(ApiResponse<RefreshModel> response) {
     _refreshData = response;
+  }
+
+  void setWithDraw(ApiResponse<WithDrawModel> response) {
+    withDrawData = response;
   }
 
   Future<int> logout() async {
@@ -72,13 +79,20 @@ class LoginViewModel with ChangeNotifier {
   Future<int> refresh() async {
     final result = await _loginRepository.refresh();
 
-    if(result.statusCode == 200) {
+    if (result.statusCode == 200) {
       setRefresh(ApiResponse.complete(result));
-    }
-    else {
+    } else {
       setRefresh(ApiResponse.error());
     }
 
     return result.statusCode;
+  }
+
+  Future<void> withDraw() async {
+    await _loginRepository.withDraw().then((value) {
+      setWithDraw(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setWithDraw(ApiResponse.error(error.toString()));
+    });
   }
 }
