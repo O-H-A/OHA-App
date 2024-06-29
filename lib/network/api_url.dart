@@ -6,7 +6,7 @@ class ApiUrl {
   static const String backgroundImageUpdate =
       "http://152.67.219.168/api/user/image/background";
   static const String imageUpload = "/api/user/";
-  static const String myInfo = "/api/user/myinfo";
+  static const String myInfo = "http://152.67.219.168/api/user/myinfo";
   static const String allUsers = "/api/user/allusers";
   static const String specificusers = "/api/user/specificusers";
 
