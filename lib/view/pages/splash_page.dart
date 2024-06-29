@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/models/upload/upload_get_model.dart';
 import 'package:oha/statics/images.dart';
+import 'package:oha/utils/app_initializer.dart';
 import 'package:oha/vidw_model/my_page_view_model.dart';
 import 'package:oha/vidw_model/weather_view_model.dart';
 import 'package:oha/view/pages/login_page.dart';
@@ -24,67 +25,12 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  LocationViewModel _locationViewModel = LocationViewModel();
-  LoginViewModel _loginViewModel = LoginViewModel();
-  WeatherViewModel _weatherViewModel = WeatherViewModel();
-  MyPageViewModel _myPageViewModel = MyPageViewModel();
-
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
-
-    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
-    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
-    _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
-
-    _loginViewModel.refresh().then((result) {
-      _storage
-          .write(
-        key: Strings.accessTokenKey,
-        value: _loginViewModel.refreshData.data?.data.accessToken,
-      )
-          .then((_) {
-        if (result == 401) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-            (Route<dynamic> route) => false,
-          );
-
-          _storage.deleteAll();
-        }
-
-        _locationViewModel.fetchAllDistricts();
-        _locationViewModel.fetchFrequentDistricts();
-        _locationViewModel.getDefaultFrequentDistricts();
-        _weatherViewModel.getDefaultWeather();
-        _myPageViewModel.myInfo();
-      });
-    }).catchError((error) {
-      _storage.write(key: Strings.loginKey, value: '').then((_) {});
-    });
-
-    Future.delayed(const Duration(seconds: 3), _checkLoginStatus);
-  }
-
-  void _checkLoginStatus() async {
-    String? loginInfo = await _storage.read(key: Strings.loginKey);
-    if (!mounted) return;
-
-    if (loginInfo == 'true') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const App()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    }
+    AppInitializer.initialize(context);
   }
 
   @override

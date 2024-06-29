@@ -6,6 +6,7 @@ import 'package:oha/statics/Colors.dart';
 import 'package:oha/view/pages/agreements/location_agreements_page.dart';
 import 'package:oha/view/pages/agreements/privacy_agreements_page.dart';
 import 'package:oha/view/pages/agreements/service_agreements_page.dart';
+import 'package:oha/view/pages/agreements/sign_up_complete_page.dart';
 import 'package:oha/view/pages/login_finish_page.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,7 @@ class _AgreementsPageState extends State<AgreementsPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const App()),
+      MaterialPageRoute(builder: (context) => const SignUpCompletePage()),
     );
   }
 

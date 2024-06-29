@@ -14,6 +14,7 @@ import '../../app.dart';
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
+import '../../utils/app_initializer.dart';
 import '../../vidw_model/login_view_model.dart';
 
 enum LoginType {
@@ -75,8 +76,6 @@ class _LoginPageState extends State<LoginPage> {
                 try {
                   Map<String, dynamic> jsonResult = json.decode(cleanedResult);
                   data.setLoginData(json.encode(jsonResult));
-                  print("result : ${data.loginData.data?.data.accessToken}");
-                  print("result : ${cleanedResult}");
                   await _storage.write(
                       key: Strings.accessTokenKey,
                       value: data.loginData.data?.data.accessToken);
@@ -102,6 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     );
                   } else {
+                    AppInitializer.initialize(context);
+
                     navigator.pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const App()),
                       (Route<dynamic> route) => false,
