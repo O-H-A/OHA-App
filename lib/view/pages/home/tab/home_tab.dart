@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../network/api_response.dart';
@@ -99,8 +100,6 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void onDeleteYes(BuildContext context, int postId) async {
-    print('Confirmed delete for post ID: $postId');
-
     final response = await _uploadViewModel.delete(postId.toString());
 
     if (response == 200) {
@@ -149,29 +148,56 @@ class _HomeTabState extends State<HomeTab> {
     return const LoadingWidget();
   }
 
+  Widget _buildPostEmptyWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: ScreenUtil().setHeight(50.0)),
+          SvgPicture.asset(Images.postEmpty),
+          SizedBox(height: ScreenUtil().setHeight(19.0)),
+          Text(
+            Strings.postEmptyGuide,
+            style: TextStyle(
+              color: const Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w400,
+              fontSize: ScreenUtil().setSp(16.0),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCompleteWidget() {
     return Consumer<UploadViewModel>(
       builder: (context, uploadViewModel, child) {
         var dataList = uploadViewModel.uploadGetData.data?.data ?? [];
-        return ListView.builder(
-          itemCount: dataList.length,
-          itemBuilder: (BuildContext context, int index) {
-            var data = dataList[index];
-            return FeedWidget(
-              postId: data.postId,
-              nickName: data.userNickname,
-              locationInfo: data.locationDetail,
-              likesCount: data.likeCount,
-              isLike: data.isLike,
-              description: data.content,
-              hashTag: data.keywords,
-              imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
-              onLikePressed: () => _onLikePressed(data.postId, data.isLike),
-              onMorePressed: () => FourMoreDialog.show(
-                  context, (action) => _onMorePressed(data.postId, action)),
-            );
-          },
-        );
+        if (dataList.isEmpty) {
+          return _buildPostEmptyWidget();
+        } else {
+          return ListView.builder(
+            itemCount: dataList.length,
+            itemBuilder: (BuildContext context, int index) {
+              var data = dataList[index];
+              return FeedWidget(
+                postId: data.postId,
+                nickName: data.userNickname,
+                locationInfo: data.locationDetail,
+                likesCount: data.likeCount,
+                isLike: data.isLike,
+                description: data.content,
+                hashTag: data.keywords,
+                imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
+                onLikePressed: () => _onLikePressed(data.postId, data.isLike),
+                onMorePressed: () => FourMoreDialog.show(
+                    context, (action) => _onMorePressed(data.postId, action)),
+              );
+            },
+          );
+        }
       },
     );
   }
