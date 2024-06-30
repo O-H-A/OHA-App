@@ -9,8 +9,8 @@ import 'package:oha/view/widgets/loading_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../network/api_response.dart';
-import '../../../../vidw_model/location_view_model.dart';
-import '../../../../vidw_model/weather_view_model.dart';
+import '../../../../view_model/location_view_model.dart';
+import '../../../../view_model/weather_view_model.dart';
 import '../weather/my_weather_register_page.dart';
 import '../weather/weather_register_page.dart';
 
@@ -140,52 +140,53 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
   Widget _buildNowWeatherWidget() {
     return Consumer<WeatherViewModel>(
       builder: (context, weatherViewModel, child) {
-        if (weatherViewModel.weatherCountData.status == Status.loading) {
-          return const LoadingWidget();
-        } else if (weatherViewModel.weatherCountData.status ==
-            Status.complete) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-                  color: Colors.white,
-                  border: Border.all(
-                    color: const Color(UserColors.ui08),
-                    width: ScreenUtil().setWidth(1.0),
+        switch (weatherViewModel.weatherCountData.status) {
+          case Status.loading:
+            return const LoadingWidget();
+          case Status.complete:
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(ScreenUtil().radius(8.0)),
+                    color: Colors.white,
+                    border: Border.all(
+                      color: const Color(UserColors.ui08),
+                      width: ScreenUtil().setWidth(1.0),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: ScreenUtil().setHeight(182.0),
                   ),
                 ),
-                child: SizedBox(
-                  height: ScreenUtil().setHeight(182.0),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(46.0)),
+                  child: weatherViewModel.topThreeWeatherData.isEmpty
+                      ? _buildWeatherEmptyWidget()
+                      : Row(
+                          mainAxisAlignment:
+                              weatherViewModel.topThreeWeatherData.length == 1
+                                  ? MainAxisAlignment.center
+                                  : MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: weatherViewModel.topThreeWeatherData
+                              .map((weatherData) {
+                            return _buildWeatherInfoWidget(
+                                Images.weatherImageMap[weatherData.weatherName] ??
+                                    '',
+                                weatherData.weatherName,
+                                weatherData.count);
+                          }).toList(),
+                        ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: ScreenUtil().setWidth(46.0)),
-                child: weatherViewModel.topThreeWeatherData.isEmpty
-                    ? _buildWeatherEmptyWidget()
-                    : Row(
-                        mainAxisAlignment:
-                            weatherViewModel.topThreeWeatherData.length == 1
-                                ? MainAxisAlignment.center
-                                : MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: weatherViewModel.topThreeWeatherData
-                            .map((weatherData) {
-                          return _buildWeatherInfoWidget(
-                              Images.weatherImageMap[weatherData.weatherName] ??
-                                  '',
-                              weatherData.weatherName,
-                              weatherData.count);
-                        }).toList(),
-                      ),
-              ),
-            ],
-          );
-        } else {
-          return ErrorPage(isNetworkError: false, onRetry: _retryCallback);
+              ],
+            );
+          default:
+            return ErrorPage(isNetworkError: false, onRetry: _retryCallback);
         }
       },
     );

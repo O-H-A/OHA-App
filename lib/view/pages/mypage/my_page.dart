@@ -7,14 +7,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/vidw_model/my_page_view_model.dart';
+import 'package:oha/view_model/my_page_view_model.dart';
 import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/mypage/profile_edit_page.dart';
 import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/login_view_model.dart';
+import '../../../view_model/login_view_model.dart';
 import '../../widgets/notification_app_bar.dart';
 import 'delete_dialog.dart';
 

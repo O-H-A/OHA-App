@@ -15,7 +15,7 @@ import '../../statics/Colors.dart';
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
 import '../../utils/app_initializer.dart';
-import '../../vidw_model/login_view_model.dart';
+import '../../view_model/login_view_model.dart';
 
 enum LoginType {
   kakao,

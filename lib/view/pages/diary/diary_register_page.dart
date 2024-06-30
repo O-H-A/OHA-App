@@ -15,7 +15,7 @@ import 'package:oha/view/widgets/location_info_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/diary_view_model.dart';
+import '../../../view_model/diary_view_model.dart';
 import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
 import '../home/weather/weather_select_dialog.dart';
@@ -94,11 +94,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       setState(() {
         final DateFormat formatter = DateFormat('yyyyMMdd');
         _writeDay = formatter.format(selectedDate);
-
-        // selectedDate를 원하는 형식으로 변환하여 _showDay에 저장
         _showDay = _addWeekday(selectedDateString);
-
-        print("jehee : ${selectedDateString}, ${_writeDay}");
       });
     }
   }

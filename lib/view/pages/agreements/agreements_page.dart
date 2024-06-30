@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import '../../../app.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
-import '../../../vidw_model/login_view_model.dart';
+import '../../../view_model/login_view_model.dart';
 import '../../widgets/infinity_button.dart';
 
 class AgreementsPage extends StatefulWidget {

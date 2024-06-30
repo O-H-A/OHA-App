@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/vidw_model/upload_view_model.dart';
+import 'package:oha/view_model/location_view_model.dart';
+import 'package:oha/view_model/upload_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';

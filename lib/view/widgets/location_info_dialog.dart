@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../statics/colors.dart';
 import '../../statics/strings.dart';
-import '../../vidw_model/upload_view_model.dart';
+import '../../view_model/upload_view_model.dart';
 import 'button_icon.dart';
 
 class LocationInfoDialog extends StatefulWidget {

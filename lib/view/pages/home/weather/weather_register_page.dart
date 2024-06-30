@@ -4,12 +4,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view/pages/home/weather/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../vidw_model/weather_view_model.dart';
+import '../../../../view_model/weather_view_model.dart';
 import '../../../widgets/back_close_app_bar.dart';
 import '../../../widgets/complete_dialog.dart';
 import '../../location/location_setting_dialog.dart';
@@ -354,7 +354,9 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   }
 
   void sendWeatherPosting() {
-    if (!completeState()) {return;}
+    if (!completeState()) {
+      return;
+    }
 
     Map<String, dynamic> sendData = {
       "regionCode": _selectRegionCode,
@@ -363,8 +365,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
     Future<int> responseFuture;
     if (widget.editState) {
-      sendData['weatherId'] =
-          widget.weatherCode;
+      sendData['weatherId'] = widget.weatherCode;
       responseFuture = _weatherViewModel.editWeatherPosting(sendData);
     } else {
       responseFuture = _weatherViewModel.addWeatherPosting(sendData);
@@ -372,7 +373,9 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
     responseFuture.then((response) {
       if (response == 200 || response == 201) {
-        Navigator.pop(context);
+        _weatherViewModel.fetchWeatherPostingMy();
+
+        Navigator.pop(context, true);
         showDialog(
           context: context,
           barrierColor: Colors.transparent,
@@ -383,8 +386,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                     : Strings.addWeatherCompleteText);
           },
         );
-      } else {
-      }
+      } 
     }).catchError((error) {
     });
   }

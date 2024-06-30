@@ -6,7 +6,7 @@ import 'package:oha/network/api_response.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/vidw_model/diary_view_model.dart';
+import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
 import 'package:oha/view/pages/diary/week_calendar_widget.dart';
 import 'package:oha/view/widgets/button_icon.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:oha/vidw_model/location_view_model.dart';
-import 'package:oha/vidw_model/weather_view_model.dart';
+import 'package:oha/view_model/location_view_model.dart';
+import 'package:oha/view_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';

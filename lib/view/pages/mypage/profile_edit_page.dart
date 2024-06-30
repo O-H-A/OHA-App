@@ -13,7 +13,7 @@ import '../../../app.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
-import '../../../vidw_model/my_page_view_model.dart';
+import '../../../view_model/my_page_view_model.dart';
 import '../../widgets/back_complete_app_bar.dart';
 import '../../widgets/complete_dialog.dart';
 import '../location/location_change_dialog.dart';

@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../app.dart';
 import '../statics/strings.dart';
-import '../vidw_model/location_view_model.dart';
-import '../vidw_model/login_view_model.dart';
-import '../vidw_model/weather_view_model.dart';
-import '../vidw_model/my_page_view_model.dart';
+import '../view_model/location_view_model.dart';
+import '../view_model/login_view_model.dart';
+import '../view_model/weather_view_model.dart';
+import '../view_model/my_page_view_model.dart';
 import '../view/pages/login_page.dart';
 
 class AppInitializer {

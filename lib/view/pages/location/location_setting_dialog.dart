@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
-import '../../../vidw_model/location_view_model.dart';
+import '../../../view_model/location_view_model.dart';
 import '../../widgets/button_icon.dart';
 import 'location_change_dialog.dart';
 

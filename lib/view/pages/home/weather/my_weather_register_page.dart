@@ -4,14 +4,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/view/pages/home/weather/weather_register_page.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../statics/Colors.dart';
+import '../../../../network/api_response.dart';
+import '../../../../statics/colors.dart';
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
-import '../../../../vidw_model/location_view_model.dart';
-import '../../../../vidw_model/weather_view_model.dart';
+import '../../../../view_model/location_view_model.dart';
+import '../../../../view_model/weather_view_model.dart';
 import '../../../widgets/back_app_bar.dart';
 import '../../../widgets/button_icon.dart';
 import '../../../widgets/complete_dialog.dart';
+import '../../../widgets/loading_widget.dart';
 import '../../mypage/delete_dialog.dart';
 
 class MyWeatherRegisterPage extends StatefulWidget {
@@ -40,16 +42,14 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
         return DeleteDialog(
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
-          yesCallback: () =>
-              onChangeHistoryDeleteYes(context, address, weatherId),
+          yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
           noCallback: () => onChangeHistoryDeleteNo(context),
         );
       },
     );
   }
 
-  void onChangeHistoryDeleteYes(
-      BuildContext context, String address, weatherId) {
+  void onChangeHistoryDeleteYes(BuildContext context, String address, weatherId) {
     Map<String, dynamic> sendData = {
       "weatherId": weatherId,
     };
@@ -73,102 +73,119 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
   }
 
   Widget _buildMyWeatherWidget() {
-    var weatherList = _weatherViewModel.getWeatherPostingMy.data?.data ?? [];
-
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: weatherList.length,
-      itemBuilder: (context, index) {
-        var weather = weatherList[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => WeatherRegisterPage(
-                        editState: true,
-                        address: _locationViewModel.getThirdAddressByRegionCode(
-                            weather.regionCode.toString()), 
-                      )),
-            );
-          },
-          child: Padding(
-            padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(ScreenUtil().radius(8.0)),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: const Color(UserColors.ui10),
-                      width: ScreenUtil().setWidth(1.0),
-                    ),
-                  ),
-                  child: SizedBox(
-                    height: ScreenUtil().setHeight(50.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: ScreenUtil().setWidth(12.0)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            Images.weatherImageMap[weather.weatherName] ?? '',
-                            width: ScreenUtil().setWidth(22.0),
-                            height: ScreenUtil().setHeight(22.0),
-                          ),
-                          SizedBox(width: ScreenUtil().setWidth(11.0)),
-                          Text(
-                            _locationViewModel.getThirdAddressByRegionCode(
-                                weather.regionCode.toString()),
-                            style: const TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+    return Consumer<WeatherViewModel>(
+      builder: (context, weatherViewModel, child) {
+        switch (weatherViewModel.weatherCountData.status) {
+          case Status.loading:
+            return const LoadingWidget();
+          case Status.complete:
+            var weatherList = weatherViewModel.getWeatherPostingMy.data?.data ?? [];
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: weatherList.length,
+              itemBuilder: (context, index) {
+                var weather = weatherList[index];
+                return GestureDetector(
+                  onTap: () async {
+                    bool? result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WeatherRegisterPage(
+                                editState: true,
+                                address: _locationViewModel.getThirdAddressByRegionCode(
+                                    weather.regionCode.toString()),
+                                weatherCode: weather.weatherCode,
+                              )),
+                    );
+                    if (result == true) {
+                      _weatherViewModel.fetchWeatherPostingMy();
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color(UserColors.ui10),
+                              width: ScreenUtil().setWidth(1.0),
                             ),
                           ),
-                        ],
-                      ),
-                      ButtonIcon(
-                        icon: Icons.close,
-                        iconColor: Colors.black,
-                        callback: () {
-                          showDeleteDialog(
-                              _locationViewModel.getThirdAddressByRegionCode(
-                                  weather.regionCode.toString()),
-                              weather.weatherId);
-                        },
-                      ),
-                    ],
+                          child: SizedBox(
+                            height: ScreenUtil().setHeight(50.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: ScreenUtil().setWidth(12.0)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    Images.weatherImageMap[weather.weatherName] ?? '',
+                                    width: ScreenUtil().setWidth(22.0),
+                                    height: ScreenUtil().setHeight(22.0),
+                                  ),
+                                  SizedBox(width: ScreenUtil().setWidth(11.0)),
+                                  Text(
+                                    _locationViewModel.getThirdAddressByRegionCode(
+                                        weather.regionCode.toString()),
+                                    style: const TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              ButtonIcon(
+                                icon: Icons.close,
+                                iconColor: Colors.black,
+                                callback: () {
+                                  showDeleteDialog(
+                                      _locationViewModel.getThirdAddressByRegionCode(
+                                          weather.regionCode.toString()),
+                                      weather.weatherId);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        );
+                );
+              },
+            );
+          default:
+            return const Center(
+              child: Text("Error occurred, please try again."),
+            );
+        }
       },
     );
   }
 
   Widget _buildAddWeatherWidget() {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        bool? result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  const WeatherRegisterPage(editState: false)),
+              builder: (context) => const WeatherRegisterPage(editState: false)),
         );
+        if (result == true) {
+          _weatherViewModel.fetchWeatherPostingMy();
+        }
       },
       child: Padding(
         padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
@@ -190,8 +207,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
+              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
               child: Row(
                 children: [
                   ButtonIcon(
