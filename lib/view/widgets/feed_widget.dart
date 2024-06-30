@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:oha/view/widgets/button_image.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
@@ -164,7 +165,18 @@ class _FeedWidgetState extends State<FeedWidget> {
             callback: () => _toggleLike(),
           ),
           Text(
-            '$_likesCount ${Strings.likes}',
+            ' $_likesCount${Strings.likes}',
+            style: const TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(UserColors.ui01),
+            ),
+          ),
+          SizedBox(width: ScreenUtil().setWidth(8.0)),
+          ButtonImage(imagePath: Images.comment),
+          Text(
+            ' $_likesCount${Strings.comments}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
