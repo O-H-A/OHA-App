@@ -18,7 +18,8 @@ class Strings {
   static const String imageVideo = "이미지/영상";
   static const String nowWeather = "지금의 날씨";
   static const String category = "카테고리";
-  static const String likes = " Likes";
+  static const String likes = "개의 좋아요";
+  static const String comments = "개의 댓글";
   static const String todaySky = "오늘의 하늘은 🌤";
   static const String nowWeatherNews = "지금의 날씨 소식은 🌈";
   static const String weatherRegistered = "명이 등록";
