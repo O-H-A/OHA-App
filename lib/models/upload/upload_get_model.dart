@@ -22,7 +22,7 @@ class UploadGetModel {
 class UploadData {
   final int postId;
   final int userId;
-  final String userNickname;
+  final String userName;
   final bool isLike;
   final int likeCount;
   final String categoryCode;
@@ -42,7 +42,7 @@ class UploadData {
   UploadData({
     required this.postId,
     required this.userId,
-    required this.userNickname,
+    required this.userName,
     required this.isLike,
     required this.likeCount,
     required this.categoryCode,
@@ -63,7 +63,7 @@ class UploadData {
   factory UploadData.fromJson(Map<String, dynamic>? json) => UploadData(
         postId: json?['postId'] ?? 0,
         userId: json?['userId'] ?? 0,
-        userNickname: json?['userNickname'] ?? '',
+        userName: json?['userName'] ?? '',
         isLike: json?['isLike'] ?? false,
         likeCount: json?['likeCount'] ?? 0,
         categoryCode: json?['categoryCode'] ?? '',

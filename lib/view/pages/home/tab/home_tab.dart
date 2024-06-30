@@ -40,7 +40,9 @@ class _HomeTabState extends State<HomeTab> {
     _loadInitialData();
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100 && !_isLoadingMore) {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 100 &&
+          !_isLoadingMore) {
         _loadMoreData();
       }
     });
@@ -218,6 +220,10 @@ class _HomeTabState extends State<HomeTab> {
         if (dataList.isEmpty) {
           return _buildPostEmptyWidget();
         } else {
+          for (int i = 0; i < dataList.length; i++) {
+            print("Jehee : ${dataList[i].userName}   ${dataList.length}");
+          }
+
           return ListView.builder(
             controller: _scrollController,
             itemCount: dataList.length + (_isLoadingMore ? 1 : 0),
@@ -229,7 +235,7 @@ class _HomeTabState extends State<HomeTab> {
               var data = dataList[index];
               return FeedWidget(
                 postId: data.postId,
-                nickName: data.userNickname,
+                nickName: data.userName,
                 locationInfo: data.locationDetail,
                 likesCount: data.likeCount,
                 isLike: data.isLike,
