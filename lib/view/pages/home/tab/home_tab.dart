@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../network/api_response.dart';
 import '../../../../statics/colors.dart';
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
-import '../../../../vidw_model/location_view_model.dart';
-import '../../../../vidw_model/upload_view_model.dart';
+import '../../../../view_model/location_view_model.dart';
+import '../../../../view_model/upload_view_model.dart';
 import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../mypage/delete_dialog.dart';
-import '../../error_page.dart'; // ErrorPage import
+import '../../error_page.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -25,6 +26,10 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   late UploadViewModel _uploadViewModel;
   late LocationViewModel _locationViewModel;
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  int _offset = 0;
+  final int _pageSize = 10;
 
   @override
   void initState() {
@@ -32,15 +37,51 @@ class _HomeTabState extends State<HomeTab> {
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
 
+    _loadInitialData();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100 && !_isLoadingMore) {
+        _loadMoreData();
+      }
+    });
+  }
+
+  Future<void> _loadInitialData() async {
     Map<String, dynamic> sendData = {
       "regionCode": _locationViewModel.getDefaultLocationCode,
-      "offset": "0",
-      "size": "10",
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
     };
 
-    _uploadViewModel.posts(sendData).catchError((error) {
+    try {
+      await _uploadViewModel.posts(sendData);
+    } catch (error) {
       _navigateToErrorPage(context);
+    }
+  }
+
+  Future<void> _loadMoreData() async {
+    setState(() {
+      _isLoadingMore = true;
     });
+
+    _offset += _pageSize;
+
+    Map<String, dynamic> sendData = {
+      "regionCode": _locationViewModel.getDefaultLocationCode,
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
+    };
+
+    try {
+      await _uploadViewModel.posts(sendData, append: true);
+    } catch (error) {
+      _navigateToErrorPage(context);
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
   void _navigateToErrorPage(BuildContext context) {
@@ -99,8 +140,6 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void onDeleteYes(BuildContext context, int postId) async {
-    print('Confirmed delete for post ID: $postId');
-
     final response = await _uploadViewModel.delete(postId.toString());
 
     if (response == 200) {
@@ -149,29 +188,61 @@ class _HomeTabState extends State<HomeTab> {
     return const LoadingWidget();
   }
 
+  Widget _buildPostEmptyWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: ScreenUtil().setHeight(50.0)),
+          SvgPicture.asset(Images.postEmpty),
+          SizedBox(height: ScreenUtil().setHeight(19.0)),
+          Text(
+            Strings.postEmptyGuide,
+            style: TextStyle(
+              color: const Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w400,
+              fontSize: ScreenUtil().setSp(16.0),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCompleteWidget() {
     return Consumer<UploadViewModel>(
       builder: (context, uploadViewModel, child) {
         var dataList = uploadViewModel.uploadGetData.data?.data ?? [];
-        return ListView.builder(
-          itemCount: dataList.length,
-          itemBuilder: (BuildContext context, int index) {
-            var data = dataList[index];
-            return FeedWidget(
-              postId: data.postId,
-              nickName: data.userNickname,
-              locationInfo: data.locationDetail,
-              likesCount: data.likeCount,
-              isLike: data.isLike,
-              description: data.content,
-              hashTag: data.keywords,
-              imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
-              onLikePressed: () => _onLikePressed(data.postId, data.isLike),
-              onMorePressed: () => FourMoreDialog.show(
-                  context, (action) => _onMorePressed(data.postId, action)),
-            );
-          },
-        );
+        if (dataList.isEmpty) {
+          return _buildPostEmptyWidget();
+        } else {
+          return ListView.builder(
+            controller: _scrollController,
+            itemCount: dataList.length + (_isLoadingMore ? 1 : 0),
+            itemBuilder: (BuildContext context, int index) {
+              if (index == dataList.length) {
+                return _buildLoadingWidget();
+              }
+
+              var data = dataList[index];
+              return FeedWidget(
+                postId: data.postId,
+                nickName: data.userNickname,
+                locationInfo: data.locationDetail,
+                likesCount: data.likeCount,
+                isLike: data.isLike,
+                description: data.content,
+                hashTag: data.keywords,
+                imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
+                onLikePressed: () => _onLikePressed(data.postId, data.isLike),
+                onMorePressed: () => FourMoreDialog.show(
+                    context, (action) => _onMorePressed(data.postId, action)),
+              );
+            },
+          );
+        }
       },
     );
   }
@@ -195,19 +266,22 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          _buildTodaySkyText(),
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          Expanded(
-            child: _buildBody(),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildTodaySkyText(),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        Expanded(
+          child: _buildBody(),
+        ),
+      ],
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

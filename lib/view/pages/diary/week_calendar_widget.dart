@@ -6,7 +6,7 @@ import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/diary_view_model.dart';
+import '../../../view_model/diary_view_model.dart';
 import 'diary_register_page.dart';
 
 class WeekCalendarWidget extends StatefulWidget {

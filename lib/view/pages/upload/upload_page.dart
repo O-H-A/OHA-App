@@ -12,7 +12,9 @@ import '../../widgets/infinity_button.dart';
 import 'album.dart';
 
 class UploadPage extends StatefulWidget {
-  const UploadPage({super.key});
+  final bool isDiary;
+
+  const UploadPage({super.key, this.isDiary = false});
 
   @override
   State<UploadPage> createState() => _UploadPageState();
@@ -33,13 +35,18 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   void showWritePage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
+    if (widget.isDiary) {
+      Navigator.pop(context, _images[_selectedIndex]);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
           builder: (context) => UploadWritePage(
-                selectImage: _images[_selectedIndex],
-              )),
-    );
+            selectImage: _images[_selectedIndex],
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> checkPermission() async {

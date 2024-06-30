@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:oha/vidw_model/location_view_model.dart';
+import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view/pages/location/location_app_bar_widget.dart';
 import 'package:oha/view/pages/location/location_find_button.dart';
 import 'package:provider/provider.dart';

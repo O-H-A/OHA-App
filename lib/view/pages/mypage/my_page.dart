@@ -7,14 +7,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
-import 'package:oha/vidw_model/my_page_view_model.dart';
+import 'package:oha/view_model/my_page_view_model.dart';
 import 'package:oha/view/pages/login_page.dart';
 import 'package:oha/view/pages/mypage/profile_edit_page.dart';
 import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:provider/provider.dart';
 
-import '../../../vidw_model/login_view_model.dart';
+import '../../../view_model/login_view_model.dart';
 import '../../widgets/notification_app_bar.dart';
+import 'delete_dialog.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -36,23 +38,59 @@ class _MyPageState extends State<MyPage> {
     _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
   }
 
-  void onLogout() async {
+  void _onLogout() async {
     await _loginViewModel.logout().then((value) {
       if (value == 200) {
-        _storage.write(key: Strings.loginKey, value: '');
-        _storage.write(key: 'accessToken', value: '');
+        _storage.deleteAll();
+
+        Navigator.pop(context); // Close the dialog
 
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
           (Route<dynamic> route) => false,
         );
+
+        CompleteDialog.showCompleteDialog(context, Strings.logoutComplete);
       }
-    }).onError((error, stackTrace) {
-    });
+    }).onError((error, stackTrace) {});
   }
 
-  void showAgreementPage() {
+  void _onWithDraw() async {
+    try {
+      await _loginViewModel.withDraw().then((value) => {
+            Navigator.pop(context),
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+              (Route<dynamic> route) => false,
+            ),
+          });
+
+      if (!mounted) return;
+
+      CompleteDialog.showCompleteDialog(context, Strings.withDrawComplete);
+    } catch (e) {}
+  }
+
+  void _showDeleteDialog(String title, String guide, VoidCallback yesCallback) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          titleText: title,
+          guideText: guide,
+          yesCallback: () {
+            Navigator.pop(context);
+            yesCallback();
+          },
+          noCallback: () => Navigator.pop(context),
+        );
+      },
+    );
+  }
+
+  void _showAgreementPage() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TermsAndPolicies()),
@@ -70,31 +108,34 @@ class _MyPageState extends State<MyPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SvgPicture.asset(Images.defaultProfile),
+          (_myPageViewModel.myInfoData.data?.data.profileUrl?.isEmpty ?? true)
+              ? SvgPicture.asset(Images.defaultProfile)
+              : Image.network(
+                  _myPageViewModel.myInfoData.data?.data.profileUrl ?? ""),
           SizedBox(width: ScreenUtil().setWidth(12.0)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "User A",
-                style: const TextStyle(
+                _myPageViewModel.myInfoData.data?.data.name ?? '',
+                style: TextStyle(
                   fontFamily: "Pretendard",
-                  fontSize: 24,
+                  fontSize: ScreenUtil().setSp(24.0),
                   fontWeight: FontWeight.w700,
-                  color: Color(UserColors.ui01),
+                  color: const Color(UserColors.ui01),
                 ),
               ),
               GestureDetector(
                 onTap: () {
                   return;
                 },
-                child: const Text(
-                  Strings.loginedWithKakao,
+                child: Text(
+                  Strings.loginProviderMap["NAVER"] ?? Strings.loginedWithKakao,
                   style: TextStyle(
                     fontFamily: "Pretendard",
-                    fontSize: 14,
+                    fontSize: ScreenUtil().setSp(14.0),
                     fontWeight: FontWeight.w500,
-                    color: Color(UserColors.ui06),
+                    color: const Color(UserColors.ui06),
                   ),
                 ),
               ),
@@ -105,7 +146,7 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildContentsWidget(String title, VoidCallback callback) {
+  Widget _buildContentsWidget(String title, VoidCallback callback, bool arrow) {
     return GestureDetector(
       onTap: callback,
       child: Row(
@@ -120,9 +161,27 @@ class _MyPageState extends State<MyPage> {
               color: Colors.black,
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.black),
+          (arrow)
+              ? const Icon(Icons.arrow_forward_ios, color: Colors.black)
+              : Container(),
         ],
       ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    _showDeleteDialog(
+      Strings.logout,
+      Strings.logoutGuide,
+      _onLogout,
+    );
+  }
+
+  void _showWithDrawDialog() {
+    _showDeleteDialog(
+      Strings.withDraw,
+      Strings.withDrawGiude,
+      _onWithDraw,
     );
   }
 
@@ -166,13 +225,13 @@ class _MyPageState extends State<MyPage> {
                   ),
                   SizedBox(height: ScreenUtil().setHeight(28.0)),
                   _buildContentsWidget(
-                      Strings.termsAndPolicies, showAgreementPage),
+                      Strings.termsAndPolicies, _showAgreementPage, true),
                   SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  // _buildContentsWidget(Strings.sendCommentsInquiries),
-                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  // _buildContentsWidget(Strings.accountCancel),
-                  // SizedBox(height: ScreenUtil().setHeight(26.0)),
-                  _buildContentsWidget(Strings.logout, onLogout),
+                  _buildContentsWidget(
+                      Strings.accountCancel, _showWithDrawDialog, false),
+                  SizedBox(height: ScreenUtil().setHeight(26.0)),
+                  _buildContentsWidget(
+                      Strings.logout, _showLogoutDialog, false),
                 ],
               ),
             ),

@@ -177,6 +177,15 @@ class Strings {
   static const String mainWeatherVeryHot = "매우 더운 날씨에요\n열사병에 유의해야 해요";
   static const String mainWeatherVeryCold = "매우 추운 날씨에요\n강추위를 대비하여 외출해야해요";
   static const String mainWeatherSnowRain = "눈과 비가 함께 와요\n외투나 우산이 필요해요";
+  static const String logoutGuide = "로그아웃 하시겠습니까?";
+  static const String withDrawGiude =
+      "탈퇴하시겠습니까?\n탈퇴 시 계정은 복구되지 않으며 작성한 게시물은\n삭제처리 됩니다";
+  static const String withDraw = "탈퇴";
+  static const String logoutComplete = "로그아웃 되었습니다.";
+  static const String withDrawComplete = "탈퇴 되었습니다.";
+  static const String postEmptyGuide =
+      "아직 등록된 게시물이 없어요.\n아래 업로드 버튼을 눌러 첫 게시물을 업로드해 보세요!";
+  static const String complete = "완료";
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",
@@ -206,6 +215,13 @@ class Strings {
     "KMA_RAIN_SNOW": mainWeatherSnowRain,
   };
 
+  static const Map<String, String> loginProviderMap = {
+    "NAVER": loginedWithNaver,
+    "KAKAO": loginedWithKakao,
+    "GOOGLE": loginedWithGoogle,
+    "APPLE": loginedWithApple,
+  };
+
   static String getProbPrecip(String probPrecip) {
     return "구름이 많은 날씨에요\n강수 확률은 $probPrecip%에요";
   }
@@ -227,4 +243,12 @@ class Strings {
 
 // === API KEY ===
   static const poistIdKey = "postId";
+
+  static const setDateKey = "setDate";
+  static const titleKey = "title";
+  static const contentKey = "content";
+  static const weatherKey = "weather";
+  static const fileKey = "file";
+  static const isPublicKey = "isPublic";
+  static const locationKey = "location";
 }

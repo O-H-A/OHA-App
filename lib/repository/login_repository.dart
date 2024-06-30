@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:oha/models/login/with_draw_model.dart';
+
 import '../models/login/login_model.dart';
 import '../models/login/logout_model.dart';
 import '../models/login/refresh_model.dart';
@@ -19,7 +21,7 @@ class LoginRepository {
   Future<LogoutModel> logout() async {
     try {
       final response = await NetworkManager.instance.post(ApiUrl.logout, {});
-      final responseBody = jsonDecode(response.body);
+      final responseBody = jsonDecode(response);
       return LogoutModel.fromJson(responseBody);
     } catch (e) {
       rethrow;
@@ -36,11 +38,19 @@ class LoginRepository {
     }
   }
 
-    Future<RefreshModel> refresh() async {
+  Future<RefreshModel> refresh() async {
     try {
-      dynamic response =
-          await NetworkManager.instance.refresh(ApiUrl.refresh);
+      dynamic response = await NetworkManager.instance.refresh(ApiUrl.refresh);
       return RefreshModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<WithDrawModel> withDraw() async {
+    try {
+      dynamic response = await NetworkManager.instance.delete(ApiUrl.withDraw);
+      return WithDrawModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

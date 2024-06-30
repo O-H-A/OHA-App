@@ -12,9 +12,14 @@ import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 
+import '../../../view_model/diary_view_model.dart';
+import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
 import '../home/weather/weather_select_dialog.dart';
+import '../upload/upload_page.dart';
 
 class DiaryRegisterPage extends StatefulWidget {
   final DateTime selectDate;
@@ -30,24 +35,74 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final _titleController = TextEditingController();
   final _contentsController = TextEditingController();
   bool _publicStatus = false;
-  XFile? uploadImage;
+  File? uploadImage;
   final ImagePicker picker = ImagePicker();
   String _selectTitle = "";
   String _selectImage = "";
+  String _showDay = "";
+  String _writeDay = "";
+  DiaryViewModel _diaryViewModel = DiaryViewModel();
+
+  @override
+  void initState() {
+    _writeDay = _getToday();
+    _showDay = _getToday();
+    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    super.initState();
+  }
 
   String _getToday() {
     return DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(DateTime.now());
   }
 
-  Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile =
-        await picker.pickImage(source: imageSource, imageQuality: 30);
+  String _addWeekday(String date) {
+    DateTime parsedDate = DateFormat('yyyy년 MM월 dd일').parse(date);
+    String weekday = DateFormat('E', 'ko_KR').format(parsedDate);
+    return '$date ($weekday)';
+  }
 
-    if (pickedFile != null) {
+  String _formatDate(DateTime date) {
+    return DateFormat('yyyyMMdd').format(date);
+  }
+
+  Future _getImage() async {
+    final selectedImage = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UploadPage(isDiary: true),
+      ),
+    );
+
+    if (selectedImage != null && selectedImage is AssetEntity) {
+      File? file = await selectedImage.file;
+      if (file != null) {
+        setState(() {
+          uploadImage = file;
+        });
+      }
+    }
+  }
+
+  void _showDatePicker() async {
+    final String? selectedDateString = await DatePicker.show(context);
+    if (selectedDateString != null) {
+      // 반환된 문자열이 'yyyy년 MM월 dd일' 형식이라고 가정합니다.
+      final DateFormat inputFormatter = DateFormat('yyyy년 MM월 dd일');
+      final DateTime selectedDate =
+          inputFormatter.parseStrict(selectedDateString);
+
       setState(() {
-        uploadImage = XFile(pickedFile.path);
+        final DateFormat formatter = DateFormat('yyyyMMdd');
+        _writeDay = formatter.format(selectedDate);
+        _showDay = _addWeekday(selectedDateString);
       });
     }
+  }
+
+  bool _buttonEanbled() {
+    return _titleController.text.isEmpty ||
+        uploadImage == null ||
+        _selectTitle.isEmpty;
   }
 
   Widget _buildPhotoArea() {
@@ -55,7 +110,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
         ? SizedBox(
             width: double.infinity,
             height: ScreenUtil().setHeight(360.0),
-            child: Image.file(File(uploadImage!.path)),
+            child: Image.file(
+              uploadImage!,
+              fit: BoxFit.cover,
+            ),
           )
         : _buildImageEmptyWidget();
   }
@@ -121,7 +179,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           ),
         ],
       ),
-      callback: () => getImage(ImageSource.gallery),
+      callback: _getImage,
     );
   }
 
@@ -177,9 +235,20 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       setState(() {
         _selectTitle = result['title'];
         _selectImage = result['image'];
-        // _selectWeatherCode = Strings.weatherCodeMap[_selectTitle] ?? "";
       });
     }
+  }
+
+  void _sendDiaryRegist() {
+    Map<String, dynamic> sendData = {
+      Strings.setDateKey: _writeDay,
+      Strings.titleKey: _titleController.text,
+      Strings.contentKey: _contentsController.text,
+      Strings.weatherKey: _selectTitle,
+      Strings.fileKey: "",
+      Strings.isPublicKey: _publicStatus,
+      Strings.locationKey: "",
+    };
   }
 
   Widget _buildSelectWeatherTitleText() {
@@ -331,20 +400,20 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          titleSpacing: ScreenUtil().setWidth(22.0),
-          title: Container(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        titleSpacing: ScreenUtil().setWidth(22.0),
+        title: GestureDetector(
+          onTap: () => _showDatePicker(),
+          child: UserContainer(
             width: ScreenUtil().setWidth(149.0),
             height: ScreenUtil().setHeight(35.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ScreenUtil().radius(18.0)),
-              color: Colors.white,
-              border: Border.all(color: const Color(UserColors.ui08)),
-            ),
+            backgroundColor: Colors.white,
+            borderRadius: ScreenUtil().radius(18.0),
+            borderColor: const Color(UserColors.ui08),
             child: Center(
               child: Text(
-                _getToday(),
+                _showDay,
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Pretendard",
@@ -354,11 +423,13 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
               ),
             ),
           ),
-          leading: ButtonIcon(
-            icon: Icons.close,
-            iconColor: Colors.black,
-            callback: () => Navigator.pop(context),
-          )),
+        ),
+        leading: ButtonIcon(
+          icon: Icons.close,
+          iconColor: Colors.black,
+          callback: () => Navigator.pop(context),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -456,10 +527,14 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
             child: InfinityButton(
               height: ScreenUtil().setHeight(50.0),
               radius: ScreenUtil().radius(8.0),
-              backgroundColor: const Color(UserColors.ui10),
+              backgroundColor: _buttonEanbled()
+                  ? const Color(UserColors.ui10)
+                  : const Color(UserColors.primaryColor),
+              textColor: _buttonEanbled() ? Colors.black : Colors.white,
               text: Strings.register,
               textSize: 16,
               textWeight: FontWeight.w600,
+              callback: () => _sendDiaryRegist(),
             ),
           ),
         ],
