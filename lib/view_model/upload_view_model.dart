@@ -29,8 +29,12 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void _setUploadGetData(ApiResponse<UploadGetModel> response) {
-    uploadGetData = response;
+  void _setUploadGetData(ApiResponse<UploadGetModel> response, {bool append = false}) {
+    if (append && response.status == Status.complete && uploadGetData.status == Status.complete) {
+      uploadGetData.data?.data.addAll(response.data?.data ?? []);
+    } else {
+      uploadGetData = response;
+    }
     notifyListeners();
   }
 
@@ -39,17 +43,16 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> posting(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+  Future<int> posting(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _uploadRepository.posting(data, thumbnailData);
 
     return result.statusCode;
   }
 
-  Future<int> posts(Map<String, dynamic> queryParams) async {
+  Future<int> posts(Map<String, dynamic> queryParams, {bool append = false}) async {
     int statusCode = 400;
     await _uploadRepository.posts(queryParams).then((value) {
-      _setUploadGetData(ApiResponse.complete(value));
+      _setUploadGetData(ApiResponse.complete(value), append: append);
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
       _setUploadGetData(ApiResponse.error(error.toString()));
@@ -68,8 +71,7 @@ class UploadViewModel with ChangeNotifier {
     final result = await _uploadRepository.delete(postId);
 
     if (result.statusCode == 200) {
-      uploadGetData.data?.data
-          .removeWhere((item) => item.postId == int.parse(postId));
+      uploadGetData.data?.data.removeWhere((item) => item.postId == int.parse(postId));
       notifyListeners();
     }
 

@@ -26,6 +26,10 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   late UploadViewModel _uploadViewModel;
   late LocationViewModel _locationViewModel;
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  int _offset = 0;
+  final int _pageSize = 10;
 
   @override
   void initState() {
@@ -33,15 +37,51 @@ class _HomeTabState extends State<HomeTab> {
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
 
+    _loadInitialData();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100 && !_isLoadingMore) {
+        _loadMoreData();
+      }
+    });
+  }
+
+  Future<void> _loadInitialData() async {
     Map<String, dynamic> sendData = {
       "regionCode": _locationViewModel.getDefaultLocationCode,
-      "offset": "0",
-      "size": "10",
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
     };
 
-    _uploadViewModel.posts(sendData).catchError((error) {
+    try {
+      await _uploadViewModel.posts(sendData);
+    } catch (error) {
       _navigateToErrorPage(context);
+    }
+  }
+
+  Future<void> _loadMoreData() async {
+    setState(() {
+      _isLoadingMore = true;
     });
+
+    _offset += _pageSize;
+
+    Map<String, dynamic> sendData = {
+      "regionCode": _locationViewModel.getDefaultLocationCode,
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
+    };
+
+    try {
+      await _uploadViewModel.posts(sendData, append: true);
+    } catch (error) {
+      _navigateToErrorPage(context);
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
   void _navigateToErrorPage(BuildContext context) {
@@ -179,8 +219,13 @@ class _HomeTabState extends State<HomeTab> {
           return _buildPostEmptyWidget();
         } else {
           return ListView.builder(
-            itemCount: dataList.length,
+            controller: _scrollController,
+            itemCount: dataList.length + (_isLoadingMore ? 1 : 0),
             itemBuilder: (BuildContext context, int index) {
+              if (index == dataList.length) {
+                return _buildLoadingWidget();
+              }
+
               var data = dataList[index];
               return FeedWidget(
                 postId: data.postId,
@@ -232,5 +277,11 @@ class _HomeTabState extends State<HomeTab> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
