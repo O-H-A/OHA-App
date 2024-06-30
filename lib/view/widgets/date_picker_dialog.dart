@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/strings.dart';
@@ -10,6 +11,10 @@ class DatePicker extends StatefulWidget {
 
   @override
   _DatePickerState createState() => _DatePickerState();
+
+    String _formatDate(DateTime date) {
+    return DateFormat('yyyyMMdd').format(date);
+  }
 
   static Future<String?> show(BuildContext context) async {
     return await showDialog<String>(

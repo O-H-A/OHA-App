@@ -44,7 +44,8 @@ class ApiUrl {
   static const String weatherDelete = "/api/posting/weather/";
   static const String weatherPostingMy =
       "http://152.67.219.168/api/posting/weather/my";
-  static const String defaultWeather = "http://152.67.219.168/api/common/weather/datas";
+  static const String defaultWeather =
+      "http://152.67.219.168/api/common/weather/datas";
 
   // Upload
   static const String posting = "http://152.67.219.168/api/posting/post";
@@ -55,5 +56,6 @@ class ApiUrl {
   static const String test = "/api/posting/test";
 
   // Diary
-  static const String myDiary =  "http://152.67.219.168/api/diary/my";
+  static const String myDiary = "http://152.67.219.168/api/diary/my";
+  static const String diary = "http://152.67.219.168/api/diary";
 }
