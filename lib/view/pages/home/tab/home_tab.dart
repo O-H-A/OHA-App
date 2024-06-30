@@ -14,7 +14,7 @@ import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../mypage/delete_dialog.dart';
-import '../../error_page.dart'; // ErrorPage import
+import '../../error_page.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -221,19 +221,16 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          _buildTodaySkyText(),
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          Expanded(
-            child: _buildBody(),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildTodaySkyText(),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        Expanded(
+          child: _buildBody(),
+        ),
+      ],
     );
   }
 }

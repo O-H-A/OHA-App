@@ -124,38 +124,84 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: ScreenUtil().setHeight(12.0)),
-          MainWeatherWidget(
-              neighborhood: _locationViewModel.getDefaultLocation,
-              temperature:
-                  _weatherViewModel.defaultWeatherData.data?.data.hourlyTemp ??
-                      '',
-              widgetType:
-                  _weatherViewModel.defaultWeatherData.data?.data.widget ?? '',
-              probPrecip:
-                  _weatherViewModel.defaultWeatherData.data?.data.probPrecip ??
-                      ''),
-          SizedBox(height: ScreenUtil().setHeight(43.0)),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-            child: _buildTabBarWidget(),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: const <Widget>[
-                HomeTab(),
-                PopularityTab(),
-                ImageVideoTab(),
-                NowWeatherTab(),
-              ],
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              pinned: true,
+              floating: true,
+              expandedHeight: 160.0,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
+                  children: [
+                    SizedBox(height: ScreenUtil().setHeight(12.0)),
+                    MainWeatherWidget(
+                        neighborhood: _locationViewModel.getDefaultLocation,
+                        temperature: _weatherViewModel
+                                .defaultWeatherData.data?.data.hourlyTemp ??
+                            '',
+                        widgetType: _weatherViewModel
+                                .defaultWeatherData.data?.data.widget ??
+                            '',
+                        probPrecip: _weatherViewModel
+                                .defaultWeatherData.data?.data.probPrecip ??
+                            ''),
+                    SizedBox(height: ScreenUtil().setHeight(43.0)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(22.0)),
+                      child: _buildTabBarWidget(),
+                    ),
+                  ],
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(48.0),
+                child: Container(
+                  color: Colors.white,
+                  child: TabBar(
+                    labelPadding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(1.0)),
+                    controller: tabController,
+                    tabs: const <Widget>[
+                      Tab(text: Strings.home),
+                      Tab(text: Strings.popularity),
+                      Tab(text: Strings.imageVideo),
+                      Tab(text: Strings.nowWeather),
+                    ],
+                    labelColor: const Color(0xFF333333),
+                    labelStyle: const TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    unselectedLabelColor: const Color(0xFF444444),
+                    unselectedLabelStyle: const TextStyle(
+                      fontFamily: "Pretendard",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overlayColor: const MaterialStatePropertyAll(
+                      Colors.white,
+                    ),
+                    indicatorColor: Colors.black,
+                    indicatorWeight: 2,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ];
+        },
+        body: TabBarView(
+          controller: tabController,
+          children: const <Widget>[
+            HomeTab(),
+            PopularityTab(),
+            ImageVideoTab(),
+            NowWeatherTab(),
+          ],
+        ),
       ),
     );
   }
