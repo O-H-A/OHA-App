@@ -13,7 +13,7 @@ class ImageVideoTab extends StatefulWidget {
 }
 
 Widget _buildCategoryWidget(int index) {
-  switch (index) {  
+  switch (index) {
     case 0:
       return SvgPicture.asset(Images.cloudCategory);
     case 1:
@@ -26,7 +26,6 @@ Widget _buildCategoryWidget(int index) {
       return SvgPicture.asset(Images.nightSkyCategory);
     case 5:
       return SvgPicture.asset(Images.sunnyCategory);
-
     default:
       return Container();
   }
@@ -35,13 +34,13 @@ Widget _buildCategoryWidget(int index) {
 Widget _buildCategoryTextWidget() {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-    child: const Text(
+    child: Text(
       Strings.category,
       style: TextStyle(
           color: Colors.black,
           fontFamily: "Pretendard",
           fontWeight: FontWeight.w600,
-          fontSize: 20),
+          fontSize: ScreenUtil().setSp(20.0)),
     ),
   );
 }
@@ -55,20 +54,31 @@ class _ImageVideoTabState extends State<ImageVideoTab> {
         children: [
           _buildCategoryTextWidget(),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: ScreenUtil().setWidth(12.0),
-                crossAxisSpacing: ScreenUtil().setHeight(12.0),
+            child: Padding(
+              padding: EdgeInsets.all(ScreenUtil().setWidth(12.0)),
+              child: Column(
+                children: [
+                  _buildRow(0),
+                  SizedBox(height: ScreenUtil().setHeight(12.0)),
+                  _buildRow(2),
+                  SizedBox(height: ScreenUtil().setHeight(12.0)),
+                  _buildRow(4),
+                ],
               ),
-              itemBuilder: (context, index) {
-                return _buildCategoryWidget(index);
-              },
-              itemCount: 6,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRow(int startIndex) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildCategoryWidget(startIndex),
+        _buildCategoryWidget(startIndex + 1),
+      ],
     );
   }
 }
