@@ -13,7 +13,7 @@ class ImageVideoTab extends StatefulWidget {
 }
 
 Widget _buildCategoryWidget(int index) {
-  switch (index) {
+  switch (index) {  
     case 0:
       return SvgPicture.asset(Images.cloudCategory);
     case 1:

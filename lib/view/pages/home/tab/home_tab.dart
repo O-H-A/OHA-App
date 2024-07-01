@@ -220,10 +220,6 @@ class _HomeTabState extends State<HomeTab> {
         if (dataList.isEmpty) {
           return _buildPostEmptyWidget();
         } else {
-          for (int i = 0; i < dataList.length; i++) {
-            print("Jehee : ${dataList[i].userName}   ${dataList.length}");
-          }
-
           return ListView.builder(
             controller: _scrollController,
             itemCount: dataList.length + (_isLoadingMore ? 1 : 0),
