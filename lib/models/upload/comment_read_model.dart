@@ -3,8 +3,11 @@ class CommentReadModel {
   String message;
   List<CommentData> data;
 
-  CommentReadModel(
-      {required this.statusCode, required this.message, required this.data});
+  CommentReadModel({
+    required this.statusCode,
+    required this.message,
+    required this.data,
+  });
 
   factory CommentReadModel.fromJson(Map<String, dynamic> json) {
     return CommentReadModel(
@@ -15,14 +18,6 @@ class CommentReadModel {
               .toList() ??
           [],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'statusCode': statusCode,
-      'message': message,
-      'data': data?.map((e) => e.toJson()).toList(),
-    };
   }
 }
 
@@ -79,24 +74,5 @@ class CommentData {
           [],
       likeCount: json['likeCount'] ?? 0,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'commentId': commentId,
-      'parentId': parentId,
-      'postId': postId,
-      'content': content,
-      'userId': userId,
-      'userNickname': userNickname,
-      'profileUrl': profileUrl,
-      'taggedUserId': taggedUserId,
-      'taggedUserNickname': taggedUserNickname,
-      'regDtm': regDtm,
-      'updDtm': updDtm,
-      'replyCount': replyCount,
-      'likeUsers': likeUsers,
-      'likeCount': likeCount,
-    };
   }
 }
