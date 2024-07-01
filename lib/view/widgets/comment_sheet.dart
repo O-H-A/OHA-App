@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // flutter_svg 패키지 추가
 import 'package:provider/provider.dart';
 import 'package:oha/models/upload/comment_read_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import '../../network/api_response.dart';
+import '../../statics/images.dart';
 import 'loading_widget.dart'; // 로딩 위젯 추가
 
 class CommentSheet extends StatefulWidget {
   final int postId;
-  
+
   const CommentSheet({super.key, required this.postId});
 
   @override
@@ -36,7 +38,8 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadInitialComments() async {
-    final uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    final uploadViewModel =
+        Provider.of<UploadViewModel>(context, listen: false);
     await uploadViewModel.commentRead({
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
@@ -51,7 +54,8 @@ class _CommentSheetState extends State<CommentSheet> {
 
     _offset += _pageSize;
 
-    final uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    final uploadViewModel =
+        Provider.of<UploadViewModel>(context, listen: false);
     await uploadViewModel.commentRead({
       "postId": widget.postId,
       "offset": _offset.toString(),
@@ -92,7 +96,13 @@ class _CommentSheetState extends State<CommentSheet> {
                   case Status.loading:
                     return const LoadingWidget(); // 로딩 위젯 표시
                   case Status.complete:
-                    var comments = uploadViewModel.commentReadData.data?.data ?? [];
+                    var comments =
+                        uploadViewModel.commentReadData.data?.data ?? [];
+                    if (comments.isEmpty) {
+                      return Center(
+                        child: SvgPicture.asset(Images.commentEmpty),
+                      );
+                    }
                     return ListView.builder(
                       controller: _scrollController,
                       itemCount: comments.length + (_isLoadingMore ? 1 : 0),

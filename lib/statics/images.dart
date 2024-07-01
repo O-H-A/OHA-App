@@ -94,6 +94,7 @@ class Images {
   static const String signUpComplete = "assets/images/sign_up_complete.svg";
   static const String postEmpty = "assets/images/post_empty.svg";
   static const String comment = "assets/images/comment.svg";
+  static const String commentEmpty = "assets/images/comment_empty.svg";
 
   static const Map<String, String> weatherImageMap = {
     "흐림": Images.cloudyEnable,
