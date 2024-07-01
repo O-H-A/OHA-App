@@ -7,6 +7,7 @@ import '../../statics/Colors.dart';
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
 import 'button_icon.dart';
+import 'comment_sheet.dart';
 
 class FeedWidget extends StatefulWidget {
   final int postId;
@@ -174,7 +175,11 @@ class _FeedWidgetState extends State<FeedWidget> {
             ),
           ),
           SizedBox(width: ScreenUtil().setWidth(8.0)),
-          ButtonImage(imagePath: Images.comment),
+          ButtonImage(
+            imagePath: Images.comment,
+            callback: () =>
+                _showCommentSheet(context), // Comment 아이콘을 클릭했을 때 실행
+          ),
           Text(
             ' $_likesCount${Strings.comments}',
             style: const TextStyle(
@@ -186,6 +191,17 @@ class _FeedWidgetState extends State<FeedWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showCommentSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FractionallySizedBox(
+          heightFactor: 0.9, // 화면의 90% 차지
+          child: CommentSheet(postId: widget.postId)),
     );
   }
 
