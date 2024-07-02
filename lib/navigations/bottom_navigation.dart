@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../statics/images.dart';
 import '../view/pages/diary/diary_page.dart';
 import '../view/pages/home_page.dart';
@@ -25,17 +24,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   void _onBottomTapped(int index) {
     setState(() {
-      if (index != 1) {
-        _selectIndex = index;
-      }
+      _selectIndex = index;
     });
-
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const UploadPage()),
-      );
-    }
   }
 
   @override
@@ -46,50 +36,69 @@ class _BottomNavigationState extends State<BottomNavigation> {
         index: _selectIndex,
         children: _pages,
       ),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(10.0),
-          topRight: Radius.circular(10.0),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectIndex,
-          onTap: _onBottomTapped,
-          type: BottomNavigationBarType.fixed,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Image.asset(Images.homeDisable),
-              activeIcon: Image.asset(Images.homeEnable),
-              label: "",
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(Images.uploadDisable),
-              activeIcon: Image.asset(Images.uploadEnable),
-              label: "",
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(Images.diaryDisable),
-              activeIcon: Image.asset(Images.diaryEnable),
-              label: "",
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(Images.myPageDisable),
-              activeIcon: Image.asset(Images.myPageEnable),
-              label: "",
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, -3),
             ),
           ],
-          showUnselectedLabels: true,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          selectedLabelStyle: const TextStyle(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectIndex,
+            onTap: _onBottomTapped,
+            type: BottomNavigationBarType.fixed,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Image.asset(Images.homeDisable),
+                activeIcon: Image.asset(Images.homeEnable),
+                label: "",
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(Images.uploadDisable),
+                activeIcon: Image.asset(Images.uploadEnable),
+                label: "",
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(Images.diaryDisable),
+                activeIcon: Image.asset(Images.diaryEnable),
+                label: "",
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(Images.myPageDisable),
+                activeIcon: Image.asset(Images.myPageEnable),
+                label: "",
+              ),
+            ],
+            showUnselectedLabels: true,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey,
+            selectedLabelStyle: const TextStyle(
               color: Colors.blue,
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w600,
-              fontSize: 12),
-          unselectedLabelStyle: const TextStyle(
+              fontSize: 12,
+            ),
+            unselectedLabelStyle: const TextStyle(
               color: Colors.white,
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w600,
-              fontSize: 12),
+              fontSize: 12,
+            ),
+          ),
         ),
       ),
     );
