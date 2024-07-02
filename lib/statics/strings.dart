@@ -20,6 +20,7 @@ class Strings {
   static const String category = "카테고리";
   static const String likes = "개의 좋아요";
   static const String comments = "개의 댓글";
+  static const String comment = "댓글";
   static const String todaySky = "오늘의 하늘은 🌤";
   static const String nowWeatherNews = "지금의 날씨 소식은 🌈";
   static const String weatherRegistered = "명이 등록";
@@ -187,6 +188,7 @@ class Strings {
   static const String postEmptyGuide =
       "아직 등록된 게시물이 없어요.\n아래 업로드 버튼을 눌러 첫 게시물을 업로드해 보세요!";
   static const String complete = "완료";
+  static const String addCommentGuide = "댓글을 남겨보세요.";
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",
