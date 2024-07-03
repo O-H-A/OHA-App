@@ -25,6 +25,7 @@ class UploadData {
   final String userName;
   final bool isLike;
   final int likeCount;
+  final int commentCount;
   final String categoryCode;
   final String categoryName;
   final List<String> keywords;
@@ -38,6 +39,7 @@ class UploadData {
   final String updDtm;
   final List<FileData> files;
   final String profileUrl;
+  final bool isOwn;
 
   UploadData({
     required this.postId,
@@ -45,6 +47,7 @@ class UploadData {
     required this.userName,
     required this.isLike,
     required this.likeCount,
+    required this.commentCount,
     required this.categoryCode,
     required this.categoryName,
     required this.keywords,
@@ -58,6 +61,7 @@ class UploadData {
     required this.updDtm,
     required this.files,
     required this.profileUrl,
+    required this.isOwn,
   });
 
   factory UploadData.fromJson(Map<String, dynamic>? json) => UploadData(
@@ -66,6 +70,7 @@ class UploadData {
         userName: json?['userName'] ?? '',
         isLike: json?['isLike'] ?? false,
         likeCount: json?['likeCount'] ?? 0,
+        commentCount: json?['commentCount'] ?? 0,
         categoryCode: json?['categoryCode'] ?? '',
         categoryName: json?['categoryName'] ?? '',
         keywords: (json?['keywords'] as List<dynamic>?)
@@ -85,6 +90,7 @@ class UploadData {
                 .toList() ??
             [],
         profileUrl: json?['profileUrl'] ?? '',
+        isOwn: json?['isOwn'] ?? false,
       );
 }
 

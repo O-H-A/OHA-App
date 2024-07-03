@@ -234,6 +234,7 @@ class _HomeTabState extends State<HomeTab> {
                 nickName: data.userName,
                 locationInfo: data.locationDetail,
                 likesCount: data.likeCount,
+                commentCount: data.commentCount,
                 isLike: data.isLike,
                 description: data.content,
                 hashTag: data.keywords,

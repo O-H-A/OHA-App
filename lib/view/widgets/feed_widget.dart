@@ -14,6 +14,7 @@ class FeedWidget extends StatefulWidget {
   final String nickName;
   final String locationInfo;
   final int likesCount;
+  final int commentCount;
   final bool isLike;
   final String description;
   final List<String> hashTag;
@@ -27,6 +28,7 @@ class FeedWidget extends StatefulWidget {
     required this.nickName,
     required this.locationInfo,
     required this.likesCount,
+    required this.commentCount,
     required this.isLike,
     required this.description,
     required this.hashTag,
@@ -166,7 +168,7 @@ class _FeedWidgetState extends State<FeedWidget> {
             callback: () => _toggleLike(),
           ),
           Text(
-            ' $_likesCount${Strings.likes}',
+            ' ${widget.likesCount}${Strings.likes}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
@@ -178,10 +180,10 @@ class _FeedWidgetState extends State<FeedWidget> {
           ButtonImage(
             imagePath: Images.comment,
             callback: () =>
-                _showCommentSheet(context), // Comment 아이콘을 클릭했을 때 실행
+                _showCommentSheet(context),
           ),
           Text(
-            ' $_likesCount${Strings.comments}',
+            ' ${widget.commentCount}${Strings.comments}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
@@ -200,7 +202,7 @@ class _FeedWidgetState extends State<FeedWidget> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
-          heightFactor: 0.9, // 화면의 90% 차지
+          heightFactor: 0.9,
           child: CommentSheet(postId: widget.postId)),
     );
   }
