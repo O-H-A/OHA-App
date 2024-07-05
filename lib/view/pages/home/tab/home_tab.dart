@@ -241,7 +241,10 @@ class _HomeTabState extends State<HomeTab> {
                 imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
                 onLikePressed: () => _onLikePressed(data.postId, data.isLike),
                 onMorePressed: () => FourMoreDialog.show(
-                    context, (action) => _onMorePressed(data.postId, action), data.isOwn),
+                    context,
+                    (action) => _onMorePressed(data.postId, action),
+                    data.isOwn,
+                    data.files.isNotEmpty ? data.files[0].url : ''),
               );
             },
           );

@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/widgets/image_save_dialog.dart';
 import 'package:oha/view/widgets/report_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_downloader/image_downloader.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/strings.dart';
@@ -22,13 +26,16 @@ class FourMoreDialog {
     );
   }
 
-  static Widget _contentsWidget(
-      BuildContext context, String title, Function(String) onTap) {
+  static Widget _contentsWidget(BuildContext context, String title,
+      Function(String) onTap, String imageUrl) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (title == Strings.report) {
           Navigator.of(context).pop();
           ReportDialog.show(context);
+        } else if (title == Strings.saveImage) {
+          Navigator.of(context).pop();
+          await _saveImage(context, imageUrl);
         } else {
           Navigator.of(context).pop();
           onTap(title);
@@ -56,8 +63,28 @@ class FourMoreDialog {
     );
   }
 
-  static Future<void> show(
-      BuildContext context, Function(String) onTap, bool isOwn) async {
+  static Future<void> _saveImage(BuildContext context, String imageUrl) async {
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      try {
+        var imageId = await ImageDownloader.downloadImage(imageUrl);
+        if (imageId == null) {
+          print('Failed to download image.');
+          return;
+        }
+        var filePath = await ImageDownloader.findPath(imageId);
+        
+        ImageSaveDialog.showCompleteDialog(context);
+      } catch (error) {
+        print('Failed to save image: $error');
+      }
+    } else {
+      print('Storage permission denied');
+    }
+  }
+
+  static Future<void> show(BuildContext context, Function(String) onTap,
+      bool isOwn, String imageUrl) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -87,15 +114,18 @@ class FourMoreDialog {
                   _buildSMIndicator(),
                   Column(
                     children: [
-                      _contentsWidget(context, Strings.saveImage, onTap),
+                      _contentsWidget(
+                          context, Strings.saveImage, onTap, imageUrl),
                       if (isOwn) ...[
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _contentsWidget(context, Strings.edit, onTap),
+                        _contentsWidget(context, Strings.edit, onTap, imageUrl),
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _contentsWidget(context, Strings.delete, onTap),
+                        _contentsWidget(
+                            context, Strings.delete, onTap, imageUrl),
                       ] else ...[
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _contentsWidget(context, Strings.report, onTap),
+                        _contentsWidget(
+                            context, Strings.report, onTap, imageUrl),
                       ]
                     ],
                   ),
