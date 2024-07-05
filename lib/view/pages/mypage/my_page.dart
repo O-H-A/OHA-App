@@ -43,7 +43,7 @@ class _MyPageState extends State<MyPage> {
       if (value == 200) {
         _storage.deleteAll();
 
-        Navigator.pop(context); // Close the dialog
+        Navigator.pop(context);
 
         Navigator.pushAndRemoveUntil(
           context,
@@ -73,11 +73,13 @@ class _MyPageState extends State<MyPage> {
     } catch (e) {}
   }
 
-  void _showDeleteDialog(String title, String guide, VoidCallback yesCallback) {
+  void _showDeleteDialog(
+      String title, String guide, VoidCallback yesCallback, double height) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
+          height: height,
           titleText: title,
           guideText: guide,
           yesCallback: () {
@@ -174,6 +176,7 @@ class _MyPageState extends State<MyPage> {
       Strings.logout,
       Strings.logoutGuide,
       _onLogout,
+      ScreenUtil().setHeight(178.0),
     );
   }
 
@@ -182,6 +185,7 @@ class _MyPageState extends State<MyPage> {
       Strings.withDraw,
       Strings.withDrawGiude,
       _onWithDraw,
+      ScreenUtil().setHeight(218.0),
     );
   }
 

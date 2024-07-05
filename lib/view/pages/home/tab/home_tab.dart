@@ -105,7 +105,7 @@ class _HomeTabState extends State<HomeTab> {
 
     final statusCode = await _uploadViewModel.like(data);
 
-    if (statusCode == 200) {
+    if (statusCode == 201) {
       setState(() {});
     }
   }
@@ -132,6 +132,7 @@ class _HomeTabState extends State<HomeTab> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
+          height: ScreenUtil().setHeight(178.0),
           titleText: Strings.postDeleteTitle,
           guideText: Strings.postDeleteContent,
           yesCallback: () => onDeleteYes(context, postId),
@@ -144,7 +145,7 @@ class _HomeTabState extends State<HomeTab> {
   void onDeleteYes(BuildContext context, int postId) async {
     final response = await _uploadViewModel.delete(postId.toString());
 
-    if (response == 200) {
+    if (response == 201) {
       if (mounted) {
         Navigator.pop(context);
         showCompleteDialog();
@@ -241,7 +242,10 @@ class _HomeTabState extends State<HomeTab> {
                 imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
                 onLikePressed: () => _onLikePressed(data.postId, data.isLike),
                 onMorePressed: () => FourMoreDialog.show(
-                    context, (action) => _onMorePressed(data.postId, action)),
+                    context,
+                    (action) => _onMorePressed(data.postId, action),
+                    data.isOwn,
+                    data.files.isNotEmpty ? data.files[0].url : ''),
               );
             },
           );

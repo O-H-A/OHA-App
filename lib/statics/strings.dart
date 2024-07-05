@@ -189,6 +189,10 @@ class Strings {
       "아직 등록된 게시물이 없어요.\n아래 업로드 버튼을 눌러 첫 게시물을 업로드해 보세요!";
   static const String complete = "완료";
   static const String addCommentGuide = "댓글을 남겨보세요.";
+  static const String imageSaveComplete = "사진 앨범에 저장되었습니다.";
+  static const String check = "확인";
+  static const String reportCompleteTitle = "신고 접수가 완료되었어요";
+  static const String reportCompleteGuide = "회원님이 신고하신 게시물이 현재 검토 대기중에 있어요.\n검토 완료가 되면 최대한 빠르게 신고 접수에 대한 결과를\n확인하실 수 있도록 알람을 보내드릴게요.";
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",

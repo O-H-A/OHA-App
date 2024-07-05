@@ -23,8 +23,8 @@ class UploadData {
   final int postId;
   final int userId;
   final String userName;
-  final bool isLike;
-  final int likeCount;
+  bool isLike;
+  int likeCount;
   final int commentCount;
   final String categoryCode;
   final String categoryName;
