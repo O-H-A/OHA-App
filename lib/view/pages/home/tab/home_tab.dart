@@ -132,6 +132,7 @@ class _HomeTabState extends State<HomeTab> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
+          height: ScreenUtil().setHeight(178.0),
           titleText: Strings.postDeleteTitle,
           guideText: Strings.postDeleteContent,
           yesCallback: () => onDeleteYes(context, postId),

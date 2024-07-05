@@ -230,6 +230,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
+          height: ScreenUtil().setHeight(198.0),
           titleText: Strings.deleteChangeHistory,
           guideText: Strings.deleteChangeHistoryGuide,
           yesCallback: () => onChangeHistoryDeleteYes(context),

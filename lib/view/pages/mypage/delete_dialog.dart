@@ -6,6 +6,7 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
 class DeleteDialog extends StatelessWidget {
+  final double height;
   final String titleText;
   final String guideText;
   final VoidCallback yesCallback;
@@ -13,6 +14,7 @@ class DeleteDialog extends StatelessWidget {
 
   const DeleteDialog({
     Key? key,
+    required this.height,
     required this.titleText,
     required this.guideText,
     this.yesCallback = _yesCallback,
@@ -69,7 +71,7 @@ class DeleteDialog extends StatelessWidget {
       ),
       child: Container(
         width: double.infinity,
-        height: ScreenUtil().setHeight(228.0),
+        height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
           color: Colors.white,
