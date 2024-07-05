@@ -105,7 +105,7 @@ class _HomeTabState extends State<HomeTab> {
 
     final statusCode = await _uploadViewModel.like(data);
 
-    if (statusCode == 200) {
+    if (statusCode == 201) {
       setState(() {});
     }
   }
@@ -145,7 +145,7 @@ class _HomeTabState extends State<HomeTab> {
   void onDeleteYes(BuildContext context, int postId) async {
     final response = await _uploadViewModel.delete(postId.toString());
 
-    if (response == 200) {
+    if (response == 201) {
       if (mounted) {
         Navigator.pop(context);
         showCompleteDialog();

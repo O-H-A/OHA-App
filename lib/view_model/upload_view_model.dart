@@ -76,7 +76,27 @@ class UploadViewModel with ChangeNotifier {
 
   Future<int> like(Map<String, dynamic> data) async {
     final result = await _uploadRepository.like(data);
-    _setLikeData(ApiResponse.complete(result));
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      int postId = data["postId"];
+      bool isLike = data["type"] == "L";
+
+      var post = uploadGetData.data?.data.firstWhere((post) => post.postId == postId);
+      if (post != null) {
+        post.isLike = isLike;
+        if (isLike) {
+          post.likeCount += 1;
+        } else {
+          post.likeCount -= 1;
+        }
+        notifyListeners();
+      }
+
+      _setLikeData(ApiResponse.complete(result));
+    } else {
+      _setLikeData(ApiResponse.error(result.toString()));
+    }
+
     return result.statusCode;
   }
 
