@@ -28,7 +28,7 @@ class CommentReadData {
   String content;
   int userId;
   String userNickname;
-  String profileUrl;
+  String? profileUrl;
   int taggedUserId;
   String taggedUserNickname;
   String regDtm;
