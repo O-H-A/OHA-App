@@ -85,6 +85,8 @@ class _CommentSheetState extends State<CommentSheet> {
 
     try {
       await _uploadViewModel.commentWrite(sendData);
+      _textController.clear();
+      _focusNode.unfocus();
     } catch (error) {
       // _navigateToErrorPage(context);
     } finally {

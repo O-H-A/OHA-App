@@ -131,6 +131,10 @@ class UploadViewModel with ChangeNotifier {
 
   Future<void> commentWrite(Map<String, dynamic> data) async {
     await _uploadRepository.commentWrite(data).then((value) {
+      if (value.statusCode == 201) {
+        commentReadData.data?.data.insert(0, value.data.toCommentReadData());
+        notifyListeners();
+      }
       setCommentWrite(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setCommentWrite(ApiResponse.error(error.toString()));

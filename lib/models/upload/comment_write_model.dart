@@ -1,7 +1,9 @@
+import 'comment_read_model.dart';
+
 class CommentWriteModel {
   final int statusCode;
   final String message;
-  final CommentData data;
+  final CommentWriteData data;
 
   CommentWriteModel({
     required this.statusCode,
@@ -13,12 +15,12 @@ class CommentWriteModel {
     return CommentWriteModel(
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
-      data: CommentData.fromJson(json['data'] ?? {}),
+      data: CommentWriteData.fromJson(json['data'] ?? {}),
     );
   }
 }
 
-class CommentData {
+class CommentWriteData {
   final int postId;
   final int parentId;
   final String content;
@@ -30,7 +32,7 @@ class CommentData {
   final String profileUrl;
   final DateTime regDtm;
 
-  CommentData({
+  CommentWriteData({
     required this.postId,
     required this.parentId,
     required this.content,
@@ -43,8 +45,8 @@ class CommentData {
     required this.regDtm,
   });
 
-  factory CommentData.fromJson(Map<String, dynamic> json) {
-    return CommentData(
+  factory CommentWriteData.fromJson(Map<String, dynamic> json) {
+    return CommentWriteData(
       postId: json['postId'] ?? 0,
       parentId: json['parentId'] ?? 0,
       content: json['content'] ?? '',
@@ -55,6 +57,25 @@ class CommentData {
       taggedUserNickname: json['taggedUserNickname'] ?? '',
       profileUrl: json['profileUrl'] ?? '',
       regDtm: DateTime.parse(json['regDtm'] ?? {}),
+    );
+  }
+
+  CommentReadData toCommentReadData() {
+    return CommentReadData(
+      commentId: commentId,
+      parentId: parentId,
+      postId: postId,
+      content: content,
+      userId: userId,
+      userNickname: userNickname,
+      profileUrl: profileUrl,
+      taggedUserId: taggedUserId,
+      taggedUserNickname: taggedUserNickname,
+      regDtm: regDtm.toString(),
+      updDtm: '',
+      replyCount: 0,
+      likeUsers: [],
+      likeCount: 0,
     );
   }
 }
