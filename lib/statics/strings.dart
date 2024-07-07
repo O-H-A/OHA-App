@@ -192,7 +192,29 @@ class Strings {
   static const String imageSaveComplete = "사진 앨범에 저장되었습니다.";
   static const String check = "확인";
   static const String reportCompleteTitle = "신고 접수가 완료되었어요";
-  static const String reportCompleteGuide = "회원님이 신고하신 게시물이 현재 검토 대기중에 있어요.\n검토 완료가 되면 최대한 빠르게 신고 접수에 대한 결과를\n확인하실 수 있도록 알람을 보내드릴게요.";
+  static const String reportCompleteGuide =
+      "회원님이 신고하신 게시물이 현재 검토 대기중에 있어요.\n검토 완료가 되면 최대한 빠르게 신고 접수에 대한 결과를\n확인하실 수 있도록 알람을 보내드릴게요.";
+  static const String count = "개";
+  static const String commentCount = "의 답글 보기";
+  static const String likeCount = "의 좋아요";
+
+  /*
+    구름 	CTGR_CLOUD
+    달	CTGR_MOON
+    무지개	CTGR_RAINBOW
+    일몰/일출	CTGR_SUNSET_SUNRISE
+    밤하늘	CTGR_NIGHT_SKY
+    맑은 하늘	CTGR_CLEAR_SKY
+  */
+
+  static Map<int, String> categoryMap = {
+    0: "CTGR_CLOUD",
+    1: "CTGR_MOON",
+    2: "CTGR_RAINBOW",
+    3: "CTGR_SUNSET_SUNRISE",
+    4: "CTGR_NIGHT_SKY",
+    5: "CTGR_CLEAR_SKY"
+  };
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",

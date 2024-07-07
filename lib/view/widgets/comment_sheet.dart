@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:oha/view/widgets/button_image.dart';
 import 'package:provider/provider.dart';
 import 'package:oha/models/upload/comment_read_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
@@ -8,6 +9,7 @@ import '../../network/api_response.dart';
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
 import '../../statics/strings.dart';
+import 'button_icon.dart';
 import 'loading_widget.dart';
 
 class CommentSheet extends StatefulWidget {
@@ -26,10 +28,13 @@ class _CommentSheetState extends State<CommentSheet> {
   int _offset = 0;
   final int _pageSize = 10;
   bool _isLoadingMore = false;
+  UploadViewModel _uploadViewModel = UploadViewModel();
 
   @override
   void initState() {
     super.initState();
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+
     _loadInitialComments();
 
     _scrollController.addListener(() {
@@ -42,9 +47,7 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadInitialComments() async {
-    final uploadViewModel =
-        Provider.of<UploadViewModel>(context, listen: false);
-    await uploadViewModel.commentRead({
+    await _uploadViewModel.commentRead({
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
@@ -71,6 +74,29 @@ class _CommentSheetState extends State<CommentSheet> {
     });
   }
 
+  Future<void> _commentWrite() async {
+    if (_textController.text.isEmpty) {
+      return;
+    }
+
+    Map<String, dynamic> sendData = {
+      Strings.poistIdKey: widget.postId,
+      Strings.contentKey: _textController.text,
+    };
+
+    try {
+      await _uploadViewModel.commentWrite(sendData);
+      _textController.clear();
+      _focusNode.unfocus();
+    } catch (error) {
+      // _navigateToErrorPage(context);
+    } finally {
+      setState(() {
+        // _isLoadingMore = false;
+      });
+    }
+  }
+
   Widget _buildSMIndicator() {
     return Center(
       child: Container(
@@ -92,6 +118,113 @@ class _CommentSheetState extends State<CommentSheet> {
         color: Colors.black,
         fontSize: ScreenUtil().setSp(20.0),
         fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
+  Widget _buildCommentWidget(int index) {
+    final commentData = _uploadViewModel.commentReadData.data?.data[index];
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(94.0),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(30.0)),
+              child: ClipOval(
+                child: commentData?.profileUrl == null ||
+                        commentData!.profileUrl!.isEmpty
+                    ? SvgPicture.asset(
+                        Images.defaultProfile,
+                        width: ScreenUtil().setWidth(44.0),
+                        height: ScreenUtil().setHeight(44.0),
+                      )
+                    : Image.network(
+                        commentData.profileUrl!,
+                        width: ScreenUtil().setWidth(44.0),
+                        height: ScreenUtil().setHeight(44.0),
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+            SizedBox(width: ScreenUtil().setWidth(12.0)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  commentData?.userNickname ?? '',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w700,
+                    fontSize: ScreenUtil().setSp(14.0),
+                  ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(8.0)),
+                Text(
+                  commentData?.content ?? '',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w400,
+                    fontSize: ScreenUtil().setSp(14.0),
+                  ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(8.0)),
+                Row(
+                  children: [
+                    ButtonImage(imagePath: Images.commentGray),
+                    SizedBox(width: ScreenUtil().setWidth(6.0)),
+                    Text(
+                      '2개',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w700,
+                        fontSize: ScreenUtil().setSp(14.0),
+                      ),
+                    ),
+                    Text(
+                      Strings.commentCount,
+                      style: TextStyle(
+                        color: Color(UserColors.ui04),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(13.0),
+                      ),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(14.0)),
+                    ButtonIcon(
+                        icon: Icons.favorite_border,
+                        iconColor: const Color(UserColors.ui04)),
+                        SizedBox(width: ScreenUtil().setWidth(6.0)),
+                    Text(
+                      '2개',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w700,
+                        fontSize: ScreenUtil().setSp(14.0),
+                      ),
+                    ),
+                    Text(
+                      Strings.commentCount,
+                      style: TextStyle(
+                        color: const Color(UserColors.ui04),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(13.0),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -160,7 +293,9 @@ class _CommentSheetState extends State<CommentSheet> {
                 ),
               ),
             ),
-            SvgPicture.asset(Images.commentUpload),
+            ButtonImage(
+                imagePath: Images.commentUpload,
+                callback: () => _commentWrite()),
           ],
         ),
       ),
@@ -208,10 +343,11 @@ class _CommentSheetState extends State<CommentSheet> {
                         }
 
                         var comment = comments[index];
-                        return ListTile(
-                          title: Text(comment.userNickname ?? 'Unknown'),
-                          subtitle: Text(comment.content ?? 'No content'),
-                        );
+                        return _buildCommentWidget(index);
+                        // ListTile(
+                        //   title: Text(comment.userNickname ?? 'Unknown'),
+                        //   subtitle: Text(comment.content ?? 'No content'),
+                        // );
                       },
                     );
                   case Status.error:

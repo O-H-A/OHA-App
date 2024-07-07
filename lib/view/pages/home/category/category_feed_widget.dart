@@ -10,6 +10,7 @@ import '../../../../statics/strings.dart';
 
 class CategoryFeedWidget extends StatefulWidget {
   final int length;
+  final String imageUrl;
   final String nickName;
   final String locationInfo;
   final int likesCount;
@@ -19,6 +20,7 @@ class CategoryFeedWidget extends StatefulWidget {
   const CategoryFeedWidget({
     Key? key,
     required this.length,
+    required this.imageUrl,
     required this.nickName,
     required this.locationInfo,
     required this.likesCount,
@@ -86,7 +88,7 @@ class _CategoryFeedWidgetState extends State<CategoryFeedWidget> {
             children: [
               SizedBox(height: ScreenUtil().setHeight(59.0)),
               Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzXZT2D5aAY4xFSPf-VkK02mgELw4JG7OYp6Y6Alq5DbZmUE2DVOAwIBmR-uoByD9sie4&usqp=CAU",
+                  widget.imageUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: ScreenUtil().setHeight(390.0)),
@@ -94,6 +96,7 @@ class _CategoryFeedWidgetState extends State<CategoryFeedWidget> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:oha/view/pages/home/category/category_feed_widget.dart';
-
-import 'category_detail_app_bar_Widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/models/upload/upload_get_model.dart';
+import 'category_detail_app_bar_widget.dart';
+import 'category_feed_widget.dart';
 
 class CategoryDetailPage extends StatefulWidget {
-  const CategoryDetailPage({super.key});
+  final UploadData data;
+
+  const CategoryDetailPage({Key? key, required this.data}) : super(key: key);
 
   @override
   State<CategoryDetailPage> createState() => _CategoryDetailPageState();
@@ -16,28 +17,18 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CategoryDetailAppBarWidget(),
+      appBar: CategoryDetailAppBarWidget(imageUrl: widget.data.files[0].url), // Pass imageUrl here
       backgroundColor: Colors.black,
       body: Column(
         children: [
           CategoryFeedWidget(
-            length: 6,
-            nickName: "고독한 사진작가",
-            locationInfo: "2023년 10월 21일 논현동 거리",
-            likesCount: 3,
-            description:
-                "지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요! 지금 노을이 너무 이뻐요!",
-            hashTag: [
-              "구름",
-              "같은 하늘",
-              "노을",
-              "구름",
-              "같은 하늘",
-              "노을",
-              "구름",
-              "같은 하늘",
-              "노을"
-            ],
+            length: 1,
+            imageUrl: widget.data.files[0].url,
+            nickName: widget.data.userName,
+            locationInfo: widget.data.locationDetail,
+            likesCount: widget.data.likeCount,
+            description: widget.data.content,
+            hashTag: widget.data.keywords,
           ),
         ],
       ),

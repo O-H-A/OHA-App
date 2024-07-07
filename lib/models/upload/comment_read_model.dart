@@ -1,7 +1,7 @@
 class CommentReadModel {
   int statusCode;
   String message;
-  List<CommentData> data;
+  List<CommentReadData> data;
 
   CommentReadModel({
     required this.statusCode,
@@ -14,21 +14,21 @@ class CommentReadModel {
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
       data: (json['data'] as List<dynamic>?)
-              ?.map((e) => CommentData.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => CommentReadData.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
   }
 }
 
-class CommentData {
+class CommentReadData {
   int commentId;
   int parentId;
   int postId;
   String content;
   int userId;
   String userNickname;
-  String profileUrl;
+  String? profileUrl;
   int taggedUserId;
   String taggedUserNickname;
   String regDtm;
@@ -37,7 +37,7 @@ class CommentData {
   List<int> likeUsers;
   int likeCount;
 
-  CommentData({
+  CommentReadData({
     required this.commentId,
     required this.parentId,
     required this.postId,
@@ -54,8 +54,8 @@ class CommentData {
     required this.likeCount,
   });
 
-  factory CommentData.fromJson(Map<String, dynamic> json) {
-    return CommentData(
+  factory CommentReadData.fromJson(Map<String, dynamic> json) {
+    return CommentReadData(
       commentId: json['commentId'] ?? 0,
       parentId: json['parentId'] ?? 0,
       postId: json['postId'] ?? 0,

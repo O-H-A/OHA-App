@@ -38,6 +38,7 @@ class UploadData {
   final String regDtm;
   final String updDtm;
   final List<FileData> files;
+  final String thumbnailUrl;
   final String profileUrl;
   final bool isOwn;
 
@@ -60,6 +61,7 @@ class UploadData {
     required this.regDtm,
     required this.updDtm,
     required this.files,
+    required this.thumbnailUrl,
     required this.profileUrl,
     required this.isOwn,
   });
@@ -85,6 +87,7 @@ class UploadData {
         locationDetail: json?['locationDetail'] ?? '',
         regDtm: json?['regDtm'] ?? '',
         updDtm: json?['updDtm'] ?? '',
+        thumbnailUrl: json?['thumbnailUrl'] ?? '',
         files: (json?['files'] as List<dynamic>?)
                 ?.map((e) => FileData.fromJson(e))
                 .toList() ??
@@ -96,18 +99,15 @@ class UploadData {
 
 class FileData {
   final String url;
-  final String thumbnailUrl;
   final int seq;
 
   FileData({
     required this.url,
-    required this.thumbnailUrl,
     required this.seq,
   });
 
   factory FileData.fromJson(Map<String, dynamic>? json) => FileData(
         url: json?['url'] ?? '',
-        thumbnailUrl: json?['thumbnailUrl'] ?? '',
         seq: json?['seq'] ?? 0,
       );
 }
