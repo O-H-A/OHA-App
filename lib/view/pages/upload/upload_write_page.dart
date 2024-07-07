@@ -46,24 +46,6 @@ class _UploadWritePageState extends State<UploadWritePage> {
   UploadViewModel _uploadViewModel = UploadViewModel();
   LocationViewModel _locationViewModel = LocationViewModel();
 
-  /*
-    구름 	CTGR_CLOUD
-    달	CTGR_MOON
-    무지개	CTGR_RAINBOW
-    일몰/일출	CTGR_SUNSET_SUNRISE
-    밤하늘	CTGR_NIGHT_SKY
-    맑은 하늘	CTGR_CLEAR_SKY
-  */
-
-  Map<int, String> categoryMap = {
-    0: "CTGR_CLOUD",
-    1: "CTGR_MOON",
-    2: "CTGR_RAINBOW",
-    3: "CTGR_SUNSET_SUNRISE",
-    4: "CTGR_NIGHT_SKY",
-    5: "CTGR_CLEAR_SKY"
-  };
-
   @override
   void initState() {
     super.initState();
@@ -369,7 +351,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
   Future<void> upload() async {
     String content = _textController.text;
-    String selectCategory = categoryMap[_categorySelectIndex] ?? "";
+    String selectCategory = Strings.categoryMap[_categorySelectIndex] ?? "";
     List<String> keyword = _uploadViewModel.getKetwordList;
     String selectLocationCode =
         _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
@@ -540,7 +522,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       height: ScreenUtil().setHeight(35.0),
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: categoryMap.length,
+                          itemCount: Strings.categoryMap.length,
                           itemBuilder: (BuildContext context, int index) {
                             return _buildCategoryWidget(index);
                           }),

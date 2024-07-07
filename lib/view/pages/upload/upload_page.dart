@@ -154,7 +154,7 @@ class _UploadPageState extends State<UploadPage> {
                 Padding(
                   padding: EdgeInsets.only(
                       top: ScreenUtil().setHeight(40.0),
-                      bottom: ScreenUtil().setHeight(20.0),
+                      bottom: ScreenUtil().setHeight(120.0),
                       left: ScreenUtil().setWidth(22.0),
                       right: ScreenUtil().setWidth(22.0)),
                   child: InfinityButton(
