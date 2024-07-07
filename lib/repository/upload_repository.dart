@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:oha/models/upload/comment_read_model.dart';
+import 'package:oha/models/upload/comment_write_model.dart';
 import 'package:oha/models/upload/upload_like_model.dart';
 import 'package:oha/models/upload/upload_model.dart';
 
@@ -55,9 +56,19 @@ class UploadRepository {
 
   Future<CommentReadModel> commentRead(Map<String, dynamic> queryParams) async {
     try {
-      dynamic response =
-          await NetworkManager.instance.getWithQuery(ApiUrl.comments, queryParams);
+      dynamic response = await NetworkManager.instance
+          .getWithQuery(ApiUrl.comments, queryParams);
       return CommentReadModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<CommentWriteModel> commentWrite(Map<String, dynamic> data) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.post(ApiUrl.comment, data);
+      return CommentWriteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

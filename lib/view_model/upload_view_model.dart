@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/models/upload/comment_read_model.dart';
 import 'package:oha/repository/upload_repository.dart';
+import '../models/upload/comment_write_model.dart';
 import '../models/upload/upload_get_model.dart';
 import '../models/upload/upload_like_model.dart';
 import '../network/api_response.dart';
@@ -22,6 +23,8 @@ class UploadViewModel with ChangeNotifier {
 
   ApiResponse<CommentReadModel> commentReadData = ApiResponse.loading();
 
+  ApiResponse<CommentWriteModel> commentWriteData = ApiResponse.loading();
+
   void setUploadKeywordList(String keyword) {
     _keywordList.add(keyword);
     notifyListeners();
@@ -34,6 +37,11 @@ class UploadViewModel with ChangeNotifier {
 
   void setCommentRead(ApiResponse<CommentReadModel> response) {
     commentReadData = response;
+    notifyListeners();
+  }
+
+  void setCommentWrite(ApiResponse<CommentWriteModel> response) {
+    commentWriteData = response;
     notifyListeners();
   }
 
@@ -81,7 +89,8 @@ class UploadViewModel with ChangeNotifier {
       int postId = data["postId"];
       bool isLike = data["type"] == "L";
 
-      var post = uploadGetData.data?.data.firstWhere((post) => post.postId == postId);
+      var post =
+          uploadGetData.data?.data.firstWhere((post) => post.postId == postId);
       if (post != null) {
         post.isLike = isLike;
         if (isLike) {
@@ -117,6 +126,14 @@ class UploadViewModel with ChangeNotifier {
       setCommentRead(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setCommentRead(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> commentWrite(Map<String, dynamic> data) async {
+    await _uploadRepository.commentWrite(data).then((value) {
+      setCommentWrite(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setCommentWrite(ApiResponse.error(error.toString()));
     });
   }
 }

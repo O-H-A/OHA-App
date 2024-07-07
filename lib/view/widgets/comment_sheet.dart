@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:oha/view/widgets/button_image.dart';
 import 'package:provider/provider.dart';
 import 'package:oha/models/upload/comment_read_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
@@ -26,10 +27,13 @@ class _CommentSheetState extends State<CommentSheet> {
   int _offset = 0;
   final int _pageSize = 10;
   bool _isLoadingMore = false;
+  UploadViewModel _uploadViewModel = UploadViewModel();
 
   @override
   void initState() {
     super.initState();
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+
     _loadInitialComments();
 
     _scrollController.addListener(() {
@@ -42,9 +46,7 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadInitialComments() async {
-    final uploadViewModel =
-        Provider.of<UploadViewModel>(context, listen: false);
-    await uploadViewModel.commentRead({
+    await _uploadViewModel.commentRead({
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
@@ -71,6 +73,27 @@ class _CommentSheetState extends State<CommentSheet> {
     });
   }
 
+  Future<void> _commentWrite() async {
+    if(_textController.text.isEmpty) {
+      return;
+    }
+
+    Map<String, dynamic> sendData = {
+      Strings.poistIdKey: widget.postId,
+      Strings.contentKey: _textController.text,
+    };
+
+    try {
+      await _uploadViewModel.commentWrite(sendData);
+    } catch (error) {
+      // _navigateToErrorPage(context);
+    } finally {
+      setState(() {
+        // _isLoadingMore = false;
+      });
+    }
+  }
+
   Widget _buildSMIndicator() {
     return Center(
       child: Container(
@@ -92,6 +115,16 @@ class _CommentSheetState extends State<CommentSheet> {
         color: Colors.black,
         fontSize: ScreenUtil().setSp(20.0),
         fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
+  Widget _buildCommentWidget() {
+    return SizedBox(
+      width: double.infinity,
+      height: ScreenUtil().setHeight(94.0),
+      child: Row(
+        children: [],
       ),
     );
   }
@@ -160,7 +193,9 @@ class _CommentSheetState extends State<CommentSheet> {
                 ),
               ),
             ),
-            SvgPicture.asset(Images.commentUpload),
+            ButtonImage(
+                imagePath: Images.commentUpload,
+                callback: () => _commentWrite()),
           ],
         ),
       ),
