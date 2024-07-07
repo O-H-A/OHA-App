@@ -191,7 +191,7 @@ class _CategoryPageState extends State<CategoryPage>
     );
   }
 
-  Widget _buildCompleteWidget(List dataList) {
+  Widget _buildCompleteWidget(List<UploadData> dataList) {
     return ListView.builder(
       controller: _scrollController,
       itemCount: dataList.length + (_isLoadingMore ? 1 : 0),
@@ -225,7 +225,7 @@ class _CategoryPageState extends State<CategoryPage>
   Widget _buildGridCompleteWidget(List<UploadData> dataList) {
     List<String> imageList =
         dataList.map((UploadData data) => data.thumbnailUrl).toList();
-    return CategoryGridWidget(imageList: imageList);
+    return CategoryGridWidget(imageList: imageList, dataList: dataList);
   }
 
   Widget _buildBody() {
@@ -236,6 +236,7 @@ class _CategoryPageState extends State<CategoryPage>
           var selectedCategory = Strings.categoryMap[tabController.index];
           return data.categoryCode == selectedCategory;
         }).toList();
+
         switch (uploadViewModel.uploadGetData.status) {
           case Status.loading:
             return _buildLoadingWidget();
