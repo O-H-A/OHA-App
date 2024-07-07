@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../statics/images.dart';
 import '../../../../statics/strings.dart';
+import '../category/category_page.dart';
 
 class ImageVideoTab extends StatefulWidget {
   const ImageVideoTab({super.key});
@@ -12,23 +13,20 @@ class ImageVideoTab extends StatefulWidget {
   State<ImageVideoTab> createState() => _ImageVideoTabState();
 }
 
-Widget _buildCategoryWidget(int index) {
-  switch (index) {
-    case 0:
-      return SvgPicture.asset(Images.cloudCategory);
-    case 1:
-      return SvgPicture.asset(Images.moonCategory);
-    case 2:
-      return SvgPicture.asset(Images.rainbowCategory);
-    case 3:
-      return SvgPicture.asset(Images.sunsetSunriseCategory);
-    case 4:
-      return SvgPicture.asset(Images.nightSkyCategory);
-    case 5:
-      return SvgPicture.asset(Images.sunnyCategory);
-    default:
-      return Container();
-  }
+Widget _buildCategoryWidget(int index, Function(int) onTap) {
+  final categoryIcons = [
+    Images.cloudCategory,
+    Images.moonCategory,
+    Images.rainbowCategory,
+    Images.sunsetSunriseCategory,
+    Images.nightSkyCategory,
+    Images.sunnyCategory,
+  ];
+
+  return GestureDetector(
+    onTap: () => onTap(index),
+    child: SvgPicture.asset(categoryIcons[index]),
+  );
 }
 
 Widget _buildCategoryTextWidget() {
@@ -46,6 +44,15 @@ Widget _buildCategoryTextWidget() {
 }
 
 class _ImageVideoTabState extends State<ImageVideoTab> {
+  void _navigateToCategoryPage(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategoryPage(categoryIndex: index),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,8 +83,9 @@ class _ImageVideoTabState extends State<ImageVideoTab> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildCategoryWidget(startIndex),
-        _buildCategoryWidget(startIndex + 1),
+        _buildCategoryWidget(startIndex, _navigateToCategoryPage),
+        if (startIndex + 1 < 6)
+          _buildCategoryWidget(startIndex + 1, _navigateToCategoryPage),
       ],
     );
   }
