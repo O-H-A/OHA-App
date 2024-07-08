@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final _titleController = TextEditingController();
   final _contentsController = TextEditingController();
   bool _publicStatus = false;
-  File? uploadImage;
+  File? _uploadImage;
   final ImagePicker picker = ImagePicker();
   String _selectTitle = "";
   String _selectImage = "";
@@ -45,8 +46,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   @override
   void initState() {
-    _writeDay = _getToday();
-    _showDay = _getToday();
+    _writeDay = DateFormat('yyyyMMdd').format(widget.selectDate);
+    _showDay =
+        DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(widget.selectDate);
+
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     super.initState();
   }
@@ -77,7 +80,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       File? file = await selectedImage.file;
       if (file != null) {
         setState(() {
-          uploadImage = file;
+          _uploadImage = file;
         });
       }
     }
@@ -86,7 +89,6 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   void _showDatePicker() async {
     final String? selectedDateString = await DatePicker.show(context);
     if (selectedDateString != null) {
-      // 반환된 문자열이 'yyyy년 MM월 dd일' 형식이라고 가정합니다.
       final DateFormat inputFormatter = DateFormat('yyyy년 MM월 dd일');
       final DateTime selectedDate =
           inputFormatter.parseStrict(selectedDateString);
@@ -99,19 +101,21 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     }
   }
 
-  bool _buttonEanbled() {
-    return _titleController.text.isEmpty ||
-        uploadImage == null ||
-        _selectTitle.isEmpty;
+  bool _buttonEnabled() {
+    return _titleController.text.isNotEmpty &&
+        _uploadImage != null &&
+        _contentsController.text.isNotEmpty &&
+        _selectTitle.isNotEmpty &&
+        _selectImage.isNotEmpty;
   }
 
   Widget _buildPhotoArea() {
-    return uploadImage != null
+    return _uploadImage != null
         ? SizedBox(
             width: double.infinity,
             height: ScreenUtil().setHeight(360.0),
             child: Image.file(
-              uploadImage!,
+              _uploadImage!,
               fit: BoxFit.cover,
             ),
           )
@@ -239,16 +243,27 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     }
   }
 
-  void _sendDiaryRegist() {
+  void _sendDiaryRegist() async {
     Map<String, dynamic> sendData = {
       Strings.setDateKey: _writeDay,
       Strings.titleKey: _titleController.text,
       Strings.contentKey: _contentsController.text,
       Strings.weatherKey: _selectTitle,
-      Strings.fileKey: "",
       Strings.isPublicKey: _publicStatus,
       Strings.locationKey: "",
     };
+
+    Uint8List? thumbnailData;
+    if (_uploadImage != null) {
+      thumbnailData = await _uploadImage!.readAsBytes();
+    }
+
+    try {
+      await _diaryViewModel.diaryWrite(sendData, thumbnailData);
+      // 성공 시 로직 추가 가능
+    } catch (error) {
+      print('Error in _sendDiaryRegist: $error');
+    }
   }
 
   Widget _buildSelectWeatherTitleText() {
@@ -527,10 +542,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
             child: InfinityButton(
               height: ScreenUtil().setHeight(50.0),
               radius: ScreenUtil().radius(8.0),
-              backgroundColor: _buttonEanbled()
-                  ? const Color(UserColors.ui10)
-                  : const Color(UserColors.primaryColor),
-              textColor: _buttonEanbled() ? Colors.black : Colors.white,
+              backgroundColor: _buttonEnabled()
+                  ? const Color(UserColors.primaryColor)
+                  : const Color(UserColors.ui10),
+              textColor: _buttonEnabled() ? Colors.white : Colors.black,
               text: Strings.register,
               textSize: 16,
               textWeight: FontWeight.w600,

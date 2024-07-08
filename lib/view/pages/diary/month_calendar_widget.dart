@@ -84,15 +84,6 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
       selectedDay = selected;
     });
     widget.onDateSelected(selectedDay!);
-
-    if (!isRecord) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DiaryRegisterPage(selectDate: selected),
-        ),
-      );
-    }
   }
 
   Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
