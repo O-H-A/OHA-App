@@ -45,8 +45,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   @override
   void initState() {
-    _writeDay = _getToday();
-    _showDay = _getToday();
+    _writeDay = DateFormat('yyyyMMdd').format(widget.selectDate);
+    _showDay =
+        DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(widget.selectDate);
+
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     super.initState();
   }
