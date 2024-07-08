@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:oha/models/diary/diary_model.dart';
+import 'package:oha/models/diary/diary_write_model.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/network/api_response.dart';
 import 'package:oha/repository/diary_repository.dart';
@@ -14,7 +14,7 @@ class DiaryViewModel with ChangeNotifier {
 
   ApiResponse<MyDiaryModel> get getMyDiary => _myDiary;
 
-  ApiResponse<DiaryModel> diaryData = ApiResponse.loading();
+  ApiResponse<DiaryWriteModel> diaryData = ApiResponse.loading();
 
   void setMyDiary(ApiResponse<MyDiaryModel> response) {
     _myDiary = response;
@@ -24,7 +24,7 @@ class DiaryViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setDiary(ApiResponse<DiaryModel> response) {
+  void setDiary(ApiResponse<DiaryWriteModel> response) {
     diaryData = response;
 
     notifyListeners();
@@ -51,8 +51,8 @@ class DiaryViewModel with ChangeNotifier {
     }).toList();
   }
 
-  Future<void> diary(Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    final result = await _diaryRepository.diary(data, thumbnailData);
+  Future<void> diaryWrite(Map<String, dynamic> data, Uint8List? thumbnailData) async {
+    final result = await _diaryRepository.diaryWrite(data, thumbnailData);
 
     if (result.statusCode == 200) {
       setDiary(ApiResponse.complete(result));
