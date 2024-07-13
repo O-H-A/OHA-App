@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:oha/view/pages/upload/upload_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UploadAgreementsPage extends StatefulWidget {
   const UploadAgreementsPage({super.key});
@@ -18,6 +21,7 @@ class _UploadAgreementsPageState extends State<UploadAgreementsPage> {
   bool _albumAgreements = false;
   bool _cameraAgreements = false;
   bool _micAgreements = false;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Widget _buildAllAgreementsWidget() {
     return Stack(
@@ -120,6 +124,24 @@ class _UploadAgreementsPageState extends State<UploadAgreementsPage> {
     return _albumAgreements && _cameraAgreements && _micAgreements;
   }
 
+  void _requestPermissions() async {
+    if (_cameraAgreements) {
+      await Permission.camera.request();
+      await _storage.write(key: Strings.isCameraGranted, value: 'true');
+    }
+    if (_micAgreements) {
+      await Permission.microphone.request();
+      await _storage.write(key: Strings.isMicGranted, value: 'true');
+    }
+    
+    if(!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const UploadPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,27 +212,19 @@ class _UploadAgreementsPageState extends State<UploadAgreementsPage> {
             ),
             Padding(
               padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(44)),
-              child: GestureDetector(
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const LoginFinishPage()),
-                  // );
-                },
-                child: InfinityButton(
-                  height: ScreenUtil().setHeight(50.0),
-                  radius: 8.0,
-                  backgroundColor: _getAllAgreements()
-                      ? const Color(UserColors.primaryColor)
-                      : const Color(UserColors.ui10),
-                  text: Strings.next,
-                  textSize: 16,
-                  textWeight: FontWeight.w600,
-                  textColor: _getAllAgreements()
-                      ? Colors.white
-                      : const Color(UserColors.ui06),
-                ),
+              child: InfinityButton(
+                height: ScreenUtil().setHeight(50.0),
+                radius: 8.0,
+                backgroundColor: _getAllAgreements()
+                    ? const Color(UserColors.primaryColor)
+                    : const Color(UserColors.ui10),
+                text: Strings.next,
+                textSize: 16,
+                textWeight: FontWeight.w600,
+                textColor: _getAllAgreements()
+                    ? Colors.white
+                    : const Color(UserColors.ui06),
+                callback: () => _requestPermissions(),
               ),
             ),
           ],

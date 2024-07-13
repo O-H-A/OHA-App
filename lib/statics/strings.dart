@@ -280,4 +280,6 @@ class Strings {
   static const fileKey = "file";
   static const isPublicKey = "isPublic";
   static const locationKey = "location";
+  static const isCameraGranted = "isCameraGranted";
+  static const isMicGranted = "isMicGranted";
 }
