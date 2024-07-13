@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../statics/images.dart';
+import '../statics/strings.dart';
 import '../view/pages/diary/diary_page.dart';
 import '../view/pages/home_page.dart';
 import '../view/pages/mypage/my_page.dart';
 import '../view/pages/upload/upload_page.dart';
+import '../view/pages/upload/upload_agreements_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -14,6 +18,7 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   int _selectIndex = 0;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   final List<Widget> _pages = <Widget>[
     const HomePage(),
@@ -22,7 +27,22 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const MyPage()
   ];
 
-  void _onBottomTapped(int index) {
+  void _onBottomTapped(int index) async {
+    if (index == 1) {
+      bool isCameraGranted = (await _storage.read(key: Strings.isCameraGranted)) == 'true';
+      bool isMicGranted = (await _storage.read(key: Strings.isMicGranted)) == 'true';
+
+      if(!mounted) return;
+
+      if (!isCameraGranted || !isMicGranted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UploadAgreementsPage()),
+        );
+        return;
+      }
+    }
+
     setState(() {
       _selectIndex = index;
     });
@@ -44,16 +64,16 @@ class _BottomNavigationState extends State<BottomNavigation> {
               color: Colors.grey.withOpacity(0.2),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: Offset(0, -3),
+              offset: const Offset(0, -3),
             ),
           ],
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10.0),
             topRight: Radius.circular(10.0),
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10.0),
             topRight: Radius.circular(10.0),
           ),
