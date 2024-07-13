@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/widgets/now_weather_widget.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view/pages/home/weather/weather_select_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
@@ -425,41 +426,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                           fontSize: 13),
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(ScreenUtil().radius(8.0)),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(UserColors.ui08),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: ScreenUtil().setHeight(182.0),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: ScreenUtil().setWidth(25.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              _buildWeatherInfoWIdget(
-                                  Images.littleCloudyDisable, "약간 흐려요", 1132),
-                              _buildWeatherInfoWIdget(
-                                  Images.cloudyDisable, "흐려요", 121),
-                              _buildWeatherInfoWIdget(
-                                  Images.veryColdDisable, "매우 추워요", 30),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    const NowWeatherWidget(),
                     SizedBox(height: ScreenUtil().setHeight(52.0)),
                   ],
                 ),
