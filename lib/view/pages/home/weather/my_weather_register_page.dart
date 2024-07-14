@@ -40,7 +40,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
-          height: ScreenUtil().setHeight(198.0),
+          height: ScreenUtil().setHeight(228.0),
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
           yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
@@ -56,6 +56,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
     };
     _weatherViewModel.deleteMyWeather(sendData).then((response) {
       if (response == 200) {
+        _weatherViewModel.fetchWeatherPostingMy();
         Navigator.pop(context);
         showDialog(
           context: context,
@@ -96,7 +97,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                                 editState: true,
                                 address: _locationViewModel.getThirdAddressByRegionCode(
                                     weather.regionCode.toString()),
-                                weatherCode: weather.weatherCode,
+                                weatherId: weather.weatherId,
                               )),
                     );
                     if (result == true) {

@@ -1,19 +1,19 @@
 class EditWeatherModel {
   int statusCode;
   String message;
-  AddWeatherDataModel data;
+  AddWeatherDataModel? data;
 
   EditWeatherModel({
     required this.statusCode,
     required this.message,
-    required this.data,
+    this.data,
   });
 
   factory EditWeatherModel.fromJson(Map<String, dynamic> json) {
     return EditWeatherModel(
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
-      data: AddWeatherDataModel.fromJson(json['data']),
+      data: json['data'] != null ? AddWeatherDataModel.fromJson(json['data']) : null,
     );
   }
 }

@@ -68,7 +68,7 @@ class MoreDialog {
     }
   }
 
-  static Future<void> show(BuildContext context, String imageUrl) async {
+  static Future<void> show(BuildContext context, String imageUrl, int postId) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -100,7 +100,7 @@ class MoreDialog {
                   SizedBox(height: ScreenUtil().setHeight(12.0)),
                   _contentsWidget(context, Strings.report, () {
                     Navigator.of(context).pop();
-                    ReportDialog.show(context);
+                    ReportDialog.show(context, postId);
                   }),
                 ],
               ),

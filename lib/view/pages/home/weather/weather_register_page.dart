@@ -18,13 +18,13 @@ import '../../location/location_setting_dialog.dart';
 class WeatherRegisterPage extends StatefulWidget {
   final bool editState;
   final String address;
-  final String weatherCode;
+  final int weatherId;
 
   const WeatherRegisterPage({
     Key? key,
     required this.editState,
     this.address = "",
-    this.weatherCode = "",
+    this.weatherId = 0,
   }) : super(key: key);
 
   @override
@@ -366,7 +366,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
     Future<int> responseFuture;
     if (widget.editState) {
-      sendData['weatherId'] = widget.weatherCode;
+      sendData['weatherId'] = widget.weatherId;
       responseFuture = _weatherViewModel.editWeatherPosting(sendData);
     } else {
       responseFuture = _weatherViewModel.addWeatherPosting(sendData);
@@ -374,7 +374,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
     responseFuture.then((response) {
       if (response == 200 || response == 201) {
-        _weatherViewModel.fetchWeatherPostingMy();
+        setState(() {
+          _weatherViewModel.fetchWeatherPostingMy();
+        });
+        
 
         Navigator.pop(context, true);
         showDialog(
@@ -388,6 +391,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
           },
         );
       } 
+      else if(response == 409){
+        
+        CompleteDialog.showCompleteDialog(context, Strings.weatherOnce);
+      }
     }).catchError((error) {
     });
   }

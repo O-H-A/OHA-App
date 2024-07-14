@@ -6,9 +6,13 @@ import 'package:oha/view/widgets/more_dialog.dart';
 class CategoryDetailAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
   final String imageUrl;
+  final int postId;
 
-  const CategoryDetailAppBarWidget({Key? key, required this.imageUrl})
-      : super(key: key);
+  const CategoryDetailAppBarWidget({
+    Key? key,
+    required this.imageUrl,
+    required this.postId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +21,16 @@ class CategoryDetailAppBarWidget extends StatelessWidget
       backgroundColor: Colors.black,
       elevation: 0,
       leading: ButtonIcon(
-          icon: Icons.arrow_back_ios,
-          iconColor: Colors.white,
-          callback: () => Navigator.pop(context)),
+        icon: Icons.arrow_back_ios,
+        iconColor: Colors.white,
+        callback: () => Navigator.pop(context),
+      ),
       actions: [
         Padding(
           padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
           child: IconButton(
             onPressed: () {
-              MoreDialog.show(context, imageUrl);
+              MoreDialog.show(context, imageUrl, postId);
             },
             icon: const Icon(
               Icons.more_horiz,

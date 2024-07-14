@@ -5,6 +5,7 @@ import 'package:oha/models/upload/comment_read_model.dart';
 import 'package:oha/models/upload/comment_write_model.dart';
 import 'package:oha/models/upload/upload_like_model.dart';
 import 'package:oha/models/upload/upload_model.dart';
+import 'package:oha/models/upload/upload_report_model.dart';
 
 import '../models/upload/upload_delete_model.dart';
 import '../models/upload/upload_get_model.dart';
@@ -69,6 +70,16 @@ class UploadRepository {
       dynamic response =
           await NetworkManager.instance.post(ApiUrl.comment, data);
       return CommentWriteModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<UploadReportModel> report(Map<String, dynamic> data) async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.post(ApiUrl.report, data);
+      return UploadReportModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

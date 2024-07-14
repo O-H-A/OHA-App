@@ -34,9 +34,9 @@ class WeatherRepository {
   Future<EditWeatherModel> editWeatherPosting(
       Map<String, dynamic> queryParams) async {
     try {
-      dynamic response =
+      final response =
           await NetworkManager.instance.put(ApiUrl.weather, queryParams);
-      return EditWeatherModel.fromJson(jsonDecode(response));
+      return EditWeatherModel.fromJson(jsonDecode(response.body));
     } catch (e) {
       rethrow;
     }
@@ -56,7 +56,7 @@ class WeatherRepository {
       Map<String, dynamic> queryParams) async {
     try {
       dynamic response =
-          await NetworkManager.instance.delete(ApiUrl.weather, queryParams);
+          await NetworkManager.instance.deleteWeather(ApiUrl.weather, queryParams);
       return DeleteWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

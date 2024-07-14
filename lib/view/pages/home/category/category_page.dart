@@ -216,7 +216,7 @@ class _CategoryPageState extends State<CategoryPage>
               context,
               (action) => _onMorePressed(data.postId, action),
               data.isOwn,
-              data.files.isNotEmpty ? data.files[0].url : ''),
+              data.files.isNotEmpty ? data.files[0].url : '', data.postId),
         );
       },
     );

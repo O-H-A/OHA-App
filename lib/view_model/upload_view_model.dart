@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/models/upload/comment_read_model.dart';
+import 'package:oha/models/upload/upload_report_model.dart';
 import 'package:oha/repository/upload_repository.dart';
 import '../models/upload/comment_write_model.dart';
 import '../models/upload/upload_get_model.dart';
@@ -24,6 +25,8 @@ class UploadViewModel with ChangeNotifier {
   ApiResponse<CommentReadModel> commentReadData = ApiResponse.loading();
 
   ApiResponse<CommentWriteModel> commentWriteData = ApiResponse.loading();
+
+  ApiResponse<UploadReportModel> reportData = ApiResponse.loading();
 
   void setUploadKeywordList(String keyword) {
     _keywordList.add(keyword);
@@ -59,6 +62,17 @@ class UploadViewModel with ChangeNotifier {
 
   void _setLikeData(ApiResponse<UploadLikeModel> response) {
     likeData = response;
+    notifyListeners();
+  }
+
+  void clearUploadGetData() {
+    uploadGetData = ApiResponse.complete(
+        UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
+  void postReport(ApiResponse<UploadReportModel> response) {
+    reportData = response;
     notifyListeners();
   }
 
@@ -138,6 +152,14 @@ class UploadViewModel with ChangeNotifier {
       setCommentWrite(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setCommentWrite(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> report(Map<String, dynamic> data) async {
+    await _uploadRepository.report(data).then((value) {
+      postReport(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      postReport(ApiResponse.error(error.toString()));
     });
   }
 }

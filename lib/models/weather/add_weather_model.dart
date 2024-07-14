@@ -1,23 +1,22 @@
 class AddWeatherModel {
   int statusCode;
   String message;
-  AddWeatherDataModel data;
+  AddWeatherDataModel? data;
 
   AddWeatherModel({
     required this.statusCode,
     required this.message,
-    required this.data,
+    this.data,
   });
 
   factory AddWeatherModel.fromJson(Map<String, dynamic> json) {
     return AddWeatherModel(
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
-      data: AddWeatherDataModel.fromJson(json['data']),
+      data: json['data'] != null ? AddWeatherDataModel.fromJson(json['data']) : null, 
     );
   }
 }
-
 
 class AddWeatherDataModel {
   int weatherId;
