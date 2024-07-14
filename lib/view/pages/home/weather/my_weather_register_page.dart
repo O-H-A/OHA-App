@@ -40,7 +40,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
-          height: ScreenUtil().setHeight(198.0),
+          height: ScreenUtil().setHeight(228.0),
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
           yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
