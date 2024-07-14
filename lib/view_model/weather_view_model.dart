@@ -67,7 +67,6 @@ class WeatherViewModel with ChangeNotifier {
       final value = await _weatherRepository.editWeatherPosting(queryParams);
       return value.statusCode;
     } catch (error) {
-      print("Jehee ERorr : ${error}");
       return 400;
     }
   }
@@ -83,12 +82,6 @@ class WeatherViewModel with ChangeNotifier {
   Future<int> deleteMyWeather(Map<String, dynamic> queryParams) async {
     try {
       final value = await _weatherRepository.deleteMyWeather(queryParams);
-
-      if (value.statusCode == 200) {
-        int weatherId = queryParams['weatherId'];
-        _weatherPostingMy.data?.data
-            .removeWhere((item) => item.weatherId == weatherId);
-      }
       return value.statusCode;
     } catch (error) {
       return 400;

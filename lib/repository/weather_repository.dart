@@ -56,7 +56,7 @@ class WeatherRepository {
       Map<String, dynamic> queryParams) async {
     try {
       dynamic response =
-          await NetworkManager.instance.delete(ApiUrl.weather, queryParams);
+          await NetworkManager.instance.deleteWeather(ApiUrl.weather, queryParams);
       return DeleteWeatherModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

@@ -278,6 +278,33 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> deleteWeather(
+      String serverUrl, Map<String, dynamic> data) async {
+    dynamic responseJson;
+
+    try {
+      final uri = Uri.parse('$serverUrl/${data['weatherId']}');
+      data.remove('weatherId');
+      String jsonData = jsonEncode(data);
+
+      final response = await http.delete(
+        uri,
+        headers: await commonHeaders,
+        body: jsonData,
+      );
+
+      responseJson = returnResponse(response);
+      responseJson = utf8.decode(response.bodyBytes);
+
+      print("DELETE with Path and Body 성공: ${responseJson}");
+
+      return responseJson;
+    } catch (error) {
+      print("에러 발생: $error");
+      return "";
+    }
+  }
+
   dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 0:

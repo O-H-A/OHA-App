@@ -56,6 +56,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
     };
     _weatherViewModel.deleteMyWeather(sendData).then((response) {
       if (response == 200) {
+        _weatherViewModel.fetchWeatherPostingMy();
         Navigator.pop(context);
         showDialog(
           context: context,

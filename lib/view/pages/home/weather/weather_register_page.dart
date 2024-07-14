@@ -372,10 +372,6 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       responseFuture = _weatherViewModel.addWeatherPosting(sendData);
     }
 
-    print("jehee : ${sendData} 1111010200  1111067000");
-
-    
-
     responseFuture.then((response) {
       if (response == 200 || response == 201) {
         setState(() {
