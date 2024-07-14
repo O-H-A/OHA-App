@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:oha/view/pages/notification/notification_page.dart';
+import 'package:oha/view/widgets/button_image.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
@@ -43,6 +45,13 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     tabController.dispose();
     super.dispose();
+  }
+
+  void _navigateToNotificationPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationPage()),
+    );
   }
 
   Widget _buildTabBarWidget() {
@@ -119,9 +128,8 @@ class _HomePageState extends State<HomePage>
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
-            child: SvgPicture.asset(Images.notification),
-          ),
+              padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
+              child: ButtonImage(imagePath: Images.notification, callback: _navigateToNotificationPage)),
         ],
       ),
       body: NestedScrollView(

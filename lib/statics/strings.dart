@@ -300,4 +300,5 @@ class Strings {
   static const String offsetKey = "offset";
   static const String sizeKey = "size";
   static const String reasonCodeKey = "reasonCode";
+  static const String limitKey = "limit";
 }

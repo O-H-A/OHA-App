@@ -12,6 +12,7 @@ import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view_model/login_view_model.dart';
 import 'package:oha/view_model/my_page_view_model.dart';
+import 'package:oha/view_model/notification_view_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MyPageViewModel()),
         ChangeNotifierProvider(create: (_) => UploadViewModel()),
         ChangeNotifierProvider(create: (_) => DiaryViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 840),
