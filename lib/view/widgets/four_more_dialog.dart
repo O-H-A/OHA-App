@@ -27,12 +27,12 @@ class FourMoreDialog {
   }
 
   static Widget _contentsWidget(BuildContext context, String title,
-      Function(String) onTap, String imageUrl) {
+      Function(String) onTap, String imageUrl, int postId) {
     return GestureDetector(
       onTap: () async {
         if (title == Strings.report) {
           Navigator.of(context).pop();
-          ReportDialog.show(context);
+          ReportDialog.show(context, postId);
         } else if (title == Strings.saveImage) {
           Navigator.of(context).pop();
           await _saveImage(context, imageUrl);
@@ -84,7 +84,7 @@ class FourMoreDialog {
   }
 
   static Future<void> show(BuildContext context, Function(String) onTap,
-      bool isOwn, String imageUrl) async {
+      bool isOwn, String imageUrl, int postId) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -115,17 +115,17 @@ class FourMoreDialog {
                   Column(
                     children: [
                       _contentsWidget(
-                          context, Strings.saveImage, onTap, imageUrl),
+                          context, Strings.saveImage, onTap, imageUrl, postId),
                       if (isOwn) ...[
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _contentsWidget(context, Strings.edit, onTap, imageUrl),
+                        _contentsWidget(context, Strings.edit, onTap, imageUrl, postId),
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
                         _contentsWidget(
-                            context, Strings.delete, onTap, imageUrl),
+                            context, Strings.delete, onTap, imageUrl, postId),
                       ] else ...[
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
                         _contentsWidget(
-                            context, Strings.report, onTap, imageUrl),
+                            context, Strings.report, onTap, imageUrl, postId),
                       ]
                     ],
                   ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/widgets/report_complete_dialog.dart';
+import 'package:oha/view_model/upload_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/strings.dart';
@@ -13,6 +15,15 @@ class ReportDialog {
     Strings.hate,
     Strings.falseInfomation,
     Strings.copyright
+  ];
+
+  static List<String> reportReasonList = [
+    "REP_RSN_001", // 마음에 들지 않음
+    "REP_RSN_002", // 스팸
+    "REP_RSN_003", // 나체 이미지 또는 성적 행위
+    "REP_RSN_004", // 혐오 발언 또는 상징
+    "REP_RSN_005", // 거짓 정보
+    "REP_RSN_006", // 저작권 침해 및 도용
   ];
 
   static Widget _buildSMIndicator() {
@@ -28,9 +39,21 @@ class ReportDialog {
     );
   }
 
-  static Widget _contentsWidget(BuildContext context, String title) {
+  static Widget _contentsWidget(BuildContext context, int index, int postId) {
+    String title = titleList[index];
+    String reasonCode = reportReasonList[index];
+
     return GestureDetector(
       onTap: () {
+        final uploadViewModel =
+            Provider.of<UploadViewModel>(context, listen: false);
+
+        Map<String, dynamic> sendData = {
+          Strings.poistIdKey: postId,
+          Strings.reasonCodeKey: reasonCode,
+        };
+
+        uploadViewModel.report(sendData);
         Navigator.pop(context);
         ReportCompleteDialog.showCompleteDialog(context);
       },
@@ -56,7 +79,7 @@ class ReportDialog {
     );
   }
 
-  static Future<void> show(BuildContext context) async {
+  static Future<void> show(BuildContext context, int postId) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -82,9 +105,9 @@ class ReportDialog {
                   _buildSMIndicator(),
                   Column(
                     children: [
-                      for (int i = 0; i < 6; i++)
+                      for (int i = 0; i < titleList.length; i++)
                         Column(children: [
-                          _contentsWidget(context, titleList[i]),
+                          _contentsWidget(context, i, postId),
                           SizedBox(height: ScreenUtil().setHeight(12.0)),
                         ]),
                     ],

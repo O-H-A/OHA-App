@@ -17,7 +17,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CategoryDetailAppBarWidget(imageUrl: widget.data.files[0].url), // Pass imageUrl here
+      appBar: CategoryDetailAppBarWidget(imageUrl: widget.data.files[0].url, postId: widget.data.postId),
       backgroundColor: Colors.black,
       body: Column(
         children: [

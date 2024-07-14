@@ -49,7 +49,7 @@ class ApiUrl {
 
   // Upload
   static const String posting = "http://152.67.219.168/api/posting/post";
-  static const String report = "/api/posting/post/report";
+  static const String report = "http://152.67.219.168/api/posting/post/report";
   static const String like = "http://152.67.219.168/api/posting/post/like";
   static const String posts = "http://152.67.219.168/api/posting/posts";
   static const String post = "/api/posting/post/";
