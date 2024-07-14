@@ -1,33 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:oha/statics/colors.dart';
+import 'package:oha/statics/images.dart';
+import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/back_app_bar.dart';
 import 'package:oha/view/widgets/loading_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:oha/view_model/notification_view_model.dart';
-import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
+import '../error_page.dart';
 import '../../../models/notification/notification_model.dart';
 import '../../../network/api_response.dart';
-import '../../../statics/images.dart';
-import '../../../statics/strings.dart';
-import '../error_page.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NotificationViewModel()..getNotification({}),
-      child: const NotificationView(),
-    );
-  }
-}
-
-class NotificationView extends StatelessWidget {
-  const NotificationView({super.key});
 
   Widget _buildDefaultProfile() {
     return Container(
@@ -50,7 +37,7 @@ class NotificationView extends StatelessWidget {
         height: ScreenUtil().setHeight(82.0),
         child: Row(
           children: [
-            notification.profileUrl != null
+            notification.profileUrl != null && notification.profileUrl!.isNotEmpty
                 ? Image.network(notification.profileUrl!)
                 : _buildDefaultProfile(),
             SizedBox(width: ScreenUtil().setWidth(15.0)),
@@ -74,7 +61,7 @@ class NotificationView extends StatelessWidget {
               ),
             ),
             SizedBox(width: ScreenUtil().setWidth(10.0)),
-            if (notification.thumbnailUrl != null)
+            if (notification.thumbnailUrl != null && notification.thumbnailUrl!.isNotEmpty)
               Image.network(
                 notification.thumbnailUrl!,
                 width: ScreenUtil().setWidth(50.0),
@@ -111,10 +98,10 @@ class NotificationView extends StatelessWidget {
       String dateKey;
 
       if (dateFormat.format(notificationDate) == dateFormat.format(now)) {
-        dateKey = '오늘';
+        dateKey = Strings.today;
       } else if (dateFormat.format(notificationDate) ==
           dateFormat.format(now.subtract(const Duration(days: 1)))) {
-        dateKey = '어제';
+        dateKey = Strings.yesterDay;
       } else {
         int difference = now.difference(notificationDate).inDays;
         if (difference <= 7) {
@@ -136,58 +123,61 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const BackAppBar(title: Strings.notification),
-      body: Consumer<NotificationViewModel>(
-        builder: (context, notificationViewModel, child) {
-          if (notificationViewModel.notificationsData.status ==
-              Status.loading) {
-            return const Center(child: LoadingWidget());
-          } else if (notificationViewModel.notificationsData.status ==
-              Status.error) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ErrorPage(
-                    isNetworkError: false,
-                    onRetry: () {
-                      notificationViewModel.getNotification({});
-                    },
+    return ChangeNotifierProvider(
+      create: (_) => NotificationViewModel()..getNotification({}),
+      child: Scaffold(
+        appBar: const BackAppBar(title: Strings.notification),
+        body: Consumer<NotificationViewModel>(
+          builder: (context, notificationViewModel, child) {
+            if (notificationViewModel.notificationsData.status ==
+                Status.loading) {
+              return const Center(child: LoadingWidget());
+            } else if (notificationViewModel.notificationsData.status ==
+                Status.error) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ErrorPage(
+                      isNetworkError: false,
+                      onRetry: () {
+                        notificationViewModel.getNotification({});
+                      },
+                    ),
                   ),
-                ),
-              );
-            });
-            return Container();
-          } else if (notificationViewModel.notificationsData.status ==
-              Status.complete) {
-            final notifications =
-                notificationViewModel.notificationsData.data?.data ?? [];
-            Map<String, List<NotificationData>> groupedNotifications =
-                _groupNotificationsByDate(notifications);
-
-            return ListView.builder(
-              itemCount: groupedNotifications.length,
-              itemBuilder: (context, index) {
-                String dateKey = groupedNotifications.keys.elementAt(index);
-                List<NotificationData> dateNotifications =
-                    groupedNotifications[dateKey]!;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: ScreenUtil().setHeight(15.0)),
-                    _buildDateHeader(dateKey),
-                    ...dateNotifications
-                        .map((notification) =>
-                            _buildNotificationWidget(notification))
-                        .toList(),
-                  ],
                 );
-              },
-            );
-          }
-          return Container();
-        },
+              });
+              return Container();
+            } else if (notificationViewModel.notificationsData.status ==
+                Status.complete) {
+              final notifications =
+                  notificationViewModel.notificationsData.data?.data ?? [];
+              Map<String, List<NotificationData>> groupedNotifications =
+                  _groupNotificationsByDate(notifications);
+
+              return ListView.builder(
+                itemCount: groupedNotifications.length,
+                itemBuilder: (context, index) {
+                  String dateKey = groupedNotifications.keys.elementAt(index);
+                  List<NotificationData> dateNotifications =
+                      groupedNotifications[dateKey]!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: ScreenUtil().setHeight(15.0)),
+                      _buildDateHeader(dateKey),
+                      ...dateNotifications
+                          .map((notification) =>
+                              _buildNotificationWidget(notification))
+                          .toList(),
+                    ],
+                  );
+                },
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
