@@ -96,7 +96,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                                 editState: true,
                                 address: _locationViewModel.getThirdAddressByRegionCode(
                                     weather.regionCode.toString()),
-                                weatherCode: weather.weatherCode,
+                                weatherId: weather.weatherId,
                               )),
                     );
                     if (result == true) {

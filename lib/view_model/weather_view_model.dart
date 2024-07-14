@@ -67,6 +67,7 @@ class WeatherViewModel with ChangeNotifier {
       final value = await _weatherRepository.editWeatherPosting(queryParams);
       return value.statusCode;
     } catch (error) {
+      print("Jehee ERorr : ${error}");
       return 400;
     }
   }
