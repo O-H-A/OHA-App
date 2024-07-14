@@ -198,6 +198,7 @@ class Strings {
   static const String commentCount = "의 답글 보기";
   static const String likeCount = "의 좋아요";
   static const String weatherOnce = "날씨는 한 번만 등록하실 수 있습니다.";
+  static const String notification = "알림";
 
   /*
     구름 	CTGR_CLOUD
