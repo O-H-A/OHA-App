@@ -65,4 +65,5 @@ class ApiUrl {
 
   // Notification
   static const String notify = "http://152.67.219.168/api/notify";
+  static const String notifyCheck = "http://152.67.219.168/api/notify/check";
 }

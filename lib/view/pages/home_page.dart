@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/view/pages/notification/notification_page.dart';
 import 'package:oha/view/widgets/button_image.dart';
 import 'package:oha/view_model/location_view_model.dart';
+import 'package:oha/view_model/notification_view_model.dart';
 import 'package:oha/view_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
@@ -33,11 +34,16 @@ class _HomePageState extends State<HomePage>
   );
   LocationViewModel _locationViewModel = LocationViewModel();
   WeatherViewModel _weatherViewModel = WeatherViewModel();
+  NotificationViewModel _notificationViewModel = NotificationViewModel();
 
   @override
   void initState() {
     _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
     _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
+    _notificationViewModel =
+        Provider.of<NotificationViewModel>(context, listen: false);
+
+    _notificationViewModel.checkNotification();
     super.initState();
   }
 
@@ -129,7 +135,13 @@ class _HomePageState extends State<HomePage>
         actions: [
           Padding(
               padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
-              child: ButtonImage(imagePath: Images.notification, callback: _navigateToNotificationPage)),
+              child: ButtonImage(
+                  imagePath: (_notificationViewModel
+                              .checkNotificationData.data?.statusCode ==
+                          200)
+                      ? Images.newNotification
+                      : Images.notification,
+                  callback: _navigateToNotificationPage)),
         ],
       ),
       body: NestedScrollView(

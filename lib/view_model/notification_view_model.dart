@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oha/models/notification/new_notification_model.dart';
 import 'package:oha/models/notification/notification_model.dart';
 
 import '../network/api_response.dart';
@@ -9,8 +10,16 @@ class NotificationViewModel with ChangeNotifier {
 
   ApiResponse<NotificationModel> notificationsData = ApiResponse.loading();
 
-    void setNotifications(ApiResponse<NotificationModel> response) {
+  ApiResponse<NewNotificationModel> checkNotificationData =
+      ApiResponse.loading();
+
+  void setNotifications(ApiResponse<NotificationModel> response) {
     notificationsData = response;
+    notifyListeners();
+  }
+
+  void setCheckNotification(ApiResponse<NewNotificationModel> response) {
+    checkNotificationData = response;
     notifyListeners();
   }
 
@@ -19,6 +28,14 @@ class NotificationViewModel with ChangeNotifier {
       setNotifications(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setNotifications(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> checkNotification() async {
+    await _notificationRepository.checkNotify().then((value) {
+      setCheckNotification(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setCheckNotification(ApiResponse.error(error.toString()));
     });
   }
 }
