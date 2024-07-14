@@ -372,9 +372,14 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       responseFuture = _weatherViewModel.addWeatherPosting(sendData);
     }
 
+    
+
     responseFuture.then((response) {
       if (response == 200 || response == 201) {
-        _weatherViewModel.fetchWeatherPostingMy();
+        setState(() {
+          _weatherViewModel.fetchWeatherPostingMy();
+        });
+        
 
         Navigator.pop(context, true);
         showDialog(
@@ -388,6 +393,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
           },
         );
       } 
+      else if(response == 409){
+        
+        CompleteDialog.showCompleteDialog(context, Strings.weatherOnce);
+      }
     }).catchError((error) {
     });
   }
