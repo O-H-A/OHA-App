@@ -67,7 +67,6 @@ class MainWeatherWidget extends StatelessWidget {
               ),
             ],
           ),
-          // here
           SvgPicture.asset(widgetImage,
               width: ScreenUtil().setWidth(75),
               height: ScreenUtil().setHeight(115)

@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage>
               backgroundColor: Colors.white,
               pinned: true,
               floating: true,
-              expandedHeight: 160.0,
+              expandedHeight: 200.0,
               flexibleSpace: FlexibleSpaceBar(
                 background: Column(
                   children: [
