@@ -62,6 +62,11 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearUploadGetData() {
+    uploadGetData = ApiResponse.complete(UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _uploadRepository.posting(data, thumbnailData);

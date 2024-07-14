@@ -82,7 +82,7 @@ class LocationViewModel with ChangeNotifier {
     final addressParts = address.split(' ');
     final province = addressParts[0];
     final city = addressParts[1];
-    final district = addressParts[2]; 
+    final district = addressParts[2];
 
     try {
       final cities = _allLocationData.data?.data.locations[province];
@@ -101,7 +101,6 @@ class LocationViewModel with ChangeNotifier {
     }
     return "";
   }
-
 
   Future<int> fetchAllDistricts() async {
     int statusCode = 400;
@@ -170,43 +169,40 @@ class LocationViewModel with ChangeNotifier {
   }
 
   String get getDefaultLocation => _defaultLocation;
-  
+
   String get getDefaultLocationCode => _defaultLocationCode;
 
-  
-
   List<String> getAddressByRegionCode(String regionCode) {
-  List<String> addresses = [];
-  final allLocationData = _allLocationData.data?.data.locations;
-  
-  allLocationData?.forEach((province, cities) {
-    cities.forEach((city, districts) {
-      districts.forEach((location) {
-        if (location.code == regionCode) {
-          addresses.add("${province} ${city} ${location.address}");
-        }
+    List<String> addresses = [];
+    final allLocationData = _allLocationData.data?.data.locations;
+
+    allLocationData?.forEach((province, cities) {
+      cities.forEach((city, districts) {
+        districts.forEach((location) {
+          if (location.code == regionCode) {
+            addresses.add("${province} ${city} ${location.address}");
+          }
+        });
       });
     });
-  });
 
-  return addresses;
-}
+    return addresses;
+  }
 
-String getThirdAddressByRegionCode(String regionCode) {
-  final allLocationData = _allLocationData.data?.data.locations;
-  
-  String thirdAddress = "";
-  allLocationData?.forEach((province, cities) {
-    cities.forEach((city, districts) {
-      districts.forEach((location) {
-        if (location.code == regionCode) {
-          thirdAddress = location.address;
-        }
+  String getThirdAddressByRegionCode(String regionCode) {
+    final allLocationData = _allLocationData.data?.data.locations;
+
+    String thirdAddress = "";
+    allLocationData?.forEach((province, cities) {
+      cities.forEach((city, districts) {
+        districts.forEach((location) {
+          if (location.code == regionCode) {
+            thirdAddress = location.address;
+          }
+        });
       });
     });
-  });
 
-  return thirdAddress;
-}
-
+    return thirdAddress;
+  }
 }

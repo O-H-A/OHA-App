@@ -136,17 +136,7 @@ class _HomePageState extends State<HomePage>
                 background: Column(
                   children: [
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    MainWeatherWidget(
-                        neighborhood: _locationViewModel.getDefaultLocation,
-                        temperature: _weatherViewModel
-                                .defaultWeatherData.data?.data.hourlyTemp ??
-                            '',
-                        widgetType: _weatherViewModel
-                                .defaultWeatherData.data?.data.widget ??
-                            '',
-                        probPrecip: _weatherViewModel
-                                .defaultWeatherData.data?.data.probPrecip ??
-                            ''),
+                    MainWeatherWidget(),
                     SizedBox(height: ScreenUtil().setHeight(43.0)),
                     Padding(
                       padding: EdgeInsets.symmetric(
