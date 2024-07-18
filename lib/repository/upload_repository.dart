@@ -97,4 +97,13 @@ class UploadRepository {
       rethrow;
     }
   }
+
+    Future<UploadLikeModel> commentLike(Map<String, dynamic> data) async {
+    try {
+      dynamic response = await NetworkManager.instance.post(ApiUrl.commentLike, data);
+      return UploadLikeModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

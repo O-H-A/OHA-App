@@ -58,6 +58,7 @@ class ApiUrl {
       "http://152.67.219.168/api/posting/post/comments";
   static const String comment =
       "http://152.67.219.168/api/posting/post/comment";
+  static const String commentLike = "http://152.67.219.168/api/posting/post/comment/like";
 
   // Diary
   static const String myDiary = "http://152.67.219.168/api/diary/my";

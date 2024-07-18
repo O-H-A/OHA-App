@@ -130,6 +130,33 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
+  Future<int> commentLike(Map<String, dynamic> data) async {
+    final result = await _uploadRepository.commentLike(data);
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      int commentId = data["commentId"];
+      bool isLike = data["type"] == "L";
+
+      var comment = commentReadData.data?.data
+          .firstWhere((comment) => comment.commentId == commentId);
+      if (comment != null) {
+        comment.isLike = isLike;
+        if (isLike) {
+          comment.likeCount += 1;
+        } else {
+          comment.likeCount -= 1;
+        }
+        notifyListeners();
+      }
+
+      _setLikeData(ApiResponse.complete(result));
+    } else {
+      _setLikeData(ApiResponse.error(result.toString()));
+    }
+
+    return result.statusCode;
+  }
+
   Future<int> delete(String postId) async {
     final result = await _uploadRepository.delete(postId);
 

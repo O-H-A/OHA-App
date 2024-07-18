@@ -126,6 +126,15 @@ class _CommentSheetState extends State<CommentSheet> {
     });
   }
 
+  void _onLikeCommentPressed(int commentId, bool isCurrentlyLiked) async {
+    Map<String, dynamic> data = {
+      "commentId": commentId,
+      "type": isCurrentlyLiked ? "U" : "L"
+    };
+
+    await _uploadViewModel.commentLike(data);
+  }
+
   Widget _buildSMIndicator() {
     return Center(
       child: Container(
@@ -153,7 +162,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
   Widget _buildCommentWidget(int index) {
     final commentData = _uploadViewModel.commentReadData.data?.data[index];
-    return InkWell(
+    return GestureDetector(
       onTap: () => _onCommentTap(commentData!),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
@@ -228,9 +237,20 @@ class _CommentSheetState extends State<CommentSheet> {
                         ),
                       ),
                       SizedBox(width: ScreenUtil().setWidth(14.0)),
-                      ButtonIcon(
-                          icon: Icons.favorite_border,
-                          iconColor: const Color(UserColors.ui04)),
+                      GestureDetector(
+                        onTap: () => _onLikeCommentPressed(
+                          commentData!.commentId,
+                          commentData.isLike,
+                        ),
+                        child: Icon(
+                          (commentData?.isLike ?? false)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: (commentData?.isLike ?? false)
+                              ? Colors.red
+                              : Color(UserColors.ui04),
+                        ),
+                      ),
                       SizedBox(width: ScreenUtil().setWidth(6.0)),
                       Text(
                         '${commentData?.likeCount}개',
