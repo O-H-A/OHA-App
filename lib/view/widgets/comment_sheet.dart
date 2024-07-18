@@ -31,6 +31,7 @@ class _CommentSheetState extends State<CommentSheet> {
   String? _replyHint;
   int? _replyCommentId;
   UploadViewModel _uploadViewModel = UploadViewModel();
+  Map<int, bool> _showReplies = {};
 
   @override
   void initState() {
@@ -135,6 +136,12 @@ class _CommentSheetState extends State<CommentSheet> {
     await _uploadViewModel.commentLike(data);
   }
 
+  void _toggleShowReplies(int commentId) {
+    setState(() {
+      _showReplies[commentId] = !(_showReplies[commentId] ?? false);
+    });
+  }
+
   Widget _buildSMIndicator() {
     return Center(
       child: Container(
@@ -160,10 +167,9 @@ class _CommentSheetState extends State<CommentSheet> {
     );
   }
 
-  Widget _buildCommentWidget(int index) {
-    final commentData = _uploadViewModel.commentReadData.data?.data[index];
+  Widget _buildCommentWidget(CommentReadData commentData) {
     return GestureDetector(
-      onTap: () => _onCommentTap(commentData!),
+      onTap: () => _onCommentTap(commentData),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
         child: SizedBox(
@@ -174,8 +180,8 @@ class _CommentSheetState extends State<CommentSheet> {
               Padding(
                 padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(30.0)),
                 child: ClipOval(
-                  child: commentData?.profileUrl == null ||
-                          commentData!.profileUrl!.isEmpty
+                  child: commentData.profileUrl == null ||
+                          commentData.profileUrl!.isEmpty
                       ? SvgPicture.asset(
                           Images.defaultProfile,
                           width: ScreenUtil().setWidth(44.0),
@@ -195,7 +201,7 @@ class _CommentSheetState extends State<CommentSheet> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    commentData?.userName ?? '',
+                    commentData.userName,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Pretendard",
@@ -205,7 +211,7 @@ class _CommentSheetState extends State<CommentSheet> {
                   ),
                   SizedBox(height: ScreenUtil().setHeight(8.0)),
                   Text(
-                    commentData?.content ?? '',
+                    commentData.content,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Pretendard",
@@ -216,10 +222,14 @@ class _CommentSheetState extends State<CommentSheet> {
                   SizedBox(height: ScreenUtil().setHeight(8.0)),
                   Row(
                     children: [
-                      ButtonImage(imagePath: Images.commentGray),
+                      ButtonImage(
+                        imagePath: Images.commentGray,
+                        callback: () =>
+                            _toggleShowReplies(commentData.commentId),
+                      ),
                       SizedBox(width: ScreenUtil().setWidth(6.0)),
                       Text(
-                        '${commentData?.replyCount}개',
+                        '${commentData.replyCount}개',
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Pretendard",
@@ -239,21 +249,21 @@ class _CommentSheetState extends State<CommentSheet> {
                       SizedBox(width: ScreenUtil().setWidth(14.0)),
                       GestureDetector(
                         onTap: () => _onLikeCommentPressed(
-                          commentData!.commentId,
+                          commentData.commentId,
                           commentData.isLike,
                         ),
                         child: Icon(
-                          (commentData?.isLike ?? false)
+                          commentData.isLike
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: (commentData?.isLike ?? false)
+                          color: commentData.isLike
                               ? Colors.red
                               : Color(UserColors.ui04),
                         ),
                       ),
                       SizedBox(width: ScreenUtil().setWidth(6.0)),
                       Text(
-                        '${commentData?.likeCount}개',
+                        '${commentData.likeCount}개',
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Pretendard",
@@ -276,6 +286,118 @@ class _CommentSheetState extends State<CommentSheet> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplyCommentWidget(CommentReadData commentData) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(76.0)),
+      child: SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(94.0),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(30.0)),
+              child: ClipOval(
+                child: commentData.profileUrl == null ||
+                        commentData.profileUrl!.isEmpty
+                    ? SvgPicture.asset(
+                        Images.defaultProfile,
+                        width: ScreenUtil().setWidth(28.0),
+                        height: ScreenUtil().setHeight(28.0),
+                      )
+                    : Image.network(
+                        commentData.profileUrl!,
+                        width: ScreenUtil().setWidth(28.0),
+                        height: ScreenUtil().setHeight(28.0),
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+            SizedBox(width: ScreenUtil().setWidth(12.0)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  commentData.userName,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w700,
+                    fontSize: ScreenUtil().setSp(12.0),
+                  ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(8.0)),
+                Text(
+                  commentData.content,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w400,
+                    fontSize: ScreenUtil().setSp(12.0),
+                  ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(8.0)),
+                Row(
+                  children: [
+                    ButtonImage(
+                      imagePath: Images.commentGray,
+                      callback: () => _onCommentTap(commentData),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(4.0)),
+                    Text(
+                      Strings.reply,
+                      style: TextStyle(
+                        color: const Color(UserColors.ui04),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(13.0),
+                      ),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(14.0)),
+                    GestureDetector(
+                      onTap: () => _onLikeCommentPressed(
+                        commentData.commentId,
+                        commentData.isLike,
+                      ),
+                      child: Icon(
+                        commentData.isLike
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: commentData.isLike
+                            ? Colors.red
+                            : Color(UserColors.ui04),
+                        size: ScreenUtil().setSp(14.0),
+                      ),
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(6.0)),
+                    Text(
+                      '${commentData.likeCount}개',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w700,
+                        fontSize: ScreenUtil().setSp(12.0),
+                      ),
+                    ),
+                    Text(
+                      Strings.likeCount,
+                      style: TextStyle(
+                        color: const Color(UserColors.ui04),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(12.0),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -393,7 +515,22 @@ class _CommentSheetState extends State<CommentSheet> {
                           return const LoadingWidget();
                         }
 
-                        return _buildCommentWidget(index);
+                        var commentData = comments[index];
+                        List<Widget> commentWidgets = [
+                          _buildCommentWidget(commentData),
+                        ];
+
+                        // Add reply comments if any and if they should be shown
+                        if (_showReplies[commentData.commentId] ?? false) {
+                          for (var i = 0; i < commentData.replyCount; i++) {
+                            commentWidgets
+                                .add(_buildReplyCommentWidget(commentData));
+                          }
+                        }
+
+                        return Column(
+                          children: commentWidgets,
+                        );
                       },
                     );
                   case Status.error:

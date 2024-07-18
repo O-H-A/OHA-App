@@ -201,6 +201,7 @@ class Strings {
   static const String notification = "알림";
   static const String today = "오늘";
   static const String yesterDay = "어제";
+  static const String reply = "답글 달기";
 
   /*
     구름 	CTGR_CLOUD
