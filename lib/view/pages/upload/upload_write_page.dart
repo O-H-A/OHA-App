@@ -12,6 +12,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app.dart';
+import '../../../models/upload/upload_get_model.dart';
 import '../../../network/api_url.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
@@ -29,11 +30,15 @@ import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 
 class UploadWritePage extends StatefulWidget {
-  final AssetEntity selectImage;
+  final AssetEntity? selectImage;
+  final bool isEdit;
+  final UploadData? uploadData;
 
   const UploadWritePage({
     Key? key,
-    required this.selectImage,
+    this.selectImage,
+    this.isEdit = false,
+    this.uploadData,
   }) : super(key: key);
 
   @override
@@ -45,6 +50,9 @@ class _UploadWritePageState extends State<UploadWritePage> {
   final _textController = TextEditingController();
   UploadViewModel _uploadViewModel = UploadViewModel();
   LocationViewModel _locationViewModel = LocationViewModel();
+
+  // 키워드 리스트를 지역 변수로 선언
+  List<String> _keywordList = [];
 
   @override
   void initState() {
@@ -59,6 +67,22 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
       setState(() {});
     });
+
+    if (widget.isEdit == true && widget.uploadData != null) {
+      _textController.text = widget.uploadData!.content;
+
+      _categorySelectIndex = Strings.categoryMap.entries
+          .firstWhere((entry) => entry.value == widget.uploadData!.categoryCode,
+              orElse: () => const MapEntry(0, "CTGR_CLOUD"))
+          .key;
+
+      String locationCode = widget.uploadData!.regionCode.toString();
+      List<String> selectedKeywords = widget.uploadData!.keywords;
+
+      // 키워드 리스트 초기화
+      _keywordList = selectedKeywords;
+      _uploadViewModel.setUploadLocation(locationCode);
+    }
   }
 
   TextSpan _buildTextSpan(String text) {
@@ -249,13 +273,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
                 ),
               ),
               GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _uploadViewModel.getKetwordList.removeAt(index);
-                    });
-                  },
-                  child:
-                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
+                onTap: () {
+                  setState(() {
+                    _keywordList.removeAt(index);
+                  });
+                },
+                child: const Icon(Icons.cancel, color: Color(UserColors.ui07)),
+              ),
             ],
           ),
         ),
@@ -335,13 +359,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
                 ),
               ),
               GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _uploadViewModel.setUploadLocation("");
-                    });
-                  },
-                  child:
-                      const Icon(Icons.cancel, color: Color(UserColors.ui07))),
+                onTap: () {
+                  setState(() {
+                    _uploadViewModel.setUploadLocation("");
+                  });
+                },
+                child: const Icon(Icons.cancel, color: Color(UserColors.ui07)),
+              ),
             ],
           ),
         ),
@@ -352,7 +376,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
   Future<void> upload() async {
     String content = _textController.text;
     String selectCategory = Strings.categoryMap[_categorySelectIndex] ?? "";
-    List<String> keyword = _uploadViewModel.getKetwordList;
+    List<String> keyword = _keywordList;
     String selectLocationCode =
         _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
@@ -371,7 +395,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     try {
       final result = await _uploadViewModel.posting(
-          sendData, await widget.selectImage.thumbnailData);
+          sendData, await widget.selectImage?.thumbnailData);
 
       if (!mounted) return;
 
@@ -384,6 +408,55 @@ class _UploadWritePageState extends State<UploadWritePage> {
       }
     } catch (error) {
       print('Error uploading: $error');
+    }
+  }
+
+  Future<void> edit() async {
+    String content = _textController.text;
+    String selectCategory = Strings.categoryMap[_categorySelectIndex] ?? "";
+    List<String> keyword = _keywordList;
+
+    List<String> selectedKeywords = [];
+    for (int i = 0; i < min(keyword.length, 3); i++) {
+      selectedKeywords.add(keyword[i]);
+    }
+
+    Map<String, dynamic> sendData = {
+      Strings.poistIdKey: widget.uploadData?.postId.toString(),
+      Strings.contentKey: content,
+      Strings.categoryCodeKey: selectCategory,
+      Strings.keywordsKey: selectedKeywords,
+      Strings.regionCodeKey: '1111051500',
+      Strings.locationDetailKey: _uploadViewModel.getUploadLocation,
+      Strings.updateItemKey: "content,keywords,regionCode"
+    };
+
+    try {
+      Uint8List? thumbnailData;
+
+      if (widget.selectImage != null) {
+        thumbnailData = await widget.selectImage?.thumbnailData;
+      } else if (widget.uploadData?.files.isNotEmpty ?? false) {
+        String fileUrl = widget.uploadData!.files[0].url;
+        final response = await http.get(Uri.parse(fileUrl));
+        if (response.statusCode == 200) {
+          thumbnailData = response.bodyBytes;
+        }
+      }
+
+      final result = await _uploadViewModel.edit(sendData, thumbnailData);
+
+      if (!mounted) return;
+
+      if (result == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const App()),
+        );
+        showCompleteDialog();
+      }
+    } catch (error) {
+      print('Error updating: $error');
     }
   }
 
@@ -455,11 +528,16 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       child: SizedBox(
                         width: double.infinity,
                         height: ScreenUtil().setHeight(298.0),
-                        child: AssetEntityImage(
-                          widget.selectImage,
-                          isOriginal: false,
-                          fit: BoxFit.cover,
-                        ),
+                        child: widget.selectImage != null
+                            ? AssetEntityImage(
+                                widget.selectImage!,
+                                isOriginal: false,
+                                fit: BoxFit.cover,
+                              )
+                            : (widget.uploadData?.files.isNotEmpty ?? false)
+                                ? Image.network(widget.uploadData!.files[0].url,
+                                    fit: BoxFit.cover)
+                                : Container(),
                       ),
                     ),
                     SizedBox(height: ScreenUtil().setHeight(22.0)),
@@ -541,8 +619,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                           ),
                         ),
                         Text(
-                          _uploadViewModel.getKetwordList.length.toString() +
-                              Strings.keywordCount,
+                          _keywordList.length.toString() + Strings.keywordCount,
                           style: const TextStyle(
                             color: Colors.black,
                             fontFamily: "Pretendard",
@@ -553,22 +630,21 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    (_uploadViewModel.getKetwordList.isEmpty)
+                    (_keywordList.isEmpty)
                         ? _buildKeywordDefaultWidget()
                         : SizedBox(
                             height: ScreenUtil().setHeight(35.0),
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _uploadViewModel.getKetwordList.length,
+                              itemCount: _keywordList.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
                                 return SizedBox(
                                     width: ScreenUtil().setWidth(8.0));
                               },
                               itemBuilder: (BuildContext context, int index) {
-                                return _buildKeywordWidget(
-                                    _uploadViewModel.getKetwordList[index],
-                                    index);
+                                String keyword = _keywordList[index];
+                                return _buildKeywordWidget(keyword, index);
                               },
                             ),
                           ),
@@ -589,10 +665,11 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    (_uploadViewModel.getUploadLocation.isEmpty)
+                    (widget.uploadData?.locationDetail.isEmpty ?? true)
                         ? _buildLocationDefaultWidget("ex) 면목동")
                         : _buildLocationWidget(
-                            _uploadViewModel.getUploadLocation),
+                            widget.uploadData?.locationDetail ??
+                                _uploadViewModel.getUploadLocation),
                     SizedBox(height: ScreenUtil().setHeight(49.0)),
                   ],
                 ),
@@ -616,7 +693,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                         _uploadViewModel.getUploadLocation.isNotEmpty)
                     ? Colors.white
                     : Colors.black,
-                callback: upload,
+                callback: (widget.isEdit) ? edit : upload,
               ),
             ),
           ],

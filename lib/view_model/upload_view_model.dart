@@ -83,6 +83,13 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
+  Future<int> edit(
+      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+    final result = await _uploadRepository.edit(data, thumbnailData);
+
+    return result.statusCode;
+  }
+
   Future<int> posts(Map<String, dynamic> queryParams,
       {bool append = false}) async {
     int statusCode = 400;

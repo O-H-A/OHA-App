@@ -26,6 +26,19 @@ class UploadRepository {
     }
   }
 
+    Future<UploadModel> edit(
+      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+    try {
+      dynamic response = await NetworkManager.instance
+          .imagePatch(ApiUrl.post, data, thumbnailData);
+
+      String responseBody = jsonEncode(response);
+      return UploadModel.fromJson(jsonDecode(responseBody));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<UploadGetModel> posts(Map<String, dynamic> queryParams) async {
     try {
       dynamic response =

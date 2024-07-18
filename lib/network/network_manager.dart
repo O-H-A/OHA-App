@@ -178,6 +178,46 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> imagePatch(String serverUrl, Map<String, dynamic> userData,
+      Uint8List? thumbnailData) async {
+    Map<String, dynamic> sendData = userData;
+
+    var dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      "files": await MultipartFile.fromBytes(
+        thumbnailData!,
+        filename: 'files.png',
+        contentType: MediaType('application', 'octet-stream'),
+      ),
+      "dto": MultipartFile.fromString(
+        jsonEncode(sendData),
+        contentType: MediaType('application', 'json'),
+      ),
+    });
+
+    try {
+      Response response = await dio.patch(
+        serverUrl,
+        data: formData,
+        options: Options(
+          headers: await commonHeaders,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Image patch successful');
+      } else {
+        print('Image patch failed with status: ${response.statusCode}');
+      }
+
+      return response.data;
+    } catch (error) {
+      print('Error patching: $error');
+      throw error;
+    }
+  }
+
   Future<dynamic> put(String serverUrl, Map<String, dynamic> userData) async {
     try {
       String jsonData = jsonEncode(userData);
