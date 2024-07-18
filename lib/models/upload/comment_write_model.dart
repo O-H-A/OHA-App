@@ -67,7 +67,7 @@ class CommentWriteData {
       postId: postId,
       content: content,
       userId: userId,
-      userNickname: userNickname,
+      userName: userNickname,
       profileUrl: profileUrl,
       taggedUserId: taggedUserId,
       taggedUserNickname: taggedUserNickname,

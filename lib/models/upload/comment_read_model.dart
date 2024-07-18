@@ -27,7 +27,7 @@ class CommentReadData {
   int postId;
   String content;
   int userId;
-  String userNickname;
+  String userName;
   String? profileUrl;
   int taggedUserId;
   String taggedUserNickname;
@@ -43,7 +43,7 @@ class CommentReadData {
     required this.postId,
     required this.content,
     required this.userId,
-    required this.userNickname,
+    required this.userName,
     required this.profileUrl,
     required this.taggedUserId,
     required this.taggedUserNickname,
@@ -61,7 +61,7 @@ class CommentReadData {
       postId: json['postId'] ?? 0,
       content: json['content'] ?? '',
       userId: json['userId'] ?? 0,
-      userNickname: json['userNickname'] ?? '',
+      userName: json['userName'] ?? '',
       profileUrl: json['profileUrl'] ?? '',
       taggedUserId: json['taggedUserId'] ?? 0,
       taggedUserNickname: json['taggedUserNickname'] ?? '',

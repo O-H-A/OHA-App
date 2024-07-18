@@ -155,7 +155,7 @@ class _CommentSheetState extends State<CommentSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  commentData?.userNickname ?? '',
+                  commentData?.userName ?? '',
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Pretendard",
