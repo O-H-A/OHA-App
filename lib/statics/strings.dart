@@ -307,5 +307,6 @@ class Strings {
   static const String keywordsKey = "keywords";
   static const String locationDetailKey = "locationDetail";
   static const String updateItemKey = "updateItem";
-
+  static const String commentIdKey = "commentId";
+  static const String parentIdKey = "parentId";
 }
