@@ -81,4 +81,27 @@ class CommentReadData {
       type: json['type'] ?? '',
     );
   }
+
+
+  factory CommentReadData.empty() {
+    return CommentReadData(
+      commentId: 0,
+      parentId: 0,
+      postId: 0,
+      content: '',
+      userId: 0,
+      userName: '',
+      profileUrl: '',
+      replyUserId: 0,
+      replyUserName: '',
+      taggedUserId: 0,
+      taggedUserNickname: '',
+      regDtm: '',
+      updDtm: '',
+      replyCount: 0,
+      isLike: false,
+      likeCount: 0,
+      type: '',
+    );
+  }
 }

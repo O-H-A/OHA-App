@@ -19,10 +19,12 @@ class UploadViewModel with ChangeNotifier {
   String get getUploadLocation => _uploadLocation;
 
   ApiResponse<UploadGetModel> uploadGetData = ApiResponse.loading();
+  ApiResponse<UploadGetModel> popularUploadGetData = ApiResponse.loading();
 
   ApiResponse<UploadLikeModel> likeData = ApiResponse.loading();
 
   ApiResponse<CommentReadModel> commentReadData = ApiResponse.loading();
+  ApiResponse<CommentReadModel> replyReadData = ApiResponse.loading();
 
   ApiResponse<CommentWriteModel> commentWriteData = ApiResponse.loading();
 
@@ -38,8 +40,20 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setCommentRead(ApiResponse<CommentReadModel> response) {
-    commentReadData = response;
+  void setCommentRead(ApiResponse<CommentReadModel> response,
+      {bool append = false}) {
+    if (append &&
+        response.status == Status.complete &&
+        commentReadData.status == Status.complete) {
+      commentReadData.data?.data.addAll(response.data?.data ?? []);
+    } else {
+      commentReadData = response;
+    }
+    notifyListeners();
+  }
+
+  void setReplyRead(ApiResponse<CommentReadModel> response) {
+    replyReadData = response;
     notifyListeners();
   }
 
@@ -60,6 +74,18 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void _setPopularUploadGetData(ApiResponse<UploadGetModel> response,
+      {bool append = false}) {
+    if (append &&
+        response.status == Status.complete &&
+        popularUploadGetData.status == Status.complete) {
+      popularUploadGetData.data?.data.addAll(response.data?.data ?? []);
+    } else {
+      popularUploadGetData = response;
+    }
+    notifyListeners();
+  }
+
   void _setLikeData(ApiResponse<UploadLikeModel> response) {
     likeData = response;
     notifyListeners();
@@ -67,6 +93,12 @@ class UploadViewModel with ChangeNotifier {
 
   void clearUploadGetData() {
     uploadGetData = ApiResponse.complete(
+        UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
+  void clearPopularUploadGetData() {
+    popularUploadGetData = ApiResponse.complete(
         UploadGetModel(statusCode: 200, message: "", data: []));
     notifyListeners();
   }
@@ -83,8 +115,7 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  Future<int> edit(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _uploadRepository.edit(data, thumbnailData);
 
     return result.statusCode;
@@ -103,6 +134,19 @@ class UploadViewModel with ChangeNotifier {
     return statusCode;
   }
 
+  Future<int> popularPosts(Map<String, dynamic> queryParams,
+      {bool append = false}) async {
+    int statusCode = 400;
+    await _uploadRepository.posts(queryParams).then((value) {
+      _setPopularUploadGetData(ApiResponse.complete(value), append: append);
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      _setPopularUploadGetData(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
+  }
+
   Future<int> like(Map<String, dynamic> data) async {
     final result = await _uploadRepository.like(data);
 
@@ -110,18 +154,35 @@ class UploadViewModel with ChangeNotifier {
       int postId = data["postId"];
       bool isLike = data["type"] == "L";
 
-      var post =
-          uploadGetData.data?.data.firstWhere((post) => post.postId == postId);
-      if (post != null) {
+      var post = uploadGetData.data?.data.firstWhere(
+        (post) => post.postId == postId,
+        orElse: () => UploadData.empty(),
+      );
+
+      var popularPost = popularUploadGetData.data?.data.firstWhere(
+        (post) => post.postId == postId,
+        orElse: () => UploadData.empty(),
+      );
+
+      if (post != null && post.postId != 0) {
         post.isLike = isLike;
         if (isLike) {
           post.likeCount += 1;
         } else {
           post.likeCount -= 1;
         }
-        notifyListeners();
       }
 
+      if (popularPost != null && popularPost.postId != 0) {
+        popularPost.isLike = isLike;
+        if (isLike) {
+          popularPost.likeCount += 1;
+        } else {
+          popularPost.likeCount -= 1;
+        }
+      }
+
+      notifyListeners();
       _setLikeData(ApiResponse.complete(result));
     } else {
       _setLikeData(ApiResponse.error(result.toString()));
@@ -137,18 +198,32 @@ class UploadViewModel with ChangeNotifier {
       int commentId = data["commentId"];
       bool isLike = data["type"] == "L";
 
-      var comment = commentReadData.data?.data
-          .firstWhere((comment) => comment.commentId == commentId);
-      if (comment != null) {
+      CommentReadData? comment;
+
+      if (commentReadData.data != null) {
+        comment = commentReadData.data!.data.firstWhere(
+          (comment) => comment.commentId == commentId,
+          orElse: () => CommentReadData.empty(),
+        );
+      }
+
+      if (comment == null && replyReadData.data != null) {
+        comment = replyReadData.data!.data.firstWhere(
+          (reply) => reply.commentId == commentId,
+          orElse: () => CommentReadData.empty(),
+        );
+      }
+
+      if (comment != null && comment.commentId != 0) {
         comment.isLike = isLike;
         if (isLike) {
           comment.likeCount += 1;
         } else {
           comment.likeCount -= 1;
         }
-        notifyListeners();
       }
 
+      notifyListeners();
       _setLikeData(ApiResponse.complete(result));
     } else {
       _setLikeData(ApiResponse.error(result.toString()));
@@ -169,11 +244,20 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  Future<void> commentRead(Map<String, dynamic> queryParams) async {
+  Future<void> commentRead(Map<String, dynamic> queryParams,
+      {bool append = false}) async {
     await _uploadRepository.commentRead(queryParams).then((value) {
-      setCommentRead(ApiResponse.complete(value));
+      setCommentRead(ApiResponse.complete(value), append: append);
     }).onError((error, stackTrace) {
       setCommentRead(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> replyRead(Map<String, dynamic> queryParams) async {
+    await _uploadRepository.commentRead(queryParams).then((value) {
+      setReplyRead(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setReplyRead(ApiResponse.error(error.toString()));
     });
   }
 
