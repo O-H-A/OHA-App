@@ -56,7 +56,7 @@ class _PopularityTabState extends State<PopularityTab> {
       "regionCode": _locationViewModel.getDefaultLocationCode,
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
-      "popular": "true",  // 인기 데이터 플래그 추가
+      "popular": "true", // 인기 데이터 플래그 추가
     };
 
     try {
@@ -77,7 +77,7 @@ class _PopularityTabState extends State<PopularityTab> {
       "regionCode": _locationViewModel.getDefaultLocationCode,
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
-      "popular": "true",  // 인기 데이터 플래그 추가
+      "popular": "true", // 인기 데이터 플래그 추가
     };
 
     try {
@@ -181,6 +181,21 @@ class _PopularityTabState extends State<PopularityTab> {
     );
   }
 
+  Widget _buildTodaySkyText() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: const Text(
+        Strings.todaySky,
+        style: TextStyle(
+          fontFamily: "Pretendard",
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Color(UserColors.ui01),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoadingWidget() {
     return const LoadingWidget();
   }
@@ -271,6 +286,9 @@ class _PopularityTabState extends State<PopularityTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
+        _buildTodaySkyText(),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
         Expanded(
           child: _buildBody(),
         ),
