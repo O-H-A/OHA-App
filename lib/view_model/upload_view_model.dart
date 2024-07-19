@@ -24,6 +24,8 @@ class UploadViewModel with ChangeNotifier {
 
   ApiResponse<CommentReadModel> commentReadData = ApiResponse.loading();
 
+  ApiResponse<CommentReadModel> replyReadData = ApiResponse.loading();
+
   ApiResponse<CommentWriteModel> commentWriteData = ApiResponse.loading();
 
   ApiResponse<UploadReportModel> reportData = ApiResponse.loading();
@@ -40,6 +42,11 @@ class UploadViewModel with ChangeNotifier {
 
   void setCommentRead(ApiResponse<CommentReadModel> response) {
     commentReadData = response;
+    notifyListeners();
+  }
+
+  void setReplyRead(ApiResponse<CommentReadModel> response) {
+    replyReadData = response;
     notifyListeners();
   }
 
@@ -83,8 +90,7 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  Future<int> edit(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _uploadRepository.edit(data, thumbnailData);
 
     return result.statusCode;
@@ -137,17 +143,32 @@ class UploadViewModel with ChangeNotifier {
       int commentId = data["commentId"];
       bool isLike = data["type"] == "L";
 
-      var comment = commentReadData.data?.data
-          .firstWhere((comment) => comment.commentId == commentId);
-      if (comment != null) {
+      CommentReadData? comment;
+
+      if (commentReadData.data != null) {
+        comment = commentReadData.data!.data.firstWhere(
+          (comment) => comment.commentId == commentId,
+          orElse: () => CommentReadData.empty(),
+        );
+      }
+
+      if (comment == null && replyReadData.data != null) {
+        comment = replyReadData.data!.data.firstWhere(
+          (reply) => reply.commentId == commentId,
+          orElse: () => CommentReadData.empty(),
+        );
+      }
+
+      if (comment != null && comment.commentId != 0) {
         comment.isLike = isLike;
         if (isLike) {
           comment.likeCount += 1;
         } else {
           comment.likeCount -= 1;
         }
-        notifyListeners();
       }
+
+      notifyListeners();
 
       _setLikeData(ApiResponse.complete(result));
     } else {
@@ -174,6 +195,14 @@ class UploadViewModel with ChangeNotifier {
       setCommentRead(ApiResponse.complete(value));
     }).onError((error, stackTrace) {
       setCommentRead(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> replyRead(Map<String, dynamic> queryParams) async {
+    await _uploadRepository.commentRead(queryParams).then((value) {
+      setReplyRead(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setReplyRead(ApiResponse.error(error.toString()));
     });
   }
 

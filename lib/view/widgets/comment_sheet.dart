@@ -87,6 +87,14 @@ class _CommentSheetState extends State<CommentSheet> {
     });
   }
 
+  Future<void> _loadReplies(int commentId) async {
+    await _uploadViewModel.replyRead({
+      "parentId": commentId.toString(),
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
+    });
+  }
+
   Future<void> _commentWrite() async {
     if (_textController.text.isEmpty) {
       return;
@@ -134,12 +142,55 @@ class _CommentSheetState extends State<CommentSheet> {
     };
 
     await _uploadViewModel.commentLike(data);
+
+    setState(() {
+      CommentReadData? comment = _findCommentById(commentId);
+      if (comment != null) {
+        comment.isLike = !isCurrentlyLiked;
+        if (isCurrentlyLiked) {
+          comment.likeCount -= 1;
+        } else {
+          comment.likeCount += 1;
+        }
+      }
+    });
   }
 
-  void _toggleShowReplies(int commentId) {
-    setState(() {
-      _showReplies[commentId] = !(_showReplies[commentId] ?? false);
-    });
+  CommentReadData? _findCommentById(int commentId) {
+    // 댓글
+    CommentReadData? comment = _uploadViewModel.commentReadData.data?.data.firstWhere(
+      (comment) => comment.commentId == commentId,
+      orElse: () => CommentReadData.empty(),
+    );
+
+    if (comment != null && comment.commentId != 0) {
+      return comment;
+    }
+
+    // 답글
+    comment = _uploadViewModel.replyReadData.data?.data.firstWhere(
+      (reply) => reply.commentId == commentId,
+      orElse: () => CommentReadData.empty(),
+    );
+
+    if (comment != null && comment.commentId != 0) {
+      return comment;
+    }
+
+    return null;
+  }
+
+  void _toggleShowReplies(int commentId) async {
+    if (_showReplies[commentId] == true) {
+      setState(() {
+        _showReplies[commentId] = false;
+      });
+    } else {
+      await _loadReplies(commentId);
+      setState(() {
+        _showReplies[commentId] = true;
+      });
+    }
   }
 
   Widget _buildSMIndicator() {
@@ -332,14 +383,27 @@ class _CommentSheetState extends State<CommentSheet> {
                   ),
                 ),
                 SizedBox(height: ScreenUtil().setHeight(8.0)),
-                Text(
-                  commentData.content,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w400,
-                    fontSize: ScreenUtil().setSp(12.0),
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      commentData.replyUserName,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w700,
+                        fontSize: ScreenUtil().setSp(12.0),
+                      ),
+                    ),
+                    Text(
+                      commentData.content,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(12.0),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: ScreenUtil().setHeight(8.0)),
                 Row(
@@ -502,6 +566,7 @@ class _CommentSheetState extends State<CommentSheet> {
                   case Status.complete:
                     var comments =
                         uploadViewModel.commentReadData.data?.data ?? [];
+                    var replies = uploadViewModel.replyReadData.data?.data ?? [];
                     if (comments.isEmpty) {
                       return Center(
                         child: SvgPicture.asset(Images.commentEmpty),
@@ -520,11 +585,12 @@ class _CommentSheetState extends State<CommentSheet> {
                           _buildCommentWidget(commentData),
                         ];
 
-                        // Add reply comments if any and if they should be shown
                         if (_showReplies[commentData.commentId] ?? false) {
-                          for (var i = 0; i < commentData.replyCount; i++) {
-                            commentWidgets
-                                .add(_buildReplyCommentWidget(commentData));
+                          for (var reply in replies) {
+                            if (reply.parentId == commentData.commentId) {
+                              commentWidgets
+                                  .add(_buildReplyCommentWidget(reply));
+                            }
                           }
                         }
 
