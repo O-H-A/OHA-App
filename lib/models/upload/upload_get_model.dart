@@ -95,7 +95,34 @@ class UploadData {
         profileUrl: json?['profileUrl'] ?? '',
         isOwn: json?['isOwn'] ?? false,
       );
+
+  factory UploadData.empty() {
+    return UploadData(
+      postId: 0,
+      userId: 0,
+      userName: '',
+      isLike: false,
+      likeCount: 0,
+      commentCount: 0,
+      categoryCode: '',
+      categoryName: '',
+      keywords: [],
+      content: '',
+      regionCode: 0,
+      firstAddress: '',
+      secondAddress: '',
+      thirdAddress: '',
+      locationDetail: '',
+      regDtm: '',
+      updDtm: '',
+      files: [],
+      thumbnailUrl: '',
+      profileUrl: '',
+      isOwn: false,
+    );
+  }
 }
+
 
 class FileData {
   final String url;

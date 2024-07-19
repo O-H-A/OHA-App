@@ -107,7 +107,7 @@ class _HomeTabState extends State<HomeTab> {
 
     final statusCode = await _uploadViewModel.like(data);
 
-    if (statusCode == 201) {
+    if (statusCode == 201 || statusCode == 200) {
       setState(() {});
     }
   }
