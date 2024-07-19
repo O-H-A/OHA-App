@@ -80,7 +80,7 @@ class _CommentSheetState extends State<CommentSheet> {
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
-    });
+    }, append: true);
 
     setState(() {
       _isLoadingMore = false;
@@ -157,7 +157,7 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   CommentReadData? _findCommentById(int commentId) {
-    // 댓글
+    // 댓글에서 찾기
     CommentReadData? comment = _uploadViewModel.commentReadData.data?.data.firstWhere(
       (comment) => comment.commentId == commentId,
       orElse: () => CommentReadData.empty(),
@@ -167,7 +167,7 @@ class _CommentSheetState extends State<CommentSheet> {
       return comment;
     }
 
-    // 답글
+    // 답글에서 찾기
     comment = _uploadViewModel.replyReadData.data?.data.firstWhere(
       (reply) => reply.commentId == commentId,
       orElse: () => CommentReadData.empty(),
@@ -577,7 +577,7 @@ class _CommentSheetState extends State<CommentSheet> {
                       itemCount: comments.length + (_isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == comments.length) {
-                          return const LoadingWidget();
+                          return _isLoadingMore ? const LoadingWidget() : Container();
                         }
 
                         var commentData = comments[index];

@@ -190,9 +190,14 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  Future<void> commentRead(Map<String, dynamic> queryParams) async {
+  Future<void> commentRead(Map<String, dynamic> queryParams, {bool append = false}) async {
     await _uploadRepository.commentRead(queryParams).then((value) {
-      setCommentRead(ApiResponse.complete(value));
+      if (append && commentReadData.data != null) {
+        commentReadData.data!.data.addAll(value.data ?? []);
+        setCommentRead(ApiResponse.complete(commentReadData.data!));
+      } else {
+        setCommentRead(ApiResponse.complete(value));
+      }
     }).onError((error, stackTrace) {
       setCommentRead(ApiResponse.error(error.toString()));
     });
