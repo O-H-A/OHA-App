@@ -40,8 +40,14 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setCommentRead(ApiResponse<CommentReadModel> response) {
-    commentReadData = response;
+  void setCommentRead(ApiResponse<CommentReadModel> response, {bool append = false}) {
+    if (append &&
+        response.status == Status.complete &&
+        commentReadData.status == Status.complete) {
+      commentReadData.data?.data.addAll(response.data?.data ?? []);
+    } else {
+      commentReadData = response;
+    }
     notifyListeners();
   }
 
@@ -163,8 +169,10 @@ class UploadViewModel with ChangeNotifier {
         comment.isLike = isLike;
         if (isLike) {
           comment.likeCount += 1;
+          print("Jehee ${comment.likeCount}");
         } else {
           comment.likeCount -= 1;
+          print("Jehee ${comment.likeCount}");
         }
       }
 
@@ -192,12 +200,7 @@ class UploadViewModel with ChangeNotifier {
 
   Future<void> commentRead(Map<String, dynamic> queryParams, {bool append = false}) async {
     await _uploadRepository.commentRead(queryParams).then((value) {
-      if (append && commentReadData.data != null) {
-        commentReadData.data!.data.addAll(value.data ?? []);
-        setCommentRead(ApiResponse.complete(commentReadData.data!));
-      } else {
-        setCommentRead(ApiResponse.complete(value));
-      }
+      setCommentRead(ApiResponse.complete(value), append: append);
     }).onError((error, stackTrace) {
       setCommentRead(ApiResponse.error(error.toString()));
     });
