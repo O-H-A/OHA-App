@@ -52,12 +52,13 @@ class ApiUrl {
   static const String report = "http://152.67.219.168/api/posting/post/report";
   static const String like = "http://152.67.219.168/api/posting/post/like";
   static const String posts = "http://152.67.219.168/api/posting/posts";
-  static const String post = "/api/posting/post/";
+  static const String post = "http://152.67.219.168/api/posting/post";
   static const String test = "/api/posting/test";
   static const String comments =
       "http://152.67.219.168/api/posting/post/comments";
   static const String comment =
       "http://152.67.219.168/api/posting/post/comment";
+  static const String commentLike = "http://152.67.219.168/api/posting/post/comment/like";
 
   // Diary
   static const String myDiary = "http://152.67.219.168/api/diary/my";

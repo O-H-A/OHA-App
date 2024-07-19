@@ -67,15 +67,18 @@ class CommentWriteData {
       postId: postId,
       content: content,
       userId: userId,
-      userNickname: userNickname,
+      userName: userNickname,
       profileUrl: profileUrl,
+      replyUserId: 0,
+      replyUserName: '',
       taggedUserId: taggedUserId,
       taggedUserNickname: taggedUserNickname,
       regDtm: regDtm.toString(),
       updDtm: '',
       replyCount: 0,
-      likeUsers: [],
+      isLike: false,
       likeCount: 0,
+      type: 'C',
     );
   }
 }

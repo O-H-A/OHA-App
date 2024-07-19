@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../models/upload/upload_get_model.dart';
 import '../../../../network/api_response.dart';
 import '../../../../statics/colors.dart';
 import '../../../../statics/images.dart';
@@ -15,6 +16,7 @@ import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../mypage/delete_dialog.dart';
 import '../../error_page.dart';
+import '../../upload/upload_write_page.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -110,13 +112,21 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
-  void _onMorePressed(int postId, String action) {
+  void _onMorePressed(int postId, String action, UploadData data) {
     switch (action) {
       case Strings.saveImage:
         print('Save Image $postId');
         break;
       case Strings.edit:
-        print('Edit $postId');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UploadWritePage(
+              isEdit: true,
+              uploadData: data,
+            ),
+          ),
+        );
         break;
       case Strings.delete:
         print('Post ID to delete: $postId');
@@ -243,9 +253,10 @@ class _HomeTabState extends State<HomeTab> {
                 onLikePressed: () => _onLikePressed(data.postId, data.isLike),
                 onMorePressed: () => FourMoreDialog.show(
                     context,
-                    (action) => _onMorePressed(data.postId, action),
+                    (action) => _onMorePressed(data.postId, action, data),
                     data.isOwn,
-                    data.files.isNotEmpty ? data.files[0].url : '', data.postId),
+                    data.files.isNotEmpty ? data.files[0].url : '',
+                    data.postId),
               );
             },
           );

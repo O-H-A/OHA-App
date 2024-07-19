@@ -83,6 +83,13 @@ class UploadViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
+  Future<int> edit(
+      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+    final result = await _uploadRepository.edit(data, thumbnailData);
+
+    return result.statusCode;
+  }
+
   Future<int> posts(Map<String, dynamic> queryParams,
       {bool append = false}) async {
     int statusCode = 400;
@@ -111,6 +118,33 @@ class UploadViewModel with ChangeNotifier {
           post.likeCount += 1;
         } else {
           post.likeCount -= 1;
+        }
+        notifyListeners();
+      }
+
+      _setLikeData(ApiResponse.complete(result));
+    } else {
+      _setLikeData(ApiResponse.error(result.toString()));
+    }
+
+    return result.statusCode;
+  }
+
+  Future<int> commentLike(Map<String, dynamic> data) async {
+    final result = await _uploadRepository.commentLike(data);
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      int commentId = data["commentId"];
+      bool isLike = data["type"] == "L";
+
+      var comment = commentReadData.data?.data
+          .firstWhere((comment) => comment.commentId == commentId);
+      if (comment != null) {
+        comment.isLike = isLike;
+        if (isLike) {
+          comment.likeCount += 1;
+        } else {
+          comment.likeCount -= 1;
         }
         notifyListeners();
       }

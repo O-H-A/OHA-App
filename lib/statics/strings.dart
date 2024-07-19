@@ -201,6 +201,7 @@ class Strings {
   static const String notification = "알림";
   static const String today = "오늘";
   static const String yesterDay = "어제";
+  static const String reply = "답글 달기";
 
   /*
     구름 	CTGR_CLOUD
@@ -256,15 +257,15 @@ class Strings {
   };
 
   static const List<String> reportReasenList = [
-    "REP_RSN_006",  // 저작권 침해 및 도용
-    "REP_RSN_005",  // 거짓 정보
-    "REP_RSN_004",  // 혐오 발언 또는 상징
-    "REP_RSN_003",  // 나체 이미지 또는 성적 행위
-    "REP_RSN_002",  // 스팸
-    "REP_RSN_001",  // 마음에 들지 않음
-    "REP_ACT_003",  // 신고자, 피신고자 알림 발송
-    "REP_ACT_002",  // 이상없음(게시물 미삭제)
-    "REP_ACT_001",  // 게시물 삭제
+    "REP_RSN_006", // 저작권 침해 및 도용
+    "REP_RSN_005", // 거짓 정보
+    "REP_RSN_004", // 혐오 발언 또는 상징
+    "REP_RSN_003", // 나체 이미지 또는 성적 행위
+    "REP_RSN_002", // 스팸
+    "REP_RSN_001", // 마음에 들지 않음
+    "REP_ACT_003", // 신고자, 피신고자 알림 발송
+    "REP_ACT_002", // 이상없음(게시물 미삭제)
+    "REP_ACT_001", // 게시물 삭제
   ];
 
   static String getProbPrecip(String probPrecip) {
@@ -288,7 +289,6 @@ class Strings {
 
 // === API KEY ===
   static const String poistIdKey = "postId";
-
   static const String setDateKey = "setDate";
   static const String titleKey = "title";
   static const String contentKey = "content";
@@ -304,4 +304,10 @@ class Strings {
   static const String sizeKey = "size";
   static const String reasonCodeKey = "reasonCode";
   static const String limitKey = "limit";
+  static const String categoryCodeKey = "categoryCode";
+  static const String keywordsKey = "keywords";
+  static const String locationDetailKey = "locationDetail";
+  static const String updateItemKey = "updateItem";
+  static const String commentIdKey = "commentId";
+  static const String parentIdKey = "parentId";
 }
