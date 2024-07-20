@@ -52,7 +52,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
     });
   }
 
-  // 아이콘에 위쪽 및 아래쪽 패딩을 추가하는 위젯
   Widget _bottomIcon({
     required String assetName,
     double topPadding = 0.0,
