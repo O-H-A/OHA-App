@@ -109,6 +109,12 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearMyUploadGetData() {
+    popularUploadGetData = ApiResponse.complete(
+        UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
   void postReport(ApiResponse<UploadReportModel> response) {
     reportData = response;
     notifyListeners();

@@ -5,9 +5,7 @@ import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
-
-import '../../../view_model/diary_view_model.dart';
-import 'diary_register_page.dart';
+import '../../../view_model/upload_view_model.dart';
 
 class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
@@ -24,7 +22,7 @@ class WeekCalendarWidget extends StatefulWidget {
 }
 
 class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
-  DiaryViewModel? _diaryViewModel;
+  UploadViewModel? _uploadViewModel;
   DateTime? firstDayOfWeek;
   List<int>? daysList;
   Set<int>? recordedDays;
@@ -44,7 +42,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   @override
   void initState() {
     super.initState();
-    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _updateWeek();
   }
 
@@ -65,14 +63,14 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
         return day.day;
       });
 
-      final diaryEntries = _diaryViewModel!.diaryEntries;
-      recordedDays = diaryEntries
+      final uploadEntries = _uploadViewModel!.myUploadGetData.data?.data ?? [];
+      recordedDays = uploadEntries
           .where((entry) {
-            DateTime entryDate = DateTime.parse(entry.setDate);
+            DateTime entryDate = DateTime.parse(entry.regDtm);
             return entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
                 entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
           })
-          .map((entry) => DateTime.parse(entry.setDate).day)
+          .map((entry) => DateTime.parse(entry.regDtm).day)
           .toSet();
 
       today = DateTime.now();
@@ -82,7 +80,6 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
 
   void _onDaySelected(int day) {
     DateTime selected = DateTime(widget.currentDate.year, widget.currentDate.month, day);
-    bool isRecord = recordedDays!.contains(day);
 
     setState(() {
       selectedDay = selected;

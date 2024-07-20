@@ -202,6 +202,8 @@ class Strings {
   static const String today = "오늘";
   static const String yesterDay = "어제";
   static const String reply = "답글 달기";
+  static const String postEmpty = "포스팅을 추가해 보세요";
+  static const String diaryEmpty = "다이어리를 추가해 보세요";
 
   /*
     구름 	CTGR_CLOUD
