@@ -202,6 +202,8 @@ class Strings {
   static const String today = "오늘";
   static const String yesterDay = "어제";
   static const String reply = "답글 달기";
+  static const String postEmpty = "포스팅을 추가해 보세요";
+  static const String diaryEmpty = "다이어리를 추가해 보세요";
 
   /*
     구름 	CTGR_CLOUD
@@ -278,6 +280,10 @@ class Strings {
 
   static String deleteWeatherCompleteText(String address) {
     return "$address의 날씨 정보가 삭제 되었습니다.";
+  }
+
+  static String diaryInfoText(int diaryCount, int likeCount) {
+    return "다이어리 등록 수 $diaryCount · 반응 $likeCount";
   }
 
   static const String serviceAgreementGuide =

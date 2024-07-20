@@ -64,5 +64,8 @@
 	<string>카메라 접근 문구 필요</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>마이크 문구 필요</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>위치 권한 문구 필요</string>
+
 </dict>
 </plist>

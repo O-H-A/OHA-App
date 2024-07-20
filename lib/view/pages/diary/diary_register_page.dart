@@ -247,7 +247,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     Map<String, dynamic> sendData = {
       Strings.setDateKey: _writeDay,
       Strings.titleKey: _titleController.text,
-      Strings.contentKey: _contentsController.text,
+      Strings.contentKey: Strings.weatherCodeMap[_selectTitle],
       Strings.weatherKey: _selectTitle,
       Strings.isPublicKey: _publicStatus,
       Strings.locationKey: "",
