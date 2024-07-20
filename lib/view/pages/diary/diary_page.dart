@@ -53,13 +53,25 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   void addCurrentTime() {
-    currentTime =
-        DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
+    setState(() {
+      if (viewMonth) {
+        currentTime =
+            DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
+      } else {
+        currentTime = currentTime.add(Duration(days: 7));
+      }
+    });
   }
 
   void subCurrentTime() {
-    currentTime =
-        DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+    setState(() {
+      if (viewMonth) {
+        currentTime =
+            DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+      } else {
+        currentTime = currentTime.subtract(Duration(days: 7));
+      }
+    });
   }
 
   void onDateSelected(DateTime date) {
@@ -172,11 +184,7 @@ class _DiaryPageState extends State<DiaryPage> {
             children: [
               IconButton(
                 icon: const Icon(Icons.chevron_left),
-                onPressed: () {
-                  setState(() {
-                    subCurrentTime();
-                  });
-                },
+                onPressed: subCurrentTime,
               ),
               Text(
                 getCurrentTime(),
@@ -189,11 +197,7 @@ class _DiaryPageState extends State<DiaryPage> {
               ),
               IconButton(
                 icon: const Icon(Icons.chevron_right),
-                onPressed: () {
-                  setState(() {
-                    addCurrentTime();
-                  });
-                },
+                onPressed: addCurrentTime,
               ),
             ],
           ),
