@@ -26,7 +26,7 @@ class UploadRepository {
     }
   }
 
-    Future<UploadModel> edit(
+  Future<UploadModel> edit(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     try {
       dynamic response = await NetworkManager.instance
@@ -43,6 +43,16 @@ class UploadRepository {
     try {
       dynamic response =
           await NetworkManager.instance.getWithQuery(ApiUrl.posts, queryParams);
+      return UploadGetModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UploadGetModel> myPosts() async {
+    try {
+      dynamic response =
+          await NetworkManager.instance.get(ApiUrl.myPosts);
       return UploadGetModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
@@ -88,7 +98,7 @@ class UploadRepository {
     }
   }
 
-    Future<UploadReportModel> report(Map<String, dynamic> data) async {
+  Future<UploadReportModel> report(Map<String, dynamic> data) async {
     try {
       dynamic response =
           await NetworkManager.instance.post(ApiUrl.report, data);
@@ -98,9 +108,10 @@ class UploadRepository {
     }
   }
 
-    Future<UploadLikeModel> commentLike(Map<String, dynamic> data) async {
+  Future<UploadLikeModel> commentLike(Map<String, dynamic> data) async {
     try {
-      dynamic response = await NetworkManager.instance.post(ApiUrl.commentLike, data);
+      dynamic response =
+          await NetworkManager.instance.post(ApiUrl.commentLike, data);
       return UploadLikeModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

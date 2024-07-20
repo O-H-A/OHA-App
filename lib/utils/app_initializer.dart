@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oha/view_model/upload_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../app.dart';
@@ -25,6 +26,8 @@ class AppInitializer {
         Provider.of<WeatherViewModel>(context, listen: false);
     final myPageViewModel =
         Provider.of<MyPageViewModel>(context, listen: false);
+    final uploadViewModel =
+        Provider.of<UploadViewModel>(context, listen: false);
 
     try {
       final result = await loginViewModel.refresh();
@@ -42,6 +45,7 @@ class AppInitializer {
         await locationViewModel.getDefaultFrequentDistricts();
         await weatherViewModel.getDefaultWeather();
         await myPageViewModel.myInfo();
+        await uploadViewModel.myPosts();
         _checkLoginStatus(context);
       }
     } catch (error) {
