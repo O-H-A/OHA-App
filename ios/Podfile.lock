@@ -25,6 +25,8 @@ PODS:
     - NMapsMap (= 3.16.2)
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - geocoding_ios (1.0.5):
+    - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
   - GoogleUtilities/Environment (7.13.3):
@@ -72,6 +74,7 @@ DEPENDENCIES:
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_naver_map (from `.symlinks/plugins/flutter_naver_map/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_downloader (from `.symlinks/plugins/image_downloader/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
@@ -108,6 +111,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_naver_map/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  geocoding_ios:
+    :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_downloader:
@@ -141,6 +146,7 @@ SPEC CHECKSUMS:
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_naver_map: d1ee15e7a2fe5360a19640648ceed5abf79d82aa
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
+  geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   image_downloader: 73e190d6c9f286f2649554051348d9cb319cd4b3
