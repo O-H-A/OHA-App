@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../statics/images.dart';
@@ -29,10 +31,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   void _onBottomTapped(int index) async {
     if (index == 1) {
-      bool isCameraGranted = (await _storage.read(key: Strings.isCameraGranted)) == 'true';
-      bool isMicGranted = (await _storage.read(key: Strings.isMicGranted)) == 'true';
+      bool isCameraGranted =
+          (await _storage.read(key: Strings.isCameraGranted)) == 'true';
+      bool isMicGranted =
+          (await _storage.read(key: Strings.isMicGranted)) == 'true';
 
-      if(!mounted) return;
+      if (!mounted) return;
 
       if (!isCameraGranted || !isMicGranted) {
         Navigator.push(
@@ -46,6 +50,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
     setState(() {
       _selectIndex = index;
     });
+  }
+
+  // 아이콘에 위쪽 및 아래쪽 패딩을 추가하는 위젯
+  Widget _bottomIcon({
+    required String assetName,
+    double topPadding = 0.0,
+    double bottomPadding = 0.0,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
+      child: SvgPicture.asset(assetName),
+    );
   }
 
   @override
@@ -83,40 +99,72 @@ class _BottomNavigationState extends State<BottomNavigation> {
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Image.asset(Images.homeDisable),
-                activeIcon: Image.asset(Images.homeEnable),
-                label: "",
+                icon: _bottomIcon(
+                  assetName: Images.homeDisable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                activeIcon: _bottomIcon(
+                  assetName: Images.homeEnable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                label: Strings.home,
               ),
               BottomNavigationBarItem(
-                icon: Image.asset(Images.uploadDisable),
-                activeIcon: Image.asset(Images.uploadEnable),
-                label: "",
+                icon: _bottomIcon(
+                  assetName: Images.uploadDisable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                activeIcon: _bottomIcon(
+                  assetName: Images.uploadEnable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                label: Strings.upload,
               ),
               BottomNavigationBarItem(
-                icon: Image.asset(Images.diaryDisable),
-                activeIcon: Image.asset(Images.diaryEnable),
-                label: "",
+                icon: _bottomIcon(
+                  assetName: Images.diaryDisable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                activeIcon: _bottomIcon(
+                  assetName: Images.diaryEnable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                label: Strings.diary,
               ),
               BottomNavigationBarItem(
-                icon: Image.asset(Images.myPageDisable),
-                activeIcon: Image.asset(Images.myPageEnable),
-                label: "",
+                icon: _bottomIcon(
+                  assetName: Images.myPageDisable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                activeIcon: _bottomIcon(
+                  assetName: Images.myPageEnable,
+                  topPadding: 10.0,
+                  bottomPadding: 6.0,
+                ),
+                label: Strings.myPage,
               ),
             ],
             showUnselectedLabels: true,
             selectedItemColor: Colors.blue,
             unselectedItemColor: Colors.grey,
-            selectedLabelStyle: const TextStyle(
+            selectedLabelStyle: TextStyle(
               color: Colors.blue,
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w600,
-              fontSize: 12,
+              fontSize: ScreenUtil().setSp(12.0),
             ),
-            unselectedLabelStyle: const TextStyle(
+            unselectedLabelStyle: TextStyle(
               color: Colors.white,
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w600,
-              fontSize: 12,
+              fontSize: ScreenUtil().setSp(12.0),
             ),
           ),
         ),
