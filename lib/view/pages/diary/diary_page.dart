@@ -177,29 +177,37 @@ class _DiaryPageState extends State<DiaryPage> {
         SizedBox(width: ScreenUtil().setWidth(14.0)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              "User Name",
+              _diaryViewModel.getMyDiary.data?.data?.writer?.name ?? '',
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontSize: ScreenUtil().setSp(14.0),
               ),
             ),
             Text(
-              "다이어리 등록 수 반응",
+              Strings.diaryInfoText(_diaryViewModel.getMyDiary.data?.data?.diaries?.length ?? 0, _getTotalLikes()),
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w300,
-                fontSize: 12,
+                fontSize: ScreenUtil().setSp(12.0),
               ),
             ),
           ],
         ),
       ],
     );
+  }
+
+  int _getTotalLikes() {
+    int totalLikes = 0;
+    for (var diary in _diaryViewModel.getMyDiary.data?.data?.diaries ?? []) {
+      totalLikes += int.tryParse(diary.likes) ?? 0;
+    }
+    return totalLikes;
   }
 
   Widget _buildMonthChangeWidget() {
@@ -435,7 +443,6 @@ class _DiaryPageState extends State<DiaryPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildPostingImageWidget(diary?.fileRelation?.isNotEmpty == true
                   ? (diary?.fileRelation?[0].fileUrl)

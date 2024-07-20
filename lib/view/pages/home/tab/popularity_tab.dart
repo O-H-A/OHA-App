@@ -101,7 +101,6 @@ class _PopularityTabState extends State<PopularityTab> {
   }
 
   void _onLikePressed(int postId, bool isCurrentlyLiked) async {
-    print("Jehee e; ${postId}, ${isCurrentlyLiked}");
     Map<String, dynamic> data = {
       "postId": postId,
       "type": isCurrentlyLiked ? "U" : "L"
