@@ -204,6 +204,7 @@ class Strings {
   static const String reply = "답글 달기";
   static const String postEmpty = "포스팅을 추가해 보세요";
   static const String diaryEmpty = "다이어리를 추가해 보세요";
+  static const String invalidNickname = "사용할 수 없는 이름입니다. 다른 이름을 사용해 주세요.";
 
   /*
     구름 	CTGR_CLOUD
@@ -316,4 +317,5 @@ class Strings {
   static const String updateItemKey = "updateItem";
   static const String commentIdKey = "commentId";
   static const String parentIdKey = "parentId";
+  static const String nameKey = "name";
 }
