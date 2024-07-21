@@ -36,6 +36,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     super.initState();
 
     _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
+
+    if (_myPageViewModel.myInfoData.data?.data.name.isNotEmpty ?? false) {
+      _textController.text = _myPageViewModel.myInfoData.data?.data.name ?? '';
+    }
   }
 
   Future getProfileImage(ImageSource imageSource) async {
@@ -137,13 +141,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   Widget _buildCurrentNickNameWidget() {
     return Row(
       children: [
-       Text(
+        Text(
           Strings.currentNickName,
           style: TextStyle(
               color: const Color(UserColors.ui06),
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w500,
-              fontSize: ScreenUtil().setSp(12.0)),//
+              fontSize: ScreenUtil().setSp(12.0)), //
         ),
         Text(
           _myPageViewModel.myInfoData.data?.data.name ?? '',
@@ -204,12 +208,24 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 
-  void nickNameChangeComplete() async {
-    Map<String, dynamic> sendData = {"name": _textController.text};
+  void _userInfoChange() async {
+    Map<String, dynamic> sendData = {Strings.nameKey: _textController.text};
+    Uint8List? imageBytes;
+
+    if (_getProfileImage != null) {
+      imageBytes = await File(_getProfileImage!.path).readAsBytes();
+    }
 
     try {
-      await _myPageViewModel.changeNickName(sendData);
-      showCompleteDialog();
+      final result =
+          await _myPageViewModel.changeUserInfo(sendData, imageBytes);
+
+      if (!mounted) return;
+      if (result == 404) {
+        CompleteDialog.showCompleteDialog(context, Strings.invalidNickname);
+      } else if(result == 200) {
+        showCompleteDialog();
+      }
     } catch (error) {}
   }
 
@@ -257,7 +273,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Scaffold(
       appBar: BackCompleteAppBar(
         title: Strings.profile,
-        doneCallback: nickNameChangeComplete,
+        doneCallback: _userInfoChange,
         backCallback: showDeleteDialog,
       ),
       backgroundColor: Colors.white,

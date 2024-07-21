@@ -145,9 +145,9 @@ class NetworkManager {
     var dio = Dio();
 
     FormData formData = FormData.fromMap({
-      "files": await MultipartFile.fromBytes(
+      "file": await MultipartFile.fromBytes(
         thumbnailData!,
-        filename: 'files.png',
+        filename: 'file.jpeg',
         contentType: MediaType('application', 'octet-stream'),
       ),
       "dto": MultipartFile.fromString(
@@ -244,6 +244,46 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> imagePut(String serverUrl, Map<String, dynamic> userData,
+      Uint8List? fileData) async {
+    Map<String, dynamic> sendData = userData;
+
+    var dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      "profileImage": await MultipartFile.fromBytes(
+        fileData!,
+        filename: 'profileImage.png',
+        contentType: MediaType('application', 'octet-stream'),
+      ),
+      "dto": MultipartFile.fromString(
+        jsonEncode(sendData),
+        contentType: MediaType('application', 'json'),
+      ),
+    });
+
+    try {
+      Response response = await dio.put(
+        serverUrl,
+        data: formData,
+        options: Options(
+          headers: await commonHeaders,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Multipart PUT successful');
+      } else {
+        print('Multipart PUT failed with status: ${response.statusCode}');
+      }
+
+      return response.data;
+    } catch (error) {
+      print('Error in multipart PUT: $error');
+      throw error;
+    }
+  }
+
   Future<dynamic> delete(String serverUrl,
       [Map<String, dynamic>? userData]) async {
     dynamic responseJson;
@@ -292,32 +332,6 @@ class NetworkManager {
     }
   }
 
-  Future<http.Response> imagePut(String serverUrl, XFile? imageFile) async {
-    try {
-      if (imageFile == null) {
-        return http.Response('No image file provided', 400);
-      }
-
-      List<int> imageBytes = await imageFile.readAsBytes();
-      final response = await http.put(
-        Uri.parse(serverUrl),
-        headers: await commonHeaders,
-        body: imageBytes,
-      );
-
-      if (response.statusCode == 200) {
-        print("Image uploaded successfully: ${response.body}");
-      } else {
-        print("Failed to upload image: ${response.statusCode}");
-      }
-
-      return response;
-    } catch (e) {
-      print("An error occurred while uploading the image: $e");
-      throw e;
-    }
-  }
-
   Future<dynamic> deleteWeather(
       String serverUrl, Map<String, dynamic> data) async {
     dynamic responseJson;
@@ -350,6 +364,8 @@ class NetworkManager {
       case 0:
       case 200:
       case 201:
+      case 400:
+      case 404:
         return response.body;
       default:
         return ApiResponse.error;

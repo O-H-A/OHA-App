@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:oha/models/my_page/name_update_model.dart';
 import 'package:oha/models/weather/weather_model.dart';
@@ -23,12 +25,10 @@ class MyPageViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeNickName(Map<String, dynamic> data) async {
-    await _mypageRepository.changeUserNickName(data).then((value) {
-      setMyPageData(ApiResponse.complete(value));
-    }).onError((error, stackTrace) {
-      setMyPageData(ApiResponse.error(error.toString()));
-    });
+  Future<int> changeUserInfo(Map<String, dynamic> data, Uint8List? image) async {
+    final result = await _mypageRepository.changeUserInfo(data, image);
+
+    return result.statusCode;
   }
 
   Future<void> myInfo() async {
