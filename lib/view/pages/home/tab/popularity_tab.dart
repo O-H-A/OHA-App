@@ -239,15 +239,7 @@ class _PopularityTabState extends State<PopularityTab> {
 
               var data = dataList[index];
               return FeedWidget(
-                postId: data.postId,
-                nickName: data.userName,
-                locationInfo: data.locationDetail,
-                likesCount: data.likeCount,
-                commentCount: data.commentCount,
-                isLike: data.isLike,
-                description: data.content,
-                hashTag: data.keywords,
-                imageUrl: data.files.isNotEmpty ? data.files[0].url : '',
+                uploadData: data,
                 onLikePressed: () => _onLikePressed(data.postId, data.isLike),
                 onMorePressed: () => FourMoreDialog.show(
                     context,
