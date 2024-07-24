@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:oha/statics/Colors.dart';
+import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
+import '../../../view_model/diary_view_model.dart';
 import '../../../view_model/upload_view_model.dart';
 
 class MonthCalendarWidget extends StatefulWidget {
@@ -22,7 +23,6 @@ class MonthCalendarWidget extends StatefulWidget {
 }
 
 class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
-  UploadViewModel _uploadViewModel = UploadViewModel();
   DateTime? firstDayOfMonth;
   int? firstWeekday;
   int? daysInMonth;
@@ -44,7 +44,6 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   @override
   void initState() {
     super.initState();
-    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
     _updateCalendar();
   }
 
@@ -63,12 +62,29 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
       daysInMonth = DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
       daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
-      final uploadEntries = _uploadViewModel.myUploadGetData.data?.data ?? [];
-      recordedDays = uploadEntries
-          .where((entry) => DateTime.parse(entry.regDtm).month == widget.currentDate.month)
-          .map((entry) => DateTime.parse(entry.regDtm).day)
-          .toSet();
+      final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+      final postEntries = Provider.of<UploadViewModel>(context, listen: false).myUploadGetData.data?.data ?? [];
 
+      recordedDays = {};
+
+      for (var entry in diaryEntries) {
+        final diaryDate = DateTime(
+          int.parse(entry.setDate.substring(0, 4)),
+          int.parse(entry.setDate.substring(4, 6)),
+          int.parse(entry.setDate.substring(6, 8)),
+        );
+        if (diaryDate.month == widget.currentDate.month) {
+          recordedDays!.add(diaryDate.day);
+        }
+      }
+
+      for (var entry in postEntries) {
+        final postDate = DateTime.parse(entry.regDtm);
+        if (postDate.month == widget.currentDate.month) {
+          recordedDays!.add(postDate.day);
+        }
+      }
+  
       today = DateTime.now();
       selectedDay = today;
     });
@@ -79,6 +95,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
 
     setState(() {
       selectedDay = selected;
+      bool recorded = recordedDays!.contains(day);
     });
     widget.onDateSelected(selectedDay!);
   }

@@ -8,33 +8,20 @@ import '../../statics/images.dart';
 import '../../statics/strings.dart';
 import 'button_icon.dart';
 import 'comment_sheet.dart';
+import '../../../../models/upload/upload_get_model.dart';
 
 class FeedWidget extends StatefulWidget {
-  final int postId;
-  final String nickName;
-  final String locationInfo;
-  final int likesCount;
-  final int commentCount;
-  final bool isLike;
-  final String description;
-  final List<String> hashTag;
-  final String imageUrl;
+  final UploadData uploadData;
   final VoidCallback? onLikePressed;
   final VoidCallback? onMorePressed;
+  final VoidCallback? onProfilePressed;
 
   const FeedWidget({
     Key? key,
-    required this.postId,
-    required this.nickName,
-    required this.locationInfo,
-    required this.likesCount,
-    required this.commentCount,
-    required this.isLike,
-    required this.description,
-    required this.hashTag,
-    required this.imageUrl,
+    required this.uploadData,
     this.onLikePressed,
     this.onMorePressed,
+    this.onProfilePressed,
   }) : super(key: key);
 
   @override
@@ -48,8 +35,8 @@ class _FeedWidgetState extends State<FeedWidget> {
   @override
   void initState() {
     super.initState();
-    _likesCount = widget.likesCount;
-    _isLike = widget.isLike;
+    _likesCount = widget.uploadData.likeCount;
+    _isLike = widget.uploadData.isLike;
   }
 
   void _toggleLike() {
@@ -125,7 +112,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.nickName,
+                    widget.uploadData.userName,
                     style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 14,
@@ -135,7 +122,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                   ),
                   SizedBox(height: ScreenUtil().setHeight(3.0)),
                   Text(
-                    widget.locationInfo,
+                    widget.uploadData.locationDetail,
                     style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 10,
@@ -168,7 +155,7 @@ class _FeedWidgetState extends State<FeedWidget> {
             callback: () => _toggleLike(),
           ),
           Text(
-            ' ${widget.likesCount}${Strings.likes}',
+            ' ${_likesCount}${Strings.likes}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
@@ -179,11 +166,10 @@ class _FeedWidgetState extends State<FeedWidget> {
           SizedBox(width: ScreenUtil().setWidth(8.0)),
           ButtonImage(
             imagePath: Images.comment,
-            callback: () =>
-                _showCommentSheet(context),
+            callback: () => _showCommentSheet(context),
           ),
           Text(
-            ' ${widget.commentCount}${Strings.comments}',
+            ' ${widget.uploadData.commentCount}${Strings.comments}',
             style: const TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
@@ -202,8 +188,9 @@ class _FeedWidgetState extends State<FeedWidget> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
-          heightFactor: 0.9,
-          child: CommentSheet(postId: widget.postId)),
+        heightFactor: 0.9,
+        child: CommentSheet(postId: widget.uploadData.postId),
+      ),
     );
   }
 
@@ -211,7 +198,7 @@ class _FeedWidgetState extends State<FeedWidget> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
       child: Text(
-        widget.description,
+        widget.uploadData.content,
         style: const TextStyle(
           fontFamily: "Pretendard",
           fontSize: 13,
@@ -229,7 +216,9 @@ class _FeedWidgetState extends State<FeedWidget> {
       children: [
         _buildProfileWidget(),
         SizedBox(height: ScreenUtil().setHeight(16.0)),
-        Image.network(widget.imageUrl,
+        Image.network(widget.uploadData.files.isNotEmpty
+                ? widget.uploadData.files[0].url
+                : '',
             fit: BoxFit.cover,
             width: double.infinity,
             height: ScreenUtil().setHeight(390.0)),
@@ -245,7 +234,7 @@ class _FeedWidgetState extends State<FeedWidget> {
           child: Wrap(
             spacing: ScreenUtil().setWidth(6.0),
             runSpacing: ScreenUtil().setHeight(6.0),
-            children: widget.hashTag.map((hashTag) {
+            children: widget.uploadData.keywords.map((hashTag) {
               return _buildHashTagWidget(hashTag);
             }).toList(),
           ),
