@@ -39,15 +39,19 @@ class _DiaryPageState extends State<DiaryPage> {
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
 
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
     try {
-      _diaryViewModel.fetchMyDiary().then((_) {
+      await _diaryViewModel.fetchMyDiary().then((_) {
         _retryCallback = null;
       }).catchError((error) {
         _retryCallback = () => _diaryViewModel.fetchMyDiary();
       });
       _diaryViewModel.setMyDiary(ApiResponse.loading());
 
-      _uploadViewModel.myPosts().then((_) {
+      await _uploadViewModel.myPosts().then((_) {
         _retryCallback = null;
       }).catchError((error) {
         _retryCallback = () => _uploadViewModel.myPosts();
@@ -68,8 +72,7 @@ class _DiaryPageState extends State<DiaryPage> {
   void addCurrentTime() {
     setState(() {
       if (viewMonth) {
-        currentTime =
-            DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
+        currentTime = DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
       } else {
         currentTime = currentTime.add(Duration(days: 7));
       }
@@ -79,8 +82,7 @@ class _DiaryPageState extends State<DiaryPage> {
   void subCurrentTime() {
     setState(() {
       if (viewMonth) {
-        currentTime =
-            DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+        currentTime = DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
       } else {
         currentTime = currentTime.subtract(Duration(days: 7));
       }
@@ -90,6 +92,8 @@ class _DiaryPageState extends State<DiaryPage> {
   void onDateSelected(DateTime date) {
     setState(() {
       selectedDate = date;
+      print("Selected Date: $selectedDate");
+      print("Diaries on Selected Date: ${_diaryViewModel.getDiariesByDate(selectedDate)}");
     });
   }
 
@@ -101,9 +105,7 @@ class _DiaryPageState extends State<DiaryPage> {
         borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
         border: Border.all(
             color: const Color(UserColors.ui08),
-            width: (month)
-                ? ScreenUtil().setWidth(0.0)
-                : ScreenUtil().setWidth(1.0)),
+            width: (month) ? ScreenUtil().setWidth(0.0) : ScreenUtil().setWidth(1.0)),
         color: (month) ? const Color(UserColors.primaryColor) : Colors.white,
       ),
       child: Center(
@@ -162,49 +164,56 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildUserInfoWidget() {
-    return Row(
-      children: [
-        Container(
-          width: ScreenUtil().setWidth(28.0),
-          height: ScreenUtil().setHeight(28.0),
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: ClipOval(
-            child: SvgPicture.asset(Images.defaultProfile),
-          ),
-        ),
-        SizedBox(width: ScreenUtil().setWidth(14.0)),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Consumer<DiaryViewModel>(
+      builder: (context, viewModel, child) {
+        final userName = viewModel.getMyDiary.data?.data?.writer?.name ?? '';
+        final diaryCount = viewModel.diaryEntries.length;
+        final totalLikes = _getTotalLikes(viewModel);
+        return Row(
           children: [
-            Text(
-              _diaryViewModel.getMyDiary.data?.data?.writer?.name ?? '',
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Pretendard",
-                fontWeight: FontWeight.w600,
-                fontSize: ScreenUtil().setSp(14.0),
+            Container(
+              width: ScreenUtil().setWidth(28.0),
+              height: ScreenUtil().setHeight(28.0),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: ClipOval(
+                child: SvgPicture.asset(Images.defaultProfile),
               ),
             ),
-            Text(
-              Strings.diaryInfoText(_diaryViewModel.getMyDiary.data?.data?.diaries?.length ?? 0, _getTotalLikes()),
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Pretendard",
-                fontWeight: FontWeight.w300,
-                fontSize: ScreenUtil().setSp(12.0),
-              ),
+            SizedBox(width: ScreenUtil().setWidth(14.0)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w600,
+                    fontSize: ScreenUtil().setSp(14.0),
+                  ),
+                ),
+                Text(
+                  "다이어리 등록 수: $diaryCount, 반응: $totalLikes",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
-  int _getTotalLikes() {
+  int _getTotalLikes(DiaryViewModel viewModel) {
     int totalLikes = 0;
-    for (var diary in _diaryViewModel.getMyDiary.data?.data?.diaries ?? []) {
+    for (var diary in viewModel.getMyDiary.data?.data?.diaries ?? []) {
       totalLikes += int.tryParse(diary.likes) ?? 0;
     }
     return totalLikes;
@@ -515,8 +524,7 @@ class _DiaryPageState extends State<DiaryPage> {
               ),
             ],
           ),
-          if (diary != null)
-            const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+          if (diary != null) const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
         ],
       ),
     );
@@ -524,45 +532,48 @@ class _DiaryPageState extends State<DiaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final diaries = _diaryViewModel.getDiariesByDate(selectedDate);
-    final myDiary = diaries.isNotEmpty ? diaries.first : null;
-
     return Scaffold(
       appBar: const NotificationAppBar(
         title: Strings.diary,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildUserInfoWidget(),
-              SizedBox(height: ScreenUtil().setHeight(36.0)),
-              _buildMonthChangeWidget(),
-              SizedBox(height: ScreenUtil().setHeight(12.0)),
-              _buildCalendarTypeContainerWidget(),
-              SizedBox(height: ScreenUtil().setHeight(18.0)),
-              (viewMonth)
-                  ? MonthCalendarWidget(
-                      currentDate: currentTime,
-                      onDateSelected: onDateSelected,
-                    )
-                  : WeekCalendarWidget(
-                      currentDate: currentTime,
-                      onDateSelected: onDateSelected,
-                    ),
-              SizedBox(height: ScreenUtil().setHeight(22.0)),
-              _buildPostingText(),
-              SizedBox(height: ScreenUtil().setHeight(19.0)),
-              _buildPostingWidget(),
-              SizedBox(height: ScreenUtil().setHeight(37.0)),
-              _buildDiaryText(),
-              SizedBox(height: ScreenUtil().setHeight(19.0)),
-              _buildDiaryWidget(myDiary),
-              SizedBox(height: ScreenUtil().setHeight(150.0)),
-            ],
-          ),
+        child: Consumer<DiaryViewModel>(
+          builder: (context, diaryViewModel, child) {
+            final diaries = diaryViewModel.getDiariesByDate(selectedDate);
+            final myDiary = diaries.isNotEmpty ? diaries.first : null;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildUserInfoWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(36.0)),
+                  _buildMonthChangeWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(12.0)),
+                  _buildCalendarTypeContainerWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(18.0)),
+                  (viewMonth)
+                      ? MonthCalendarWidget(
+                          currentDate: currentTime,
+                          onDateSelected: onDateSelected,
+                        )
+                      : WeekCalendarWidget(
+                          currentDate: currentTime,
+                          onDateSelected: onDateSelected,
+                        ),
+                  SizedBox(height: ScreenUtil().setHeight(22.0)),
+                  _buildPostingText(),
+                  SizedBox(height: ScreenUtil().setHeight(19.0)),
+                  _buildPostingWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(37.0)),
+                  _buildDiaryText(),
+                  SizedBox(height: ScreenUtil().setHeight(19.0)),
+                  _buildDiaryWidget(myDiary),
+                  SizedBox(height: ScreenUtil().setHeight(150.0)),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

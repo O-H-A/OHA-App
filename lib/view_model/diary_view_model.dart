@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:oha/models/diary/diary_write_model.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
@@ -21,12 +20,12 @@ class DiaryViewModel with ChangeNotifier {
     if (response.status == Status.complete) {
       diaryEntries = response.data?.data?.diaries ?? [];
     }
+    print("Diary Entries Length: ${diaryEntries.length}");
     notifyListeners();
   }
 
   void setDiary(ApiResponse<DiaryWriteModel> response) {
     diaryData = response;
-
     notifyListeners();
   }
 
@@ -44,10 +43,11 @@ class DiaryViewModel with ChangeNotifier {
 
   List<MyDiary> getDiariesByDate(DateTime date) {
     return diaryEntries.where((diary) {
-      final diaryDate = DateTime.parse(diary.setDate);
+      final diaryDate = DateTime.parse("${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}");
+      print("Comparing: ${diaryDate} with ${date}");
       return diaryDate.year == date.year &&
-          diaryDate.month == date.month &&
-          diaryDate.day == date.day;
+             diaryDate.month == date.month &&
+             diaryDate.day == date.day;
     }).toList();
   }
 
