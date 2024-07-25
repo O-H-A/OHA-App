@@ -10,11 +10,13 @@ import '../../../view_model/upload_view_model.dart';
 class WeekCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
   final Function(DateTime) onDateSelected;
+  final int? userId;
 
   const WeekCalendarWidget({
     Key? key,
     required this.currentDate,
     required this.onDateSelected,
+    this.userId,
   }) : super(key: key);
 
   @override
@@ -49,7 +51,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   @override
   void didUpdateWidget(covariant WeekCalendarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentDate != widget.currentDate) {
+    if (oldWidget.currentDate != widget.currentDate || oldWidget.userId != widget.userId) {
       _updateWeek();
     }
   }
@@ -63,15 +65,27 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
         return day.day;
       });
 
-      final uploadEntries = _uploadViewModel!.myUploadGetData.data?.data ?? [];
-      recordedDays = uploadEntries
-          .where((entry) {
-            DateTime entryDate = DateTime.parse(entry.regDtm);
-            return entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
-                entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)));
-          })
-          .map((entry) => DateTime.parse(entry.regDtm).day)
-          .toSet();
+      recordedDays = {};
+
+      if (widget.userId != null) {
+        final uploadEntries = _uploadViewModel!.userUploadGetData.data?.data ?? [];
+        for (var entry in uploadEntries) {
+          DateTime entryDate = DateTime.parse(entry.regDtm);
+          if (entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+            recordedDays!.add(entryDate.day);
+          }
+        }
+      } else {
+        final uploadEntries = _uploadViewModel!.myUploadGetData.data?.data ?? [];
+        for (var entry in uploadEntries) {
+          DateTime entryDate = DateTime.parse(entry.regDtm);
+          if (entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+            recordedDays!.add(entryDate.day);
+          }
+        }
+      }
 
       today = DateTime.now();
       selectedDay = today;

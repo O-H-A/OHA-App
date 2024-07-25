@@ -14,6 +14,7 @@ import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
+import '../../diary/diary_page.dart';
 import '../../mypage/delete_dialog.dart';
 import '../../error_page.dart';
 import '../../upload/upload_write_page.dart';
@@ -142,9 +143,12 @@ class _HomeTabState extends State<HomeTab> {
 
     final statusCode = await _uploadViewModel.userPosts(userId);
     if (statusCode == 200) {
-      print("User posts loaded successfully");
-      // 데이터를 로드하고 싶은 곳에서 setState를 호출하여 화면을 갱신하세요.
-      // 필요에 따라 데이터를 표시하거나 다른 화면으로 이동할 수 있습니다.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryPage(userId: userId),
+        ),
+      );
     } else {
       print("Failed to load user posts");
     }

@@ -93,7 +93,7 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-    void _setUserUploadGetData(ApiResponse<UploadGetModel> response) {
+  void _setUserUploadGetData(ApiResponse<UploadGetModel> response) {
     userUploadGetData = response;
     notifyListeners();
   }
@@ -117,6 +117,12 @@ class UploadViewModel with ChangeNotifier {
 
   void clearMyUploadGetData() {
     popularUploadGetData = ApiResponse.complete(
+        UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
+  void clearUserUploadGetData() {
+    userUploadGetData = ApiResponse.complete(
         UploadGetModel(statusCode: 200, message: "", data: []));
     notifyListeners();
   }

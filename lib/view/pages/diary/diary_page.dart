@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:oha/network/api_response.dart';
 import 'package:oha/statics/colors.dart';
@@ -23,7 +23,9 @@ import '../mypage/delete_dialog.dart';
 import 'diary_register_page.dart';
 
 class DiaryPage extends StatefulWidget {
-  const DiaryPage({super.key});
+  final int? userId;
+
+  const DiaryPage({super.key, this.userId});
 
   @override
   State<DiaryPage> createState() => _DiaryPageState();
@@ -34,8 +36,8 @@ class _DiaryPageState extends State<DiaryPage> {
   bool viewMonth = true;
   bool showFeed = false;
   VoidCallback? _retryCallback;
-  DiaryViewModel _diaryViewModel = DiaryViewModel();
-  UploadViewModel _uploadViewModel = UploadViewModel();
+  late DiaryViewModel _diaryViewModel;
+  late UploadViewModel _uploadViewModel;
   DateTime selectedDate = DateTime.now();
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
@@ -49,7 +51,11 @@ class _DiaryPageState extends State<DiaryPage> {
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
 
-    _fetchData();
+    if (widget.userId != null) {
+      _fetchUserPosts(widget.userId!);
+    } else {
+      _fetchData();
+    }
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -83,6 +89,21 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
+  Future<void> _fetchUserPosts(int userId) async {
+    try {
+      await _uploadViewModel.userPosts(userId).then((_) {
+        _retryCallback = null;
+      }).catchError((error) {
+        _retryCallback = () => _uploadViewModel.userPosts(userId);
+      });
+      _uploadViewModel.clearUserUploadGetData();
+    } catch (error) {
+      _retryCallback = () {
+        _uploadViewModel.userPosts(userId);
+      };
+    }
+  }
+
   Future<void> _loadMoreData() async {
     setState(() {
       _isLoadingMore = true;
@@ -96,7 +117,11 @@ class _DiaryPageState extends State<DiaryPage> {
     };
 
     try {
-      await _uploadViewModel.myPosts();
+      if (widget.userId != null) {
+        await _uploadViewModel.userPosts(widget.userId!);
+      } else {
+        await _uploadViewModel.myPosts();
+      }
     } catch (error) {
       // Handle error
     } finally {
@@ -372,7 +397,9 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildPostingWidget() {
-    final myUploads = _uploadViewModel.myUploadGetData.data?.data ?? [];
+    final myUploads = widget.userId != null
+        ? _uploadViewModel.userUploadGetData.data?.data ?? []
+        : _uploadViewModel.myUploadGetData.data?.data ?? [];
     final selectedDateUploads = myUploads.where((upload) {
       final uploadDate = DateTime.parse(upload.regDtm);
       return uploadDate.year == selectedDate.year &&
@@ -600,7 +627,9 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildFeedWidget() {
-    final myUploads = _uploadViewModel.myUploadGetData.data?.data ?? [];
+    final myUploads = widget.userId != null
+        ? _uploadViewModel.userUploadGetData.data?.data ?? []
+        : _uploadViewModel.myUploadGetData.data?.data ?? [];
     final filteredUploads = myUploads.where((upload) {
       final uploadDate = DateTime.parse(upload.regDtm);
       if (viewMonth) {
@@ -790,10 +819,12 @@ class _DiaryPageState extends State<DiaryPage> {
                         ? MonthCalendarWidget(
                             currentDate: currentTime,
                             onDateSelected: onDateSelected,
+                            userId: widget.userId,
                           )
                         : WeekCalendarWidget(
                             currentDate: currentTime,
                             onDateSelected: onDateSelected,
+                            userId: widget.userId,
                           ),
                     SizedBox(height: ScreenUtil().setHeight(22.0)),
                     _buildPostingText(),
