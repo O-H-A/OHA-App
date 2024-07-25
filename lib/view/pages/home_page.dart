@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oha/view/pages/notification/notification_page.dart';
 import 'package:oha/view/widgets/button_image.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view_model/notification_view_model.dart';
-import 'package:oha/view_model/weather_view_model.dart';
 import 'package:oha/view/pages/home/tab/home_tab.dart';
 import 'package:oha/view/pages/home/tab/image_video_tab.dart';
 import 'package:oha/view/pages/home/tab/now_weather_tab.dart';
@@ -32,14 +30,11 @@ class _HomePageState extends State<HomePage>
     initialIndex: 0,
     animationDuration: const Duration(milliseconds: 300),
   );
-  LocationViewModel _locationViewModel = LocationViewModel();
-  WeatherViewModel _weatherViewModel = WeatherViewModel();
+
   NotificationViewModel _notificationViewModel = NotificationViewModel();
 
   @override
   void initState() {
-    _locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-    _weatherViewModel = Provider.of<WeatherViewModel>(context, listen: false);
     _notificationViewModel =
         Provider.of<NotificationViewModel>(context, listen: false);
 
@@ -156,18 +151,13 @@ class _HomePageState extends State<HomePage>
                 background: Column(
                   children: [
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    MainWeatherWidget(),
+                    const MainWeatherWidget(),
                     SizedBox(height: ScreenUtil().setHeight(43.0)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(22.0)),
-                      child: _buildTabBarWidget(),
-                    ),
                   ],
                 ),
               ),
               bottom: PreferredSize(
-                preferredSize: Size.fromHeight(48.0),
+                preferredSize: const Size.fromHeight(48.0),
                 child: Container(
                   color: Colors.white,
                   child: TabBar(
