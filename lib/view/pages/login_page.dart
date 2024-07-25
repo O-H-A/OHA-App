@@ -156,8 +156,6 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: SvgPicture.asset(
         _getLoginImage(type),
-        height: ScreenUtil().setHeight(50.0),
-        width: ScreenUtil().setWidth(50.0),
       ),
     );
   }
