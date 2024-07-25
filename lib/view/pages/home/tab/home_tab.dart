@@ -137,6 +137,19 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
+  void _onProfilePressed(int userId, bool isOwn) async {
+    if (isOwn) return;
+
+    final statusCode = await _uploadViewModel.userPosts(userId);
+    if (statusCode == 200) {
+      print("User posts loaded successfully");
+      // 데이터를 로드하고 싶은 곳에서 setState를 호출하여 화면을 갱신하세요.
+      // 필요에 따라 데이터를 표시하거나 다른 화면으로 이동할 수 있습니다.
+    } else {
+      print("Failed to load user posts");
+    }
+  }
+
   void showDeleteDialog(int postId) {
     showDialog(
       context: context,
@@ -249,6 +262,7 @@ class _HomeTabState extends State<HomeTab> {
                     data.isOwn,
                     data.files.isNotEmpty ? data.files[0].url : '',
                     data.postId),
+                onProfilePressed: () => _onProfilePressed(data.userId, data.isOwn),
               );
             },
           );

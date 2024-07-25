@@ -51,8 +51,17 @@ class UploadRepository {
 
   Future<UploadGetModel> myPosts() async {
     try {
-      dynamic response =
-          await NetworkManager.instance.get(ApiUrl.myPosts);
+      dynamic response = await NetworkManager.instance.get(ApiUrl.myPosts);
+      return UploadGetModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UploadGetModel> userPosts(int userId) async {
+    try {
+      final response =
+          await NetworkManager.instance.get("${ApiUrl.posts}/user/$userId");
       return UploadGetModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

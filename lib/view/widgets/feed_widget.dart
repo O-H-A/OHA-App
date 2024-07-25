@@ -90,6 +90,8 @@ class _FeedWidgetState extends State<FeedWidget> {
   }
 
   Widget _buildProfileWidget() {
+    bool isProfileUrlValid = widget.uploadData.profileUrl.isNotEmpty;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
       child: Row(
@@ -103,8 +105,14 @@ class _FeedWidgetState extends State<FeedWidget> {
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
-                child: ClipOval(
-                  child: SvgPicture.asset(Images.defaultProfile),
+                child: GestureDetector(
+                  onTap: widget.onProfilePressed,
+                  child: ClipOval(
+                    child: isProfileUrlValid
+                        ? Image.network(widget.uploadData.profileUrl,
+                            fit: BoxFit.cover)
+                        : SvgPicture.asset(Images.defaultProfile),
+                  ),
                 ),
               ),
               SizedBox(width: ScreenUtil().setWidth(8.0)),
@@ -216,7 +224,8 @@ class _FeedWidgetState extends State<FeedWidget> {
       children: [
         _buildProfileWidget(),
         SizedBox(height: ScreenUtil().setHeight(16.0)),
-        Image.network(widget.uploadData.files.isNotEmpty
+        Image.network(
+            widget.uploadData.files.isNotEmpty
                 ? widget.uploadData.files[0].url
                 : '',
             fit: BoxFit.cover,

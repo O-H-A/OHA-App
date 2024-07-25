@@ -21,6 +21,7 @@ class UploadViewModel with ChangeNotifier {
   ApiResponse<UploadGetModel> uploadGetData = ApiResponse.loading();
   ApiResponse<UploadGetModel> popularUploadGetData = ApiResponse.loading();
   ApiResponse<UploadGetModel> myUploadGetData = ApiResponse.loading();
+  ApiResponse<UploadGetModel> userUploadGetData = ApiResponse.loading();
 
   ApiResponse<UploadLikeModel> likeData = ApiResponse.loading();
 
@@ -89,6 +90,11 @@ class UploadViewModel with ChangeNotifier {
 
   void _setMyUploadGetData(ApiResponse<UploadGetModel> response) {
     myUploadGetData = response;
+    notifyListeners();
+  }
+
+    void _setUserUploadGetData(ApiResponse<UploadGetModel> response) {
+    userUploadGetData = response;
     notifyListeners();
   }
 
@@ -166,6 +172,18 @@ class UploadViewModel with ChangeNotifier {
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
       _setPopularUploadGetData(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
+  }
+
+  Future<int> userPosts(int userId) async {
+    int statusCode = 400;
+    await _uploadRepository.userPosts(userId).then((value) {
+      _setUserUploadGetData(ApiResponse.complete(value));
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      _setUserUploadGetData(ApiResponse.error(error.toString()));
       statusCode = 400;
     });
     return statusCode;
