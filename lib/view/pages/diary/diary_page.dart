@@ -13,8 +13,13 @@ import 'package:oha/view/pages/diary/week_calendar_widget.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/notification_app_bar.dart';
 import 'package:provider/provider.dart';
-
 import '../../../models/diary/my_diary_model.dart';
+import '../../../models/upload/upload_get_model.dart';
+import '../../widgets/complete_dialog.dart';
+import '../../widgets/feed_widget.dart';
+import '../../widgets/four_more_dialog.dart';
+import '../../widgets/loading_widget.dart';
+import '../mypage/delete_dialog.dart';
 import 'diary_register_page.dart';
 
 class DiaryPage extends StatefulWidget {
@@ -27,10 +32,15 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   DateTime currentTime = DateTime.now();
   bool viewMonth = true;
+  bool showFeed = false;
   VoidCallback? _retryCallback;
   DiaryViewModel _diaryViewModel = DiaryViewModel();
   UploadViewModel _uploadViewModel = UploadViewModel();
   DateTime selectedDate = DateTime.now();
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  int _offset = 0;
+  final int _pageSize = 10;
 
   @override
   void initState() {
@@ -40,6 +50,14 @@ class _DiaryPageState extends State<DiaryPage> {
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
 
     _fetchData();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 100 &&
+          !_isLoadingMore) {
+        _loadMoreData();
+      }
+    });
   }
 
   Future<void> _fetchData() async {
@@ -65,6 +83,29 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
+  Future<void> _loadMoreData() async {
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    _offset += _pageSize;
+
+    Map<String, dynamic> sendData = {
+      "offset": _offset.toString(),
+      "size": _pageSize.toString(),
+    };
+
+    try {
+      await _uploadViewModel.myPosts();
+    } catch (error) {
+      // Handle error
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
   String getCurrentTime() {
     return DateFormat('yyyy년 MM월', 'ko_KR').format(currentTime);
   }
@@ -72,7 +113,8 @@ class _DiaryPageState extends State<DiaryPage> {
   void addCurrentTime() {
     setState(() {
       if (viewMonth) {
-        currentTime = DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
+        currentTime =
+            DateTime(currentTime.year, currentTime.month + 1, currentTime.day);
       } else {
         currentTime = currentTime.add(Duration(days: 7));
       }
@@ -82,7 +124,8 @@ class _DiaryPageState extends State<DiaryPage> {
   void subCurrentTime() {
     setState(() {
       if (viewMonth) {
-        currentTime = DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
+        currentTime =
+            DateTime(currentTime.year, currentTime.month - 1, currentTime.day);
       } else {
         currentTime = currentTime.subtract(Duration(days: 7));
       }
@@ -93,7 +136,8 @@ class _DiaryPageState extends State<DiaryPage> {
     setState(() {
       selectedDate = date;
       print("Selected Date: $selectedDate");
-      print("Diaries on Selected Date: ${_diaryViewModel.getDiariesByDate(selectedDate)}");
+      print(
+          "Diaries on Selected Date: ${_diaryViewModel.getDiariesByDate(selectedDate)}");
     });
   }
 
@@ -105,7 +149,9 @@ class _DiaryPageState extends State<DiaryPage> {
         borderRadius: BorderRadius.circular(ScreenUtil().radius(22.0)),
         border: Border.all(
             color: const Color(UserColors.ui08),
-            width: (month) ? ScreenUtil().setWidth(0.0) : ScreenUtil().setWidth(1.0)),
+            width: (month)
+                ? ScreenUtil().setWidth(0.0)
+                : ScreenUtil().setWidth(1.0)),
         color: (month) ? const Color(UserColors.primaryColor) : Colors.white,
       ),
       child: Center(
@@ -195,12 +241,12 @@ class _DiaryPageState extends State<DiaryPage> {
                   ),
                 ),
                 Text(
-                  "다이어리 등록 수: $diaryCount, 반응: $totalLikes",
+                  Strings.diaryInfoText(diaryCount, totalLikes),
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w300,
-                    fontSize: 12,
+                    fontSize: ScreenUtil().setSp(12.0),
                   ),
                 ),
               ],
@@ -233,10 +279,12 @@ class _DiaryPageState extends State<DiaryPage> {
         children: [
           Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left),
-                onPressed: subCurrentTime,
+              ButtonIcon(
+                icon: Icons.chevron_left,
+                iconColor: Colors.black,
+                callback: () => subCurrentTime(),
               ),
+              SizedBox(width: ScreenUtil().setWidth(10.0)),
               Text(
                 getCurrentTime(),
                 style: const TextStyle(
@@ -246,9 +294,11 @@ class _DiaryPageState extends State<DiaryPage> {
                   fontSize: 14,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right),
-                onPressed: addCurrentTime,
+              SizedBox(width: ScreenUtil().setWidth(10.0)),
+              ButtonIcon(
+                icon: Icons.chevron_right,
+                iconColor: Colors.black,
+                callback: () => addCurrentTime(),
               ),
             ],
           ),
@@ -256,9 +306,27 @@ class _DiaryPageState extends State<DiaryPage> {
             padding: EdgeInsets.only(right: ScreenUtil().setWidth(15.0)),
             child: Row(
               children: [
-                SvgPicture.asset(Images.diaryCalendarEnable),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showFeed = false;
+                    });
+                  },
+                  child: SvgPicture.asset(
+                    showFeed ? Images.diaryCalendarDisable : Images.diaryCalendarEnable,
+                  ),
+                ),
                 SizedBox(width: ScreenUtil().setWidth(15.0)),
-                SvgPicture.asset(Images.diaryFeedDisable),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showFeed = true;
+                    });
+                  },
+                  child: SvgPicture.asset(
+                    showFeed ? Images.diaryFeedEnable : Images.diaryFeedDisable,
+                  ),
+                ),
               ],
             ),
           ),
@@ -348,7 +416,7 @@ class _DiaryPageState extends State<DiaryPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: ScreenUtil().setWidth(180.0),
                     child: Text(
                       upload.content,
@@ -524,10 +592,174 @@ class _DiaryPageState extends State<DiaryPage> {
               ),
             ],
           ),
-          if (diary != null) const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+          if (diary != null)
+            const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
         ],
       ),
     );
+  }
+
+  Widget _buildFeedWidget() {
+    final myUploads = _uploadViewModel.myUploadGetData.data?.data ?? [];
+    final filteredUploads = myUploads.where((upload) {
+      final uploadDate = DateTime.parse(upload.regDtm);
+      if (viewMonth) {
+        return uploadDate.year == currentTime.year &&
+            uploadDate.month == currentTime.month;
+      } else {
+        return uploadDate.isAfter(currentTime.subtract(const Duration(days: 7))) &&
+            uploadDate.isBefore(currentTime.add(const Duration(days: 7)));
+      }
+    }).toList();
+
+    if (filteredUploads.isEmpty) {
+      return _buildPostEmptyWidget();
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      controller: _scrollController,
+      itemCount: filteredUploads.length + (_isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == filteredUploads.length) {
+          return _buildLoadingWidget();
+        }
+
+        var data = filteredUploads[index];
+        return Padding(
+          padding: EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
+          child: FeedWidget(
+            uploadData: data,
+            onLikePressed: () => _onLikePressed(data.postId, data.isLike),
+            onMorePressed: () => FourMoreDialog.show(
+                context,
+                (action) => _onMorePressed(data.postId, action, data),
+                data.isOwn,
+                data.files.isNotEmpty ? data.files[0].url : '',
+                data.postId),
+            onProfilePressed: () => _onProfilePressed(data.userId, data.isOwn),
+          ),
+        );
+      },
+    );
+  }
+
+  void _onLikePressed(int postId, bool isCurrentlyLiked) async {
+    print("Like pressed for postId: $postId");
+
+    Map<String, dynamic> data = {
+      "postId": postId,
+      "type": isCurrentlyLiked ? "U" : "L"
+    };
+
+    final statusCode = await _uploadViewModel.like(data);
+
+    if (statusCode == 201 || statusCode == 200) {
+      setState(() {});
+    }
+  }
+
+  void _onMorePressed(int postId, String action, UploadData data) {
+    switch (action) {
+      case Strings.saveImage:
+        print('Save Image $postId');
+        break;
+      case Strings.edit:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DiaryRegisterPage(selectDate: selectedDate),
+          ),
+        );
+        break;
+      case Strings.delete:
+        print('Post ID to delete: $postId');
+        showDeleteDialog(postId);
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _onProfilePressed(int userId, bool isOwn) {
+    if (isOwn == true) {
+      return;
+    }
+
+    print("Profile Pressed");
+  }
+
+  void showDeleteDialog(int postId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          height: ScreenUtil().setHeight(178.0),
+          titleText: Strings.postDeleteTitle,
+          guideText: Strings.postDeleteContent,
+          yesCallback: () => onDeleteYes(context, postId),
+          noCallback: () => onDeleteNo(context),
+        );
+      },
+    );
+  }
+
+  void onDeleteYes(BuildContext context, int postId) async {
+    final response = await _uploadViewModel.delete(postId.toString());
+
+    if (response == 201) {
+      if (mounted) {
+        Navigator.pop(context);
+        showCompleteDialog();
+      }
+    } else {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      print('삭제 실패: $response');
+    }
+  }
+
+  void onDeleteNo(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void showCompleteDialog() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const CompleteDialog(title: Strings.postDeleteComplete);
+      },
+    );
+  }
+
+  Widget _buildPostEmptyWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: ScreenUtil().setHeight(50.0)),
+          SvgPicture.asset(Images.postEmpty),
+          SizedBox(height: ScreenUtil().setHeight(19.0)),
+          Text(
+            Strings.postEmptyGuide,
+            style: TextStyle(
+              color: const Color(UserColors.ui06),
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w400,
+              fontSize: ScreenUtil().setSp(16.0),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return const LoadingWidget();
   }
 
   @override
@@ -536,6 +768,7 @@ class _DiaryPageState extends State<DiaryPage> {
       appBar: const NotificationAppBar(
         title: Strings.diary,
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
         child: Consumer<DiaryViewModel>(
@@ -551,24 +784,28 @@ class _DiaryPageState extends State<DiaryPage> {
                   _buildMonthChangeWidget(),
                   SizedBox(height: ScreenUtil().setHeight(12.0)),
                   _buildCalendarTypeContainerWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(18.0)),
-                  (viewMonth)
-                      ? MonthCalendarWidget(
-                          currentDate: currentTime,
-                          onDateSelected: onDateSelected,
-                        )
-                      : WeekCalendarWidget(
-                          currentDate: currentTime,
-                          onDateSelected: onDateSelected,
-                        ),
-                  SizedBox(height: ScreenUtil().setHeight(22.0)),
-                  _buildPostingText(),
-                  SizedBox(height: ScreenUtil().setHeight(19.0)),
-                  _buildPostingWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(37.0)),
-                  _buildDiaryText(),
-                  SizedBox(height: ScreenUtil().setHeight(19.0)),
-                  _buildDiaryWidget(myDiary),
+                  if (!showFeed) ...[
+                    SizedBox(height: ScreenUtil().setHeight(18.0)),
+                    (viewMonth)
+                        ? MonthCalendarWidget(
+                            currentDate: currentTime,
+                            onDateSelected: onDateSelected,
+                          )
+                        : WeekCalendarWidget(
+                            currentDate: currentTime,
+                            onDateSelected: onDateSelected,
+                          ),
+                    SizedBox(height: ScreenUtil().setHeight(22.0)),
+                    _buildPostingText(),
+                    SizedBox(height: ScreenUtil().setHeight(19.0)),
+                    _buildPostingWidget(),
+                    SizedBox(height: ScreenUtil().setHeight(37.0)),
+                    _buildDiaryText(),
+                    SizedBox(height: ScreenUtil().setHeight(19.0)),
+                    _buildDiaryWidget(myDiary),
+                  ] else ...[
+                    _buildFeedWidget(),
+                  ],
                   SizedBox(height: ScreenUtil().setHeight(150.0)),
                 ],
               ),
