@@ -3,8 +3,6 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:oha/view/pages/upload/add_keyword_dialog.dart';
@@ -13,10 +11,8 @@ import 'package:provider/provider.dart';
 
 import '../../../app.dart';
 import '../../../models/upload/upload_get_model.dart';
-import '../../../network/api_url.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
-import '../../../utils/secret_key.dart';
 import '../../../view_model/location_view_model.dart';
 import '../../widgets/complete_dialog.dart';
 import '../../widgets/infinity_button.dart';
@@ -385,6 +381,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
       selectedKeywords.add(keyword[i]);
     }
 
+    print("Jehee test");
+
     Map<String, dynamic> sendData = {
       "content": content,
       "categoryCode": selectCategory,
@@ -529,10 +527,23 @@ class _UploadWritePageState extends State<UploadWritePage> {
                         width: double.infinity,
                         height: ScreenUtil().setHeight(298.0),
                         child: widget.selectImage != null
-                            ? AssetEntityImage(
-                                widget.selectImage!,
-                                isOriginal: false,
-                                fit: BoxFit.cover,
+                            ? FutureBuilder<Uint8List?>(
+                                future: widget.selectImage?.thumbnailData,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.done &&
+                                      snapshot.data != null) {
+                                    return Image.memory(
+                                      snapshot.data!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
+                                  } else {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                },
                               )
                             : (widget.uploadData?.files.isNotEmpty ?? false)
                                 ? Image.network(widget.uploadData!.files[0].url,

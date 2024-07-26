@@ -145,7 +145,7 @@ class NetworkManager {
     var dio = Dio();
 
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromBytes(
+      "files": await MultipartFile.fromBytes(
         thumbnailData!,
         filename: 'file.jpeg',
         contentType: MediaType('application', 'octet-stream'),

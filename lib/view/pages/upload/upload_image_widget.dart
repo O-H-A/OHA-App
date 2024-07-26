@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'dart:io';
 
 import '../../../statics/images.dart';
 
@@ -39,21 +40,31 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
           },
           child: Stack(
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: AssetEntityImage(
-                  widget.images[index],
-                  isOriginal: false,
-                  fit: BoxFit.cover,
-                ),
+              FutureBuilder<File?>(
+                future: widget.images[index].file,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null) {
+                    return Image.file(
+                      snapshot.data!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    );
+                  } else {
+                    return Container(
+                      color: Colors.grey[200],
+                    );
+                  }
+                },
               ),
               Positioned(
-                  top: ScreenUtil().setHeight(8.0),
-                  right: ScreenUtil().setWidth(8.0),
-                  child: (index == _selectIndex)
-                      ? SvgPicture.asset(Images.imageSelect)
-                      : SvgPicture.asset(Images.imageNotSelect)),
+                top: ScreenUtil().setHeight(8.0),
+                right: ScreenUtil().setWidth(8.0),
+                child: (index == _selectIndex)
+                    ? SvgPicture.asset(Images.imageSelect)
+                    : SvgPicture.asset(Images.imageNotSelect),
+              ),
             ],
           ),
         );

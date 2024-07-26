@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             onWebViewCreated: (controller) {
               webViewCtrl = controller;
             },
-            initialUrlRequest: URLRequest(url: Uri.parse(_getLoginUrl(type))),
+            initialUrlRequest: URLRequest(url: WebUri(_getLoginUrl(type))),
             initialOptions: InAppWebViewGroupOptions(
               crossPlatform: InAppWebViewOptions(),
               android: AndroidInAppWebViewOptions(
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                   }
 
                   await webViewCtrl?.loadUrl(
-                    urlRequest: URLRequest(url: Uri.parse("about:blank")),
+                    urlRequest: URLRequest(url: WebUri("about:blank")),
                   );
                 } catch (e) {
                   print("Error decoding JSON or accessing accessToken: $e");
