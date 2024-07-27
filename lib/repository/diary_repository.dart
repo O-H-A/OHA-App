@@ -19,7 +19,7 @@ class DiaryRepository {
 
     Future<DiaryWriteModel> diaryWrite(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     try {
-      dynamic response = await NetworkManager.instance.imagePost(ApiUrl.diary, data, thumbnailData);
+      dynamic response = await NetworkManager.instance.imagePost(ApiUrl.diary, data, thumbnailData, true);
       return DiaryWriteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

@@ -139,16 +139,21 @@ class NetworkManager {
   }
 
   Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
-      Uint8List? thumbnailData) async {
+      Uint8List? thumbnailData, bool isDiary) async {
     Map<String, dynamic> sendData = userData;
 
     var dio = Dio();
 
+    String filename = isDiary ? 'file.png' : 'files.png';
+    MediaType contentType = isDiary
+        ? MediaType('image', 'png')
+        : MediaType('application', 'octet-stream');
+
     FormData formData = FormData.fromMap({
-      "files": await MultipartFile.fromBytes(
+      "file": await MultipartFile.fromBytes(
         thumbnailData!,
-        filename: 'file.jpeg',
-        contentType: MediaType('application', 'octet-stream'),
+        filename: filename,
+        contentType: contentType,
       ),
       "dto": MultipartFile.fromString(
         jsonEncode(sendData),
@@ -157,7 +162,7 @@ class NetworkManager {
     });
 
     try {
-      Response response = await dio.post( 
+      Response response = await dio.post(
         serverUrl,
         data: formData,
         options: Options(
@@ -254,7 +259,7 @@ class NetworkManager {
       "profileImage": await MultipartFile.fromBytes(
         fileData!,
         filename: 'profileImage.png',
-        contentType: MediaType('application', 'octet-stream'),
+        contentType: MediaType('image', 'png'),
       ),
       "dto": MultipartFile.fromString(
         jsonEncode(sendData),

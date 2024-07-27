@@ -112,8 +112,14 @@ class _MyPageState extends State<MyPage> {
         children: [
           (_myPageViewModel.myInfoData.data?.data.profileUrl?.isEmpty ?? true)
               ? SvgPicture.asset(Images.defaultProfile)
-              : Image.network(
-                  _myPageViewModel.myInfoData.data?.data.profileUrl ?? ""),
+              : ClipOval(
+                  child: Image.network(
+                    _myPageViewModel.myInfoData.data?.data.profileUrl ?? "",
+                    width: ScreenUtil().setWidth(70.0),
+                    height: ScreenUtil().setWidth(70.0),
+                    fit: BoxFit.cover,
+                  ),
+                ),
           SizedBox(width: ScreenUtil().setWidth(12.0)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

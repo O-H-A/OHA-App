@@ -17,7 +17,7 @@ class UploadRepository {
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     try {
       dynamic response = await NetworkManager.instance
-          .imagePost(ApiUrl.posting, data, thumbnailData);
+          .imagePost(ApiUrl.posting, data, thumbnailData, false);
 
       String responseBody = jsonEncode(response);
       return UploadModel.fromJson(jsonDecode(responseBody));
