@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/pages/location/location_setting_page.dart';
+import 'package:oha/view/widgets/loading_widget.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:oha/view/pages/upload/add_keyword_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -17,7 +19,6 @@ import '../../../view_model/location_view_model.dart';
 import '../../widgets/complete_dialog.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
-import '../location/location_setting_page.dart';
 
 import 'package:dio/dio.dart';
 
@@ -26,13 +27,13 @@ import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 
 class UploadWritePage extends StatefulWidget {
-  final AssetEntity? selectImage;
+  final AssetEntity? selectMedia;
   final bool isEdit;
   final UploadData? uploadData;
 
   const UploadWritePage({
     Key? key,
-    this.selectImage,
+    this.selectMedia,
     this.isEdit = false,
     this.uploadData,
   }) : super(key: key);
@@ -376,12 +377,14 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String selectLocationCode =
         _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
+            print("Jehee test  ${selectLocationCode}  ${_locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation)}");
+
     List<String> selectedKeywords = [];
     for (int i = 0; i < min(keyword.length, 3); i++) {
       selectedKeywords.add(keyword[i]);
     }
 
-    print("Jehee test");
+
 
     Map<String, dynamic> sendData = {
       "content": content,
@@ -393,7 +396,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     try {
       final result = await _uploadViewModel.posting(
-          sendData, await widget.selectImage?.thumbnailData);
+          sendData, await widget.selectMedia?.thumbnailData);
 
       if (!mounted) return;
 
@@ -432,8 +435,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
     try {
       Uint8List? thumbnailData;
 
-      if (widget.selectImage != null) {
-        thumbnailData = await widget.selectImage?.thumbnailData;
+      if (widget.selectMedia != null) {
+        thumbnailData = await widget.selectMedia?.thumbnailData;
       } else if (widget.uploadData?.files.isNotEmpty ?? false) {
         String fileUrl = widget.uploadData!.files[0].url;
         final response = await http.get(Uri.parse(fileUrl));
@@ -526,9 +529,9 @@ class _UploadWritePageState extends State<UploadWritePage> {
                       child: SizedBox(
                         width: double.infinity,
                         height: ScreenUtil().setHeight(298.0),
-                        child: widget.selectImage != null
+                        child: widget.selectMedia != null
                             ? FutureBuilder<Uint8List?>(
-                                future: widget.selectImage?.thumbnailData,
+                                future: widget.selectMedia?.thumbnailData,
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                           ConnectionState.done &&
@@ -540,8 +543,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
                                       height: double.infinity,
                                     );
                                   } else {
-                                    return Center(
-                                        child: CircularProgressIndicator());
+                                    return const Center(
+                                        child: LoadingWidget());
                                   }
                                 },
                               )

@@ -246,12 +246,14 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   void _sendDiaryRegist() async {
     Map<String, dynamic> sendData = {
       Strings.setDateKey: _writeDay,
-      Strings.titleKey: _titleController.text,
-      Strings.contentKey: Strings.weatherCodeMap[_selectTitle],
-      Strings.weatherKey: _selectTitle,
+      Strings.titleKey: "TEST",//_titleController.text,
+      Strings.contentKey: _contentsController.text,//Strings.weatherCodeMap[_selectTitle],
+      Strings.weatherKey: "WTHR_PARTLY_CLOUDY",
       Strings.isPublicKey: _publicStatus,
       Strings.locationKey: "",
     };
+
+    print("Jehee : ${sendData}");
 
     Uint8List? thumbnailData;
     if (_uploadImage != null) {

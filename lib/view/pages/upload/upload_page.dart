@@ -23,7 +23,7 @@ class UploadPage extends StatefulWidget {
 class _UploadPageState extends State<UploadPage> {
   List<AssetPathEntity>? _paths;
   List<Album> _albums = [];
-  late List<AssetEntity> _images;
+  late List<AssetEntity> _media;
   int _currentPage = 0;
   late Album _currentAlbum;
   int _selectedIndex = 0;
@@ -36,13 +36,13 @@ class _UploadPageState extends State<UploadPage> {
 
   void showWritePage() {
     if (widget.isDiary) {
-      Navigator.pop(context, _images[_selectedIndex]);
+      Navigator.pop(context, _media[_selectedIndex]);
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => UploadWritePage(
-            selectImage: _images[_selectedIndex],
+            selectMedia: _media[_selectedIndex],
           ),
         ),
       );
@@ -60,7 +60,7 @@ class _UploadPageState extends State<UploadPage> {
 
   Future<void> getAlbum() async {
     _paths = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
+      type: RequestType.common,
     );
 
     _albums = await Future.wait(_paths!.map((e) async {
@@ -82,7 +82,7 @@ class _UploadPageState extends State<UploadPage> {
     _currentAlbum = album;
     albumChange ? _currentPage = 0 : _currentPage++;
 
-    final loadImages = await _paths!
+    final loadMedia = await _paths!
         .singleWhere((element) => element.id == album.id)
         .getAssetListPaged(
           page: _currentPage,
@@ -91,9 +91,9 @@ class _UploadPageState extends State<UploadPage> {
 
     setState(() {
       if (albumChange) {
-        _images = loadImages;
+        _media = loadMedia;
       } else {
-        _images.addAll(loadImages);
+        _media.addAll(loadMedia);
       }
     });
   }
@@ -148,7 +148,7 @@ class _UploadPageState extends State<UploadPage> {
               children: [
                 Expanded(
                     child: UploadImageWidget(
-                  images: _images,
+                  media: _media,
                   onSelectedIndexChanged: _setSelectedIndex,
                 )),
                 Padding(

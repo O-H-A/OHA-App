@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,11 +9,11 @@ import 'dart:io';
 import '../../../statics/images.dart';
 
 class UploadImageWidget extends StatefulWidget {
-  final List<AssetEntity> images;
+  final List<AssetEntity> media;
   final ValueChanged<int> onSelectedIndexChanged;
 
   const UploadImageWidget({
-    required this.images,
+    required this.media,
     Key? key,
     required this.onSelectedIndexChanged,
   }) : super(key: key);
@@ -40,12 +42,12 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
           },
           child: Stack(
             children: [
-              FutureBuilder<File?>(
-                future: widget.images[index].file,
+              FutureBuilder<Uint8List?>(
+                future: widget.media[index].thumbnailData,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done &&
                       snapshot.data != null) {
-                    return Image.file(
+                    return Image.memory(
                       snapshot.data!,
                       fit: BoxFit.cover,
                       width: double.infinity,
@@ -58,6 +60,15 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
                   }
                 },
               ),
+              if (widget.media[index].type == AssetType.video)
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: Icon(
+                    Icons.play_circle_fill,
+                    color: Colors.white,
+                  ),
+                ),
               Positioned(
                 top: ScreenUtil().setHeight(8.0),
                 right: ScreenUtil().setWidth(8.0),
@@ -69,7 +80,7 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
           ),
         );
       },
-      itemCount: widget.images.length,
+      itemCount: widget.media.length,
     );
   }
 }
