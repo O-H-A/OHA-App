@@ -370,6 +370,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
+  bool isVideo(AssetEntity? media) {
+    if (media?.type == AssetType.video) {
+    } else if (media?.type == AssetType.image) {
+    }
+    return media != null && media.type == AssetType.video;
+  }
+
   Future<void> upload() async {
     String content = _textController.text;
     String selectCategory = Strings.categoryMap[_categorySelectIndex] ?? "";
@@ -377,14 +384,10 @@ class _UploadWritePageState extends State<UploadWritePage> {
     String selectLocationCode =
         _locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation);
 
-            print("Jehee test  ${selectLocationCode}  ${_locationViewModel.getCodeByAddress(_uploadViewModel.getUploadLocation)}");
-
     List<String> selectedKeywords = [];
     for (int i = 0; i < min(keyword.length, 3); i++) {
       selectedKeywords.add(keyword[i]);
     }
-
-
 
     Map<String, dynamic> sendData = {
       "content": content,
@@ -395,8 +398,21 @@ class _UploadWritePageState extends State<UploadWritePage> {
     };
 
     try {
-      final result = await _uploadViewModel.posting(
-          sendData, await widget.selectMedia?.thumbnailData);
+      Uint8List? thumbnailData;
+      bool video = false;
+
+      if (widget.selectMedia != null) {
+        if (isVideo(widget.selectMedia)) {
+          video = true;
+        } else {
+          video = false;
+        }
+
+        thumbnailData = await widget.selectMedia?.thumbnailData;
+      }
+
+      final result =
+          await _uploadViewModel.posting(sendData, thumbnailData, video);
 
       if (!mounted) return;
 
@@ -434,9 +450,18 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
     try {
       Uint8List? thumbnailData;
+      bool video = false;
 
       if (widget.selectMedia != null) {
-        thumbnailData = await widget.selectMedia?.thumbnailData;
+        if (widget.selectMedia != null) {
+          if (isVideo(widget.selectMedia)) {
+            video = true;
+          } else {
+            video = false;
+          }
+
+          thumbnailData = await widget.selectMedia?.thumbnailData;
+        }
       } else if (widget.uploadData?.files.isNotEmpty ?? false) {
         String fileUrl = widget.uploadData!.files[0].url;
         final response = await http.get(Uri.parse(fileUrl));
@@ -445,7 +470,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
         }
       }
 
-      final result = await _uploadViewModel.edit(sendData, thumbnailData);
+      final result =
+          await _uploadViewModel.edit(sendData, thumbnailData, video);
 
       if (!mounted) return;
 
@@ -543,8 +569,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                                       height: double.infinity,
                                     );
                                   } else {
-                                    return const Center(
-                                        child: LoadingWidget());
+                                    return const Center(child: LoadingWidget());
                                   }
                                 },
                               )

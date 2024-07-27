@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/view/widgets/button_image.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../statics/Colors.dart';
 import '../../statics/images.dart';
@@ -31,12 +32,28 @@ class FeedWidget extends StatefulWidget {
 class _FeedWidgetState extends State<FeedWidget> {
   late int _likesCount;
   late bool _isLike;
+  VideoPlayerController? _videoController;
 
   @override
   void initState() {
     super.initState();
     _likesCount = widget.uploadData.likeCount;
     _isLike = widget.uploadData.isLike;
+
+    if (widget.uploadData.mediaType == '동영상' && widget.uploadData.files.isNotEmpty) {
+      _videoController = VideoPlayerController.network(widget.uploadData.files[0].url)
+        ..initialize().then((_) {
+          setState(() {}); // Ensure the widget rebuilds once the video is initialized
+        })
+        ..setLooping(true) // Loop the video
+        ..play(); // Start playing the video immediately
+    }
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
   }
 
   void _toggleLike() {
@@ -217,6 +234,44 @@ class _FeedWidgetState extends State<FeedWidget> {
     );
   }
 
+  Widget _buildMediaWidget() {
+    if (widget.uploadData.mediaType == '사진') {
+      return Image.network(
+        widget.uploadData.files.isNotEmpty ? widget.uploadData.files[0].url : '',
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: ScreenUtil().setHeight(390.0),
+      );
+    } else if (widget.uploadData.mediaType == '동영상' && _videoController != null) {
+      return _videoController!.value.isInitialized
+          ? AspectRatio(
+              aspectRatio: _videoController!.value.aspectRatio,
+              child: VideoPlayer(_videoController!),
+            )
+          : Container(
+              height: ScreenUtil().setHeight(390.0),
+              color: Colors.black,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+    } else {
+      return Container(
+        height: ScreenUtil().setHeight(390.0),
+        color: Colors.black,
+        child: Center(
+          child: Text(
+            '미디어를 불러올 수 없습니다.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -224,13 +279,7 @@ class _FeedWidgetState extends State<FeedWidget> {
       children: [
         _buildProfileWidget(),
         SizedBox(height: ScreenUtil().setHeight(16.0)),
-        Image.network(
-            widget.uploadData.files.isNotEmpty
-                ? widget.uploadData.files[0].url
-                : '',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: ScreenUtil().setHeight(390.0)),
+        _buildMediaWidget(),
         SizedBox(height: ScreenUtil().setHeight(12.0)),
         _buildLikesWidget(),
         SizedBox(height: ScreenUtil().setHeight(15.5)),

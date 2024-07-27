@@ -266,7 +266,8 @@ class _HomeTabState extends State<HomeTab> {
                     data.isOwn,
                     data.files.isNotEmpty ? data.files[0].url : '',
                     data.postId),
-                onProfilePressed: () => _onProfilePressed(data.userId, data.isOwn),
+                onProfilePressed: () =>
+                    _onProfilePressed(data.userId, data.isOwn),
               );
             },
           );

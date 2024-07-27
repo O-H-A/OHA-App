@@ -138,27 +138,23 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
-      Uint8List? thumbnailData, bool isDiary) async {
+   Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
+      Uint8List? thumbnailData, String fileName, bool isDiary) async {
     Map<String, dynamic> sendData = userData;
 
     var dio = Dio();
 
-    String filename = isDiary ? 'file.png' : 'files.png';
-    MediaType contentType = isDiary
-        ? MediaType('image', 'png')
-        : MediaType('application', 'octet-stream');
+    MediaType contentType =
+        isDiary ? MediaType('video', 'mp4') : MediaType('image', 'png');
+    String fileKey = isDiary ? 'file' : 'files';
 
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromBytes(
+      fileKey: await MultipartFile.fromBytes(
         thumbnailData!,
-        filename: filename,
+        filename: fileName,
         contentType: contentType,
       ),
-      "dto": MultipartFile.fromString(
-        jsonEncode(sendData),
-        contentType: MediaType('application', 'json'),
-      ),
+      "dto": jsonEncode(sendData),
     });
 
     try {
@@ -166,11 +162,14 @@ class NetworkManager {
         serverUrl,
         data: formData,
         options: Options(
-          headers: await commonHeaders,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            ...await commonHeaders,
+          },
         ),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Image upload successful');
       } else {
         print('Image upload failed with status: ${response.statusCode}');

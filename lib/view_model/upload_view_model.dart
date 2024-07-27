@@ -133,14 +133,14 @@ class UploadViewModel with ChangeNotifier {
   }
 
   Future<int> posting(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    final result = await _uploadRepository.posting(data, thumbnailData);
+      Map<String, dynamic> data, Uint8List? thumbnailData, bool isVideo) async {
+    final result = await _uploadRepository.posting(data, thumbnailData, isVideo);
 
     return result.statusCode;
   }
 
-  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    final result = await _uploadRepository.edit(data, thumbnailData);
+  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
+    final result = await _uploadRepository.edit(data, thumbnailData, isVideo);
 
     return result.statusCode;
   }

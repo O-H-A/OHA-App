@@ -14,10 +14,20 @@ import '../network/network_manager.dart';
 
 class UploadRepository {
   Future<UploadModel> posting(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+      Map<String, dynamic> data, Uint8List? thumbnailData, bool isVideo) async {
+        
+        String fileName = "";
+
+        if(isVideo == true) {
+          fileName = 'files.mp4';
+        }
+        else {
+          fileName = 'files.png';
+        }
+
     try {
       dynamic response = await NetworkManager.instance
-          .imagePost(ApiUrl.posting, data, thumbnailData, false);
+          .imagePost(ApiUrl.posting, data, thumbnailData, fileName, false);
 
       String responseBody = jsonEncode(response);
       return UploadModel.fromJson(jsonDecode(responseBody));
@@ -27,7 +37,7 @@ class UploadRepository {
   }
 
   Future<UploadModel> edit(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+      Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
     try {
       dynamic response = await NetworkManager.instance
           .imagePatch(ApiUrl.post, data, thumbnailData);
