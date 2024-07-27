@@ -147,12 +147,10 @@ class _HomePageState extends State<HomePage>
               pinned: true,
               floating: true,
               expandedHeight: 200.0,
-              flexibleSpace: FlexibleSpaceBar(
+              flexibleSpace: const FlexibleSpaceBar(
                 background: Column(
                   children: [
-                    SizedBox(height: ScreenUtil().setHeight(12.0)),
-                    const MainWeatherWidget(),
-                    SizedBox(height: ScreenUtil().setHeight(43.0)),
+                    Expanded(child: MainWeatherWidget()),
                   ],
                 ),
               ),
