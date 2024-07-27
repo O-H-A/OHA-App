@@ -1,17 +1,14 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
 import '../statics/strings.dart';
-import '../utils/secret_key.dart';
 import 'api_response.dart';
 
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
+  import 'package:dio/dio.dart';
+  import 'package:http_parser/http_parser.dart';
 
 class NetworkManager {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -139,14 +136,10 @@ class NetworkManager {
   }
 
    Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
-      Uint8List? thumbnailData, String fileName, bool isDiary) async {
+      Uint8List? thumbnailData, String fileName, String fileKey, MediaType contentType) async {
     Map<String, dynamic> sendData = userData;
 
     var dio = Dio();
-
-    MediaType contentType =
-        isDiary ? MediaType('video', 'mp4') : MediaType('image', 'png');
-    String fileKey = isDiary ? 'file' : 'files';
 
     FormData formData = FormData.fromMap({
       fileKey: await MultipartFile.fromBytes(

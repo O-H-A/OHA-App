@@ -7,6 +7,8 @@ import 'package:oha/network/network_manager.dart';
 
 import '../models/diary/diary_write_model.dart';
 
+import 'package:http_parser/http_parser.dart';
+
 class DiaryRepository {
   Future<MyDiaryModel> getMyDiary() async {
     try {
@@ -19,7 +21,11 @@ class DiaryRepository {
 
     Future<DiaryWriteModel> diaryWrite(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     try {
-      dynamic response = await NetworkManager.instance.imagePost(ApiUrl.diary, data, thumbnailData, 'file.png', true);
+      const String fileName = "file.png";
+      const String fileKey = "file";
+      MediaType contentType = MediaType('image', 'png');
+
+      dynamic response = await NetworkManager.instance.imagePost(ApiUrl.diary, data, thumbnailData, fileName, fileKey, contentType);
       return DiaryWriteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

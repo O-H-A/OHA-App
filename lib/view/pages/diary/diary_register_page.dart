@@ -260,7 +260,6 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
     try {
       await _diaryViewModel.diaryWrite(sendData, thumbnailData);
-      // 성공 시 로직 추가 가능
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
     }
