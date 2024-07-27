@@ -45,7 +45,7 @@ class AppInitializer {
         await locationViewModel.getDefaultFrequentDistricts();
         await weatherViewModel.getDefaultWeather();
         await myPageViewModel.myInfo();
-        await uploadViewModel.myPosts();
+        // await uploadViewModel.myPosts();
         _checkLoginStatus(context);
       }
     } catch (error) {

@@ -1,16 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'dart:io';
 
 import '../../../statics/images.dart';
 
 class UploadImageWidget extends StatefulWidget {
-  final List<AssetEntity> images;
+  final List<AssetEntity> media;
   final ValueChanged<int> onSelectedIndexChanged;
 
   const UploadImageWidget({
-    required this.images,
+    required this.media,
     Key? key,
     required this.onSelectedIndexChanged,
   }) : super(key: key);
@@ -39,26 +42,45 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
           },
           child: Stack(
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: AssetEntityImage(
-                  widget.images[index],
-                  isOriginal: false,
-                  fit: BoxFit.cover,
-                ),
+              FutureBuilder<Uint8List?>(
+                future: widget.media[index].thumbnailData,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null) {
+                    return Image.memory(
+                      snapshot.data!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    );
+                  } else {
+                    return Container(
+                      color: Colors.grey[200],
+                    );
+                  }
+                },
               ),
+              if (widget.media[index].type == AssetType.video)
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: Icon(
+                    Icons.play_circle_fill,
+                    color: Colors.white,
+                  ),
+                ),
               Positioned(
-                  top: ScreenUtil().setHeight(8.0),
-                  right: ScreenUtil().setWidth(8.0),
-                  child: (index == _selectIndex)
-                      ? SvgPicture.asset(Images.imageSelect)
-                      : SvgPicture.asset(Images.imageNotSelect)),
+                top: ScreenUtil().setHeight(8.0),
+                right: ScreenUtil().setWidth(8.0),
+                child: (index == _selectIndex)
+                    ? SvgPicture.asset(Images.imageSelect)
+                    : SvgPicture.asset(Images.imageNotSelect),
+              ),
             ],
           ),
         );
       },
-      itemCount: widget.images.length,
+      itemCount: widget.media.length,
     );
   }
 }

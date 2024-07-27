@@ -21,6 +21,7 @@ class UploadViewModel with ChangeNotifier {
   ApiResponse<UploadGetModel> uploadGetData = ApiResponse.loading();
   ApiResponse<UploadGetModel> popularUploadGetData = ApiResponse.loading();
   ApiResponse<UploadGetModel> myUploadGetData = ApiResponse.loading();
+  ApiResponse<UploadGetModel> userUploadGetData = ApiResponse.loading();
 
   ApiResponse<UploadLikeModel> likeData = ApiResponse.loading();
 
@@ -92,6 +93,11 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void _setUserUploadGetData(ApiResponse<UploadGetModel> response) {
+    userUploadGetData = response;
+    notifyListeners();
+  }
+
   void _setLikeData(ApiResponse<UploadLikeModel> response) {
     likeData = response;
     notifyListeners();
@@ -115,20 +121,26 @@ class UploadViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearUserUploadGetData() {
+    userUploadGetData = ApiResponse.complete(
+        UploadGetModel(statusCode: 200, message: "", data: []));
+    notifyListeners();
+  }
+
   void postReport(ApiResponse<UploadReportModel> response) {
     reportData = response;
     notifyListeners();
   }
 
   Future<int> posting(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    final result = await _uploadRepository.posting(data, thumbnailData);
+      Map<String, dynamic> data, Uint8List? thumbnailData, bool isVideo) async {
+    final result = await _uploadRepository.posting(data, thumbnailData, isVideo);
 
     return result.statusCode;
   }
 
-  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData) async {
-    final result = await _uploadRepository.edit(data, thumbnailData);
+  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
+    final result = await _uploadRepository.edit(data, thumbnailData, isVideo);
 
     return result.statusCode;
   }
@@ -166,6 +178,18 @@ class UploadViewModel with ChangeNotifier {
       statusCode = value.statusCode;
     }).onError((error, stackTrace) {
       _setPopularUploadGetData(ApiResponse.error(error.toString()));
+      statusCode = 400;
+    });
+    return statusCode;
+  }
+
+  Future<int> userPosts(int userId) async {
+    int statusCode = 400;
+    await _uploadRepository.userPosts(userId).then((value) {
+      _setUserUploadGetData(ApiResponse.complete(value));
+      statusCode = value.statusCode;
+    }).onError((error, stackTrace) {
+      _setUserUploadGetData(ApiResponse.error(error.toString()));
       statusCode = 400;
     });
     return statusCode;

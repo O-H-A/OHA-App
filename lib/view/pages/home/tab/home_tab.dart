@@ -14,6 +14,7 @@ import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
+import '../../diary/diary_page.dart';
 import '../../mypage/delete_dialog.dart';
 import '../../error_page.dart';
 import '../../upload/upload_write_page.dart';
@@ -137,6 +138,22 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
+  void _onProfilePressed(int userId, bool isOwn) async {
+    if (isOwn) return;
+
+    final statusCode = await _uploadViewModel.userPosts(userId);
+    if (statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DiaryPage(userId: userId),
+        ),
+      );
+    } else {
+      print("Failed to load user posts");
+    }
+  }
+
   void showDeleteDialog(int postId) {
     showDialog(
       context: context,
@@ -249,6 +266,8 @@ class _HomeTabState extends State<HomeTab> {
                     data.isOwn,
                     data.files.isNotEmpty ? data.files[0].url : '',
                     data.postId),
+                onProfilePressed: () =>
+                    _onProfilePressed(data.userId, data.isOwn),
               );
             },
           );

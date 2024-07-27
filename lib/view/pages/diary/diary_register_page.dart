@@ -247,8 +247,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     Map<String, dynamic> sendData = {
       Strings.setDateKey: _writeDay,
       Strings.titleKey: _titleController.text,
-      Strings.contentKey: Strings.weatherCodeMap[_selectTitle],
-      Strings.weatherKey: _selectTitle,
+      Strings.contentKey: _contentsController.text,
+      Strings.weatherKey: Strings.weatherCodeMap[_selectTitle],
       Strings.isPublicKey: _publicStatus,
       Strings.locationKey: "",
     };
@@ -260,7 +260,6 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
     try {
       await _diaryViewModel.diaryWrite(sendData, thumbnailData);
-      // 성공 시 로직 추가 가능
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
     }

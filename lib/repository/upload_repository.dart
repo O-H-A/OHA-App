@@ -12,12 +12,27 @@ import '../models/upload/upload_get_model.dart';
 import '../network/api_url.dart';
 import '../network/network_manager.dart';
 
+import 'package:http_parser/http_parser.dart';
+
 class UploadRepository {
   Future<UploadModel> posting(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+      Map<String, dynamic> data, Uint8List? thumbnailData, bool isVideo) async {
+        
+        String fileName = "";
+        const String fileKey = "files";
+        MediaType contentType = MediaType('image', 'png');
+
+        if(isVideo == true) {
+          fileName = 'files.mp4';
+          contentType =  MediaType('video', 'mp4');
+        }
+        else {
+          fileName = 'files.png';
+        }
+
     try {
       dynamic response = await NetworkManager.instance
-          .imagePost(ApiUrl.posting, data, thumbnailData);
+          .imagePost(ApiUrl.posting, data, thumbnailData, fileName, fileKey, contentType);
 
       String responseBody = jsonEncode(response);
       return UploadModel.fromJson(jsonDecode(responseBody));
@@ -27,7 +42,7 @@ class UploadRepository {
   }
 
   Future<UploadModel> edit(
-      Map<String, dynamic> data, Uint8List? thumbnailData) async {
+      Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
     try {
       dynamic response = await NetworkManager.instance
           .imagePatch(ApiUrl.post, data, thumbnailData);
@@ -51,8 +66,17 @@ class UploadRepository {
 
   Future<UploadGetModel> myPosts() async {
     try {
-      dynamic response =
-          await NetworkManager.instance.get(ApiUrl.myPosts);
+      dynamic response = await NetworkManager.instance.get(ApiUrl.myPosts);
+      return UploadGetModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UploadGetModel> userPosts(int userId) async {
+    try {
+      final response =
+          await NetworkManager.instance.get("${ApiUrl.posts}/user/$userId");
       return UploadGetModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;

@@ -12,7 +12,7 @@ class MyPageRepository {
     try {
       dynamic response = await NetworkManager.instance
           .imagePut(ApiUrl.myInfo, data, image);
-      return NameUpdateModel.fromJson(jsonDecode(response));  
+      return NameUpdateModel.fromJson(response);  
     } catch (e) {
       rethrow;
     }

@@ -11,11 +11,13 @@ import '../../../view_model/upload_view_model.dart';
 class MonthCalendarWidget extends StatefulWidget {
   final DateTime currentDate;
   final Function(DateTime) onDateSelected;
+  final int? userId;
 
   const MonthCalendarWidget({
     Key? key,
     required this.currentDate,
     required this.onDateSelected,
+    this.userId,
   }) : super(key: key);
 
   @override
@@ -50,7 +52,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   @override
   void didUpdateWidget(covariant MonthCalendarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentDate != widget.currentDate) {
+    if (oldWidget.currentDate != widget.currentDate || oldWidget.userId != widget.userId) {
       _updateCalendar();
     }
   }
@@ -62,26 +64,36 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
       daysInMonth = DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
       daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
-      final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
-      final postEntries = Provider.of<UploadViewModel>(context, listen: false).myUploadGetData.data?.data ?? [];
-
       recordedDays = {};
 
-      for (var entry in diaryEntries) {
-        final diaryDate = DateTime(
-          int.parse(entry.setDate.substring(0, 4)),
-          int.parse(entry.setDate.substring(4, 6)),
-          int.parse(entry.setDate.substring(6, 8)),
-        );
-        if (diaryDate.month == widget.currentDate.month) {
-          recordedDays!.add(diaryDate.day);
+      if (widget.userId != null) {
+        final postEntries = Provider.of<UploadViewModel>(context, listen: false).userUploadGetData.data?.data ?? [];
+        for (var entry in postEntries) {
+          final postDate = DateTime.parse(entry.regDtm);
+          if (postDate.month == widget.currentDate.month) {
+            recordedDays!.add(postDate.day);
+          }
         }
-      }
+      } else {
+        final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+        final postEntries = Provider.of<UploadViewModel>(context, listen: false).myUploadGetData.data?.data ?? [];
 
-      for (var entry in postEntries) {
-        final postDate = DateTime.parse(entry.regDtm);
-        if (postDate.month == widget.currentDate.month) {
-          recordedDays!.add(postDate.day);
+        for (var entry in diaryEntries) {
+          final diaryDate = DateTime(
+            int.parse(entry.setDate.substring(0, 4)),
+            int.parse(entry.setDate.substring(4, 6)),
+            int.parse(entry.setDate.substring(6, 8)),
+          );
+          if (diaryDate.month == widget.currentDate.month) {
+            recordedDays!.add(diaryDate.day);
+          }
+        }
+
+        for (var entry in postEntries) {
+          final postDate = DateTime.parse(entry.regDtm);
+          if (postDate.month == widget.currentDate.month) {
+            recordedDays!.add(postDate.day);
+          }
         }
       }
   
@@ -95,7 +107,6 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
 
     setState(() {
       selectedDay = selected;
-      bool recorded = recordedDays!.contains(day);
     });
     widget.onDateSelected(selectedDay!);
   }

@@ -41,6 +41,7 @@ class UploadData {
   final String thumbnailUrl;
   final String profileUrl;
   final bool isOwn;
+  final String mediaType;
 
   UploadData({
     required this.postId,
@@ -64,6 +65,7 @@ class UploadData {
     required this.thumbnailUrl,
     required this.profileUrl,
     required this.isOwn,
+    required this.mediaType,
   });
 
   factory UploadData.fromJson(Map<String, dynamic>? json) => UploadData(
@@ -94,6 +96,7 @@ class UploadData {
             [],
         profileUrl: json?['profileUrl'] ?? '',
         isOwn: json?['isOwn'] ?? false,
+        mediaType: json?['mediaType'] ?? '사진',
       );
 
   factory UploadData.empty() {
@@ -119,6 +122,7 @@ class UploadData {
       thumbnailUrl: '',
       profileUrl: '',
       isOwn: false,
+      mediaType: '사진',
     );
   }
 }

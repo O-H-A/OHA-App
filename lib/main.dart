@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:oha/utils/secret_key.dart';
@@ -35,12 +33,12 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
 
-  await NaverMapSdk.instance.initialize(
-    clientId: SecretKey.naverMapClientId,
-    //FonAuthFailed: (ex) =>
-  );
+  // await NaverMapSdk.instance.initialize(
+  //   clientId: SecretKey.naverMapClientId,
+  //   //FonAuthFailed: (ex) =>
+  // );
 
   if (Platform.isAndroid) {
     await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
