@@ -5,18 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oha/view/pages/home_page.dart';
+import 'package:oha/app.dart';
 import 'package:oha/view/pages/mypage/delete_dialog.dart';
 import 'package:provider/provider.dart';
 
-import '../../../app.dart';
 import '../../../statics/Colors.dart';
 import '../../../statics/images.dart';
 import '../../../statics/strings.dart';
 import '../../../view_model/my_page_view_model.dart';
 import '../../widgets/back_complete_app_bar.dart';
 import '../../widgets/complete_dialog.dart';
-import '../location/location_change_dialog.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -29,7 +27,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _getProfileImage;
   final _textController = TextEditingController();
-  MyPageViewModel _myPageViewModel = MyPageViewModel();
+  late MyPageViewModel _myPageViewModel;
 
   @override
   void initState() {
@@ -164,8 +162,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   Widget _buildGuideContent() {
     return Column(
       children: [
-        Row(
-          children: const [
+        const Row(
+          children: [
             Text(
               Strings.middlePoint + Strings.nickNameEditGuide1,
               style: TextStyle(
@@ -177,8 +175,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           ],
         ),
         SizedBox(height: ScreenUtil().setHeight(8.0)),
-        Row(
-          children: const [
+        const Row(
+          children: [
             Text(
               Strings.middlePoint + Strings.nickNameEditGuide2,
               style: TextStyle(
@@ -190,8 +188,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           ],
         ),
         SizedBox(height: ScreenUtil().setHeight(8.0)),
-        Row(
-          children: const [
+        const Row(
+          children: [
             Flexible(
               child: Text(
                 Strings.middlePoint + Strings.nickNameEditGuide3,
@@ -223,8 +221,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       if (!mounted) return;
       if (result == 404) {
         CompleteDialog.showCompleteDialog(context, Strings.invalidNickname);
-      } else if(result == 200) {
-        showCompleteDialog();
+      } else if (result == 200) {
+        await _myPageViewModel.myInfo();
+
+        if (mounted) {
+          showCompleteDialog();
+        }
       }
     } catch (error) {}
   }
@@ -236,9 +238,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       builder: (BuildContext context) {
         return const CompleteDialog(title: Strings.editCompleText);
       },
-    );
-
-    Navigator.pop(context);
+    ).then((_) => Navigator.pop(context, true));
   }
 
   void showDeleteDialog() {

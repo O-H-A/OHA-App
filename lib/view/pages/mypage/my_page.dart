@@ -1,21 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:oha/statics/colors.dart';
-import 'package:oha/statics/images.dart';
-import 'package:oha/statics/strings.dart';
-import 'package:oha/view_model/my_page_view_model.dart';
-import 'package:oha/view/pages/login_page.dart';
-import 'package:oha/view/pages/mypage/profile_edit_page.dart';
-import 'package:oha/view/pages/mypage/terms_and_Policies.dart';
-import 'package:oha/view/widgets/complete_dialog.dart';
+import 'package:oha/view_model/login_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../../../view_model/login_view_model.dart';
-import '../../widgets/notification_app_bar.dart';
+import '../../../statics/colors.dart';
+import '../../../statics/images.dart';
+import '../../../statics/strings.dart';
+import '../../../view_model/my_page_view_model.dart';
+import '../../../view/pages/login_page.dart';
+import '../../../view/pages/mypage/profile_edit_page.dart';
+import '../../../view/pages/mypage/terms_and_Policies.dart';
+import '../../../view/widgets/complete_dialog.dart';
+import '../../../view/widgets/notification_app_bar.dart';
 import 'delete_dialog.dart';
 
 class MyPage extends StatefulWidget {
@@ -36,6 +34,8 @@ class _MyPageState extends State<MyPage> {
 
     _loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     _myPageViewModel = Provider.of<MyPageViewModel>(context, listen: false);
+
+    _myPageViewModel.myInfo();
   }
 
   void _onLogout() async {
@@ -101,11 +101,14 @@ class _MyPageState extends State<MyPage> {
 
   Widget _buildProfileWidget() {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ProfileEditPage()),
         );
+        if (result == true) {
+          setState(() {});
+        }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
