@@ -43,11 +43,9 @@ class UploadWritePage extends StatefulWidget {
 class _UploadWritePageState extends State<UploadWritePage> {
   int _categorySelectIndex = 0;
   final _textController = TextEditingController();
-  UploadViewModel _uploadViewModel = UploadViewModel();
-  LocationViewModel _locationViewModel = LocationViewModel();
-  bool _isLoading = false; // 로딩 상태 추가
-
-  // 키워드 리스트를 지역 변수로 선언
+  late UploadViewModel _uploadViewModel;
+  late LocationViewModel _locationViewModel;
+  bool _isLoading = false;
   List<String> _keywordList = [];
 
   @override
@@ -75,7 +73,6 @@ class _UploadWritePageState extends State<UploadWritePage> {
       String locationCode = widget.uploadData!.regionCode.toString();
       List<String> selectedKeywords = widget.uploadData!.keywords;
 
-      // 키워드 리스트 초기화
       _keywordList = selectedKeywords;
       _uploadViewModel.setUploadLocation(locationCode);
     }
@@ -161,13 +158,19 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
-  void showKeyDialog() {
-    showDialog(
+  Future<void> showKeyDialog() async {
+    final result = await showDialog<List<String>>(
       context: context,
       builder: (BuildContext context) {
         return const AddKeywordDialog();
       },
     );
+
+    if (result != null) {
+      setState(() {
+        _keywordList = result;
+      });
+    }
   }
 
   void getLocationInfo() async {
@@ -371,8 +374,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
 
   bool isVideo(AssetEntity? media) {
     if (media?.type == AssetType.video) {
-    } else if (media?.type == AssetType.image) {
-    }
+    } else if (media?.type == AssetType.image) {}
     return media != null && media.type == AssetType.video;
   }
 
@@ -432,16 +434,16 @@ class _UploadWritePageState extends State<UploadWritePage> {
       print('Error uploading: $error');
     } finally {
       setState(() {
-        _isLoading = false; // 로딩 상태 해제
+        _isLoading = false;
       });
     }
   }
 
   Future<void> edit() async {
-    if (_isLoading) return; // 로딩 중일 때는 클릭 무시
+    if (_isLoading) return;
 
     setState(() {
-      _isLoading = true; // 로딩 상태로 전환
+      _isLoading = true;
     });
 
     String content = _textController.text;
@@ -501,7 +503,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
       print('Error updating: $error');
     } finally {
       setState(() {
-        _isLoading = false; // 로딩 상태 해제
+        _isLoading = false;
       });
     }
   }
@@ -561,7 +563,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
       body: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+            padding:
+                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
             child: Column(
               children: [
                 Expanded(
@@ -590,12 +593,14 @@ class _UploadWritePageState extends State<UploadWritePage> {
                                           height: double.infinity,
                                         );
                                       } else {
-                                        return const Center(child: LoadingWidget());
+                                        return const Center(
+                                            child: LoadingWidget());
                                       }
                                     },
                                   )
                                 : (widget.uploadData?.files.isNotEmpty ?? false)
-                                    ? Image.network(widget.uploadData!.files[0].url,
+                                    ? Image.network(
+                                        widget.uploadData!.files[0].url,
                                         fit: BoxFit.cover)
                                     : Container(),
                           ),
@@ -679,7 +684,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
                               ),
                             ),
                             Text(
-                              _keywordList.length.toString() + Strings.keywordCount,
+                              _keywordList.length.toString() +
+                                  Strings.keywordCount,
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontFamily: "Pretendard",
@@ -702,7 +708,8 @@ class _UploadWritePageState extends State<UploadWritePage> {
                                     return SizedBox(
                                         width: ScreenUtil().setWidth(8.0));
                                   },
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     String keyword = _keywordList[index];
                                     return _buildKeywordWidget(keyword, index);
                                   },
@@ -725,7 +732,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
                           ],
                         ),
                         SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        (widget.uploadData?.locationDetail.isEmpty ?? true)
+                        (_uploadViewModel.getUploadLocation.isEmpty)
                             ? _buildLocationDefaultWidget("ex) 면목동")
                             : _buildLocationWidget(
                                 widget.uploadData?.locationDetail ??
