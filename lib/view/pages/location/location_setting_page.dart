@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import 'package:oha/view/pages/location/location_app_bar_widget.dart';
 import 'package:oha/view/pages/location/location_find_button.dart';
@@ -18,7 +19,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
   final _controller = TextEditingController();
   List<Map<String, String>> _allLocationList = [];
   List<Map<String, String>> _displayLocationList = [];
-  LocationViewModel _locationViewModel = LocationViewModel();
+  late LocationViewModel _locationViewModel;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 
@@ -58,6 +60,24 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
       }
     }
     return locations;
+  }
+
+  void _showAlreadyAddedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("이미 설정된 지역"),
+          content: Text("이 지역은 이미 설정되어 있습니다."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("확인"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -129,12 +149,20 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                         ? _allLocationList[index]
                         : _displayLocationList[index];
                     final locationDisplay = locationMap['fullAddress'] ?? '';
+                    final locationCode = locationMap['code'] ?? '';
+
                     return Padding(
                       padding:
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context, locationMap);
+                        onTap: () async {
+                          if (_locationViewModel
+                              .isLocationAlreadyAdded(locationCode)) {
+                                CompleteDialog.showCompleteDialog(context, Strings.isLocationAlreadyAdded);
+                          } else {
+                            await _locationViewModel.fetchFrequentDistricts();
+                            Navigator.pop(context, locationMap);
+                          }
                         },
                         child: Text(
                           locationDisplay,

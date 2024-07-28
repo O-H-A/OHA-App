@@ -11,7 +11,6 @@ class LocationFindButton extends StatelessWidget {
   const LocationFindButton({super.key});
 
   Future<void> _findCurrentLocation(BuildContext context) async {
-    // 위치 권한 확인
     bool serviceEnabled;
     LocationPermission permission;
 

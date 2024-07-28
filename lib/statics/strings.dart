@@ -205,6 +205,7 @@ class Strings {
   static const String postEmpty = "포스팅을 추가해 보세요";
   static const String diaryEmpty = "다이어리를 추가해 보세요";
   static const String invalidNickname = "사용할 수 없는 이름입니다. 다른 이름을 사용해 주세요.";
+  static const String isLocationAlreadyAdded = "이미 등록된 지역입니다.";
 
   /*
     구름 	CTGR_CLOUD

@@ -23,13 +23,11 @@ class LocationViewModel with ChangeNotifier {
 
   void setLocationData(ApiResponse<AllLocationModel> response) {
     _allLocationData = response;
-
     notifyListeners();
   }
 
   void setFrequentLocationData(ApiResponse<FrequentLocationModel> response) {
     _frequentLocationData = response;
-
     notifyListeners();
   }
 
@@ -76,6 +74,10 @@ class LocationViewModel with ChangeNotifier {
     }
 
     return list;
+  }
+
+  bool isLocationAlreadyAdded(String code) {
+    return getFrequentRegionCode().contains(code);
   }
 
   String getCodeByAddress(String address) {
@@ -158,13 +160,11 @@ class LocationViewModel with ChangeNotifier {
 
   void setDefaultLocation(String location) {
     _defaultLocation = location;
-
     notifyListeners();
   }
 
   void setDefaultLocationCode(String code) {
     _defaultLocationCode = code;
-
     notifyListeners();
   }
 
