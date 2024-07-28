@@ -126,6 +126,7 @@ class NotificationPage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => NotificationViewModel()..getNotification({}),
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: const BackAppBar(title: Strings.notification),
         body: Consumer<NotificationViewModel>(
           builder: (context, notificationViewModel, child) {

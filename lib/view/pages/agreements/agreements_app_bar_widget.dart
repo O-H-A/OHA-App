@@ -9,7 +9,8 @@ class AgreementsAppBarWidget extends StatelessWidget implements PreferredSizeWid
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
       child: SizedBox(
         width: double.infinity,

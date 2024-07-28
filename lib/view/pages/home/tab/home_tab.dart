@@ -295,16 +295,19 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: ScreenUtil().setHeight(12.0)),
-        _buildTodaySkyText(),
-        SizedBox(height: ScreenUtil().setHeight(12.0)),
-        Expanded(
-          child: _buildBody(),
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          _buildTodaySkyText(),
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          Expanded(
+            child: _buildBody(),
+          ),
+        ],
+      ),
     );
   }
 

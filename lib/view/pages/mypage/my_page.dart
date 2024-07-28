@@ -201,6 +201,7 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: const NotificationAppBar(
         title: Strings.myPage,
       ),
