@@ -7,8 +7,8 @@ import 'dart:convert';
 import '../statics/strings.dart';
 import 'api_response.dart';
 
-  import 'package:dio/dio.dart';
-  import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 class NetworkManager {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -135,8 +135,57 @@ class NetworkManager {
     }
   }
 
-   Future<dynamic> imagePost(String serverUrl, Map<String, dynamic> userData,
-      Uint8List? thumbnailData, String fileName, String fileKey, MediaType contentType) async {
+  Future<dynamic> notDtoimagePost(
+    String serverUrl,
+    Map<String, dynamic> userData,
+    Uint8List? thumbnailData,
+    String fileName,
+    String fileKey,
+    MediaType contentType,
+  ) async {
+    var dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      fileKey: await MultipartFile.fromBytes(
+        thumbnailData!,
+        filename: fileName,
+        contentType: contentType,
+      ),
+      ...userData, // Spread userData directly into FormData
+    });
+
+    try {
+      Response response = await dio.post(
+        serverUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            ...await commonHeaders,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Image upload successful');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}');
+      }
+
+      return response.data;
+    } catch (error) {
+      print('Error uploading: $error');
+      throw error;
+    }
+  }
+
+  Future<dynamic> imagePost(
+      String serverUrl,
+      Map<String, dynamic> userData,
+      Uint8List? thumbnailData,
+      String fileName,
+      String fileKey,
+      MediaType contentType) async {
     Map<String, dynamic> sendData = userData;
 
     var dio = Dio();
@@ -241,22 +290,20 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> imagePut(String serverUrl, Map<String, dynamic> userData,
-      Uint8List? fileData) async {
-    Map<String, dynamic> sendData = userData;
-
+  Future<dynamic> imagePut(
+    String serverUrl,
+    Map<String, dynamic> userData,
+    Uint8List? fileData,
+  ) async {
     var dio = Dio();
 
     FormData formData = FormData.fromMap({
-      "profileImage": await MultipartFile.fromBytes(
+      "profileImage": MultipartFile.fromBytes(
         fileData!,
         filename: 'profileImage.png',
         contentType: MediaType('image', 'png'),
       ),
-      "dto": MultipartFile.fromString(
-        jsonEncode(sendData),
-        contentType: MediaType('application', 'json'),
-      ),
+      ...userData,
     });
 
     try {
