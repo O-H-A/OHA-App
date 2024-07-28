@@ -20,12 +20,13 @@ class DiaryViewModel with ChangeNotifier {
     if (response.status == Status.complete) {
       diaryEntries = response.data?.data?.diaries ?? [];
     }
-    print("Diary Entries Length: ${diaryEntries.length}");
+
     notifyListeners();
   }
 
   void setDiary(ApiResponse<DiaryWriteModel> response) {
     diaryData = response;
+
     notifyListeners();
   }
 

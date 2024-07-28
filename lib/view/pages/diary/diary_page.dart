@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:oha/network/api_response.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
@@ -73,7 +72,7 @@ class _DiaryPageState extends State<DiaryPage> {
       }).catchError((error) {
         _retryCallback = () => _diaryViewModel.fetchMyDiary();
       });
-      _diaryViewModel.setMyDiary(ApiResponse.loading());
+      // _diaryViewModel.setMyDiary(ApiResponse.loading());
 
       await _uploadViewModel.myPosts().then((_) {
         _retryCallback = null;

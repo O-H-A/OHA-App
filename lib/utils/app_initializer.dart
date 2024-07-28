@@ -64,21 +64,21 @@ class AppInitializer {
   }
 
   static void _navigateToLoginPage(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
         (Route<dynamic> route) => false,
       );
-    });
+    // });
   }
 
   static void _navigateToApp(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const App()),
       );
-    });
+    // });
   }
 }
