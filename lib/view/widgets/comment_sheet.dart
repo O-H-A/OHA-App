@@ -124,44 +124,51 @@ class _CommentSheetState extends State<CommentSheet> {
     });
   }
 
-  Future<void> _commentWrite() async {
-    if (_textController.text.isEmpty || _isCommentLoading) {
-      return;
-    }
+Future<void> _commentWrite() async {
+  if (_textController.text.isEmpty || _isCommentLoading) {
+    return;
+  }
 
+  setState(() {
+    _isCommentLoading = true;
+  });
+
+  Map<String, dynamic> sendData;
+  if (_replyCommentId != null) {
+    sendData = {
+      Strings.parentIdKey: _replyCommentId,
+      Strings.contentKey: _textController.text,
+    };
+  } else {
+    sendData = {
+      Strings.postIdKey: widget.postId,
+      Strings.contentKey: _textController.text,
+    };
+  }
+
+  try {
+    await _uploadViewModel.commentWrite(sendData);
+    _textController.clear();
+    _focusNode.unfocus();
     setState(() {
-      _isCommentLoading = true; // 로딩 상태로 전환
+      _replyHint = null;
+      _replyCommentId = null;
     });
 
-    Map<String, dynamic> sendData;
     if (_replyCommentId != null) {
-      sendData = {
-        Strings.parentIdKey: _replyCommentId,
-        Strings.contentKey: _textController.text,
-      };
+      _loadReplies(_replyCommentId!); 
     } else {
-      sendData = {
-        Strings.postIdKey: widget.postId,
-        Strings.contentKey: _textController.text,
-      };
+      _loadInitialComments();
     }
-
-    try {
-      await _uploadViewModel.commentWrite(sendData);
-      _textController.clear();
-      _focusNode.unfocus();
-      setState(() {
-        _replyHint = null;
-        _replyCommentId = null;
-      });
-    } catch (error) {
-      // _navigateToErrorPage(context);
-    } finally {
-      setState(() {
-        _isCommentLoading = false; // 로딩 상태 해제
-      });
-    }
+  } catch (error) {
+    // _navigateToErrorPage(context);
+  } finally {
+    setState(() {
+      _isCommentLoading = false;
+    });
   }
+}
+
 
   void _onCommentTap(CommentReadData commentData) {
     setState(() {
