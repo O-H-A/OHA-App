@@ -131,6 +131,8 @@ class _LocationSettingBottomSheetContentState
   }
 
   Widget _buildLocationWidget(BuildContext context, int index) {
+    bool isSelectedLocation = _locationViewModel.getDefaultLocation == _selectedLocations[index];
+    
     return GestureDetector(
       onTap: () async {
         if (_selectedLocations[index] == "") {
@@ -180,13 +182,13 @@ class _LocationSettingBottomSheetContentState
             height: ScreenUtil().setHeight(41.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(5.0)),
-              color: (_selectedLocations[index] == "")
-                  ? Colors.white
-                  : const Color(UserColors.primaryColor),
+              color: isSelectedLocation
+                  ? const Color(UserColors.primaryColor)
+                  : Colors.white,
               border: Border.all(
-                  color: (_selectedLocations[index] == "")
-                      ? const Color(UserColors.ui08)
-                      : Colors.white),
+                  color: isSelectedLocation
+                      ? Colors.white
+                      : const Color(UserColors.ui08)),
             ),
             child: Padding(
               padding:
@@ -201,9 +203,9 @@ class _LocationSettingBottomSheetContentState
                           ? Strings.locationSetting
                           : _selectedLocations[index],
                       style: TextStyle(
-                        color: (_selectedLocations[index] == "")
-                            ? const Color(UserColors.ui06)
-                            : Colors.white,
+                        color: isSelectedLocation
+                            ? Colors.white
+                            : const Color(UserColors.ui06),
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -215,9 +217,9 @@ class _LocationSettingBottomSheetContentState
                     icon: (_selectedLocations[index] == "")
                         ? Icons.add
                         : Icons.close,
-                    iconColor: (_selectedLocations[index] == "")
-                        ? const Color(UserColors.ui01)
-                        : Colors.white,
+                    iconColor: isSelectedLocation
+                        ? Colors.white
+                        : const Color(UserColors.ui01),
                     callback: () => (_selectedLocations[index] == "")
                         ? _addFrequentLocation(context, index)
                         : _removeLocation(index),
