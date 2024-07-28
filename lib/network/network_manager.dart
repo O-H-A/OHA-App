@@ -151,7 +151,7 @@ class NetworkManager {
         filename: fileName,
         contentType: contentType,
       ),
-      ...userData, // Spread userData directly into FormData
+      ...userData,
     });
 
     try {
