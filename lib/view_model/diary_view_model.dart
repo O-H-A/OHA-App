@@ -55,7 +55,9 @@ class DiaryViewModel with ChangeNotifier {
   Future<void> diaryWrite(Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _diaryRepository.diaryWrite(data, thumbnailData);
 
-    if (result.statusCode == 200) {
+    print("Jehee : ${result.statusCode}");
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
       setDiary(ApiResponse.complete(result));
     } else {
       setDiary(ApiResponse.error());

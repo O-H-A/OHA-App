@@ -11,6 +11,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/button_icon.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -246,10 +247,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   }
 
   void _sendDiaryRegist() async {
-    if (_isLoading) return; // 로딩 중이면 클릭 무시
+    if (_isLoading) return;
 
     setState(() {
-      _isLoading = true; // 로딩 상태로 전환
+      _isLoading = true;
     });
 
     Map<String, dynamic> sendData = {
@@ -268,6 +269,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
     try {
       await _diaryViewModel.diaryWrite(sendData, thumbnailData);
+
+      _diaryViewModel.fetchMyDiary();
+      Navigator.pop(context);
+      CompleteDialog.showCompleteDialog(context, Strings.diaryComplete);
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
     } finally {

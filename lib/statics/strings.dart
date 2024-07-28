@@ -207,6 +207,7 @@ class Strings {
   static const String invalidNickname = "사용할 수 없는 이름입니다. 다른 이름을 사용해 주세요.";
   static const String isLocationAlreadyAdded = "이미 등록된 지역입니다.";
   static const String locationHintText = "ex) 뚝섬 전망 문화 콤플렉스 자벌레";
+  static const String diaryComplete = "다이어리 등록이 완료되었습니다.";
 
   /*
     구름 	CTGR_CLOUD

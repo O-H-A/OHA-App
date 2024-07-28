@@ -26,7 +26,7 @@ class DiaryRepository {
       MediaType contentType = MediaType('image', 'png');
 
       dynamic response = await NetworkManager.instance.notDtoimagePost(ApiUrl.diary, data, thumbnailData, fileName, fileKey, contentType);
-      return DiaryWriteModel.fromJson(jsonDecode(response));
+      return DiaryWriteModel.fromJson(response);
     } catch (e) {
       rethrow;
     }
