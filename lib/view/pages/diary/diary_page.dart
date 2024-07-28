@@ -239,43 +239,46 @@ class _DiaryPageState extends State<DiaryPage> {
         final userName = viewModel.getMyDiary.data?.data?.writer?.name ?? '';
         final diaryCount = viewModel.diaryEntries.length;
         final totalLikes = _getTotalLikes(viewModel);
-        return Row(
-          children: [
-            Container(
-              width: ScreenUtil().setWidth(28.0),
-              height: ScreenUtil().setHeight(28.0),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: SvgPicture.asset(Images.defaultProfile),
-              ),
-            ),
-            SizedBox(width: ScreenUtil().setWidth(14.0)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  userName,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w600,
-                    fontSize: ScreenUtil().setSp(14.0),
-                  ),
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+          child: Row(
+            children: [
+              Container(
+                width: ScreenUtil().setWidth(28.0),
+                height: ScreenUtil().setHeight(28.0),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
                 ),
-                Text(
-                  Strings.diaryInfoText(diaryCount, totalLikes),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w300,
-                    fontSize: ScreenUtil().setSp(12.0),
-                  ),
+                child: ClipOval(
+                  child: SvgPicture.asset(Images.defaultProfile),
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(width: ScreenUtil().setWidth(14.0)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w600,
+                      fontSize: ScreenUtil().setSp(14.0),
+                    ),
+                  ),
+                  Text(
+                    Strings.diaryInfoText(diaryCount, totalLikes),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w300,
+                      fontSize: ScreenUtil().setSp(12.0),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
@@ -290,107 +293,118 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildMonthChangeWidget() {
-    return Container(
-      width: double.infinity,
-      height: ScreenUtil().setHeight(53.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
-        color: Colors.white,
-        border: Border.all(color: const Color(UserColors.ui11)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              ButtonIcon(
-                icon: Icons.chevron_left,
-                iconColor: Colors.black,
-                callback: () => subCurrentTime(),
-              ),
-              SizedBox(width: ScreenUtil().setWidth(10.0)),
-              Text(
-                getCurrentTime(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              SizedBox(width: ScreenUtil().setWidth(10.0)),
-              ButtonIcon(
-                icon: Icons.chevron_right,
-                iconColor: Colors.black,
-                callback: () => addCurrentTime(),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: ScreenUtil().setWidth(15.0)),
-            child: Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Container(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(53.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
+          color: Colors.white,
+          border: Border.all(color: const Color(UserColors.ui11)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showFeed = false;
-                    });
-                  },
-                  child: SvgPicture.asset(
-                    showFeed ? Images.diaryCalendarDisable : Images.diaryCalendarEnable,
+                ButtonIcon(
+                  icon: Icons.chevron_left,
+                  iconColor: Colors.black,
+                  callback: () => subCurrentTime(),
+                ),
+                SizedBox(width: ScreenUtil().setWidth(10.0)),
+                Text(
+                  getCurrentTime(),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
-                SizedBox(width: ScreenUtil().setWidth(15.0)),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showFeed = true;
-                    });
-                  },
-                  child: SvgPicture.asset(
-                    showFeed ? Images.diaryFeedEnable : Images.diaryFeedDisable,
-                  ),
+                SizedBox(width: ScreenUtil().setWidth(10.0)),
+                ButtonIcon(
+                  icon: Icons.chevron_right,
+                  iconColor: Colors.black,
+                  callback: () => addCurrentTime(),
                 ),
               ],
             ),
+            Padding(
+              padding: EdgeInsets.only(right: ScreenUtil().setWidth(15.0)),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showFeed = false;
+                      });
+                    },
+                    child: SvgPicture.asset(
+                      showFeed
+                          ? Images.diaryCalendarDisable
+                          : Images.diaryCalendarEnable,
+                    ),
+                  ),
+                  SizedBox(width: ScreenUtil().setWidth(15.0)),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showFeed = true;
+                      });
+                    },
+                    child: SvgPicture.asset(
+                      showFeed ? Images.diaryFeedEnable : Images.diaryFeedDisable,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendarTypeContainerWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                viewMonth = true;
+              });
+            },
+            child: _buildCalendarTypeWidget(viewMonth, Strings.month),
+          ),
+          SizedBox(width: ScreenUtil().setWidth(6.0)),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                viewMonth = false;
+              });
+            },
+            child: _buildCalendarTypeWidget(!viewMonth, Strings.week),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCalendarTypeContainerWidget() {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              viewMonth = true;
-            });
-          },
-          child: _buildCalendarTypeWidget(viewMonth, Strings.month),
-        ),
-        SizedBox(width: ScreenUtil().setWidth(6.0)),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              viewMonth = false;
-            });
-          },
-          child: _buildCalendarTypeWidget(!viewMonth, Strings.week),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPostingText() {
-    return const Text(
-      Strings.posting,
-      style: TextStyle(
-        color: Colors.black,
-        fontFamily: "Pretendard",
-        fontWeight: FontWeight.w600,
-        fontSize: 16,
+    return Padding(
+      padding: EdgeInsets.only(left: ScreenUtil().setWidth(22.0)),
+      child: const Text(
+        Strings.posting,
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
       ),
     );
   }
@@ -408,7 +422,7 @@ class _DiaryPageState extends State<DiaryPage> {
 
     if (selectedDateUploads.isEmpty) {
       return Padding(
-        padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0)),
+        padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
         child: Row(
           children: [
             _buildPostingImageWidget(null),
@@ -430,7 +444,7 @@ class _DiaryPageState extends State<DiaryPage> {
     final upload = selectedDateUploads.first;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0)),
+      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -514,34 +528,37 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildDiaryText() {
-    return Row(
-      children: [
-        const Text(
-          Strings.diary,
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: "Pretendard",
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-        ButtonIcon(
-          icon: Icons.add,
-          iconColor: const Color(UserColors.ui04),
-          callback: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DiaryRegisterPage(selectDate: selectedDate),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Row(
+        children: [
+          const Text(
+            Strings.diary,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
             ),
           ),
-        ),
-      ],
+          ButtonIcon(
+            icon: Icons.add,
+            iconColor: const Color(UserColors.ui04),
+            callback: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DiaryRegisterPage(selectDate: selectedDate),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildDiaryWidget(MyDiary? diary) {
     return Padding(
-      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0)),
+      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -635,7 +652,8 @@ class _DiaryPageState extends State<DiaryPage> {
         return uploadDate.year == currentTime.year &&
             uploadDate.month == currentTime.month;
       } else {
-        return uploadDate.isAfter(currentTime.subtract(const Duration(days: 7))) &&
+        return uploadDate
+                .isAfter(currentTime.subtract(const Duration(days: 7))) &&
             uploadDate.isBefore(currentTime.add(const Duration(days: 7)));
       }
     }).toList();
@@ -797,51 +815,48 @@ class _DiaryPageState extends State<DiaryPage> {
         title: Strings.diary,
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-        child: Consumer<DiaryViewModel>(
-          builder: (context, diaryViewModel, child) {
-            final diaries = diaryViewModel.getDiariesByDate(selectedDate);
-            final myDiary = diaries.isNotEmpty ? diaries.first : null;
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildUserInfoWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(36.0)),
-                  _buildMonthChangeWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(12.0)),
-                  _buildCalendarTypeContainerWidget(),
-                  if (!showFeed) ...[
-                    SizedBox(height: ScreenUtil().setHeight(18.0)),
-                    (viewMonth)
-                        ? MonthCalendarWidget(
-                            currentDate: currentTime,
-                            onDateSelected: onDateSelected,
-                            userId: widget.userId,
-                          )
-                        : WeekCalendarWidget(
-                            currentDate: currentTime,
-                            onDateSelected: onDateSelected,
-                            userId: widget.userId,
-                          ),
-                    SizedBox(height: ScreenUtil().setHeight(22.0)),
-                    _buildPostingText(),
-                    SizedBox(height: ScreenUtil().setHeight(19.0)),
-                    _buildPostingWidget(),
-                    SizedBox(height: ScreenUtil().setHeight(37.0)),
-                    _buildDiaryText(),
-                    SizedBox(height: ScreenUtil().setHeight(19.0)),
-                    _buildDiaryWidget(myDiary),
-                  ] else ...[
-                    _buildFeedWidget(),
-                  ],
-                  SizedBox(height: ScreenUtil().setHeight(150.0)),
+      body: Consumer<DiaryViewModel>(
+        builder: (context, diaryViewModel, child) {
+          final diaries = diaryViewModel.getDiariesByDate(selectedDate);
+          final myDiary = diaries.isNotEmpty ? diaries.first : null;
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildUserInfoWidget(),
+                SizedBox(height: ScreenUtil().setHeight(36.0)),
+                _buildMonthChangeWidget(),
+                SizedBox(height: ScreenUtil().setHeight(12.0)),
+                _buildCalendarTypeContainerWidget(),
+                if (!showFeed) ...[
+                  SizedBox(height: ScreenUtil().setHeight(18.0)),
+                  (viewMonth)
+                      ? MonthCalendarWidget(
+                          currentDate: currentTime,
+                          onDateSelected: onDateSelected,
+                          userId: widget.userId,
+                        )
+                      : WeekCalendarWidget(
+                          currentDate: currentTime,
+                          onDateSelected: onDateSelected,
+                          userId: widget.userId,
+                        ),
+                  SizedBox(height: ScreenUtil().setHeight(22.0)),
+                  _buildPostingText(),
+                  SizedBox(height: ScreenUtil().setHeight(19.0)),
+                  _buildPostingWidget(),
+                  SizedBox(height: ScreenUtil().setHeight(37.0)),
+                  _buildDiaryText(),
+                  SizedBox(height: ScreenUtil().setHeight(19.0)),
+                  _buildDiaryWidget(myDiary),
+                ] else ...[
+                  _buildFeedWidget(),
                 ],
-              ),
-            );
-          },
-        ),
+                SizedBox(height: ScreenUtil().setHeight(150.0)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
