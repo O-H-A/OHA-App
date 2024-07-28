@@ -28,9 +28,13 @@ class _SignUpCompletePageState extends State<SignUpCompletePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SvgPicture.asset(
-        Images.signUpComplete,
-        fit: BoxFit.cover,
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: SvgPicture.asset(
+          Images.signUpComplete,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
