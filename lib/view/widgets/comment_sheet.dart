@@ -34,10 +34,12 @@ class _CommentSheetState extends State<CommentSheet> {
   final int _pageSize = 10;
   bool _isLoadingMore = false;
   bool _isCommentLoading = false; // 댓글 작성 중 로딩 상태 추가
+  bool _isLoadingComments = true; // 댓글 로딩 상태 추가
   String? _replyHint;
   int? _replyCommentId;
   UploadViewModel _uploadViewModel = UploadViewModel();
   Map<int, bool> _showReplies = {};
+  int _currentLoadedCommentId = -1; // 현재 로드된 댓글 ID 추가
 
   @override
   void initState() {
@@ -66,10 +68,18 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadInitialComments() async {
+    setState(() {
+      _isLoadingComments = true;
+    });
+
     await _uploadViewModel.commentRead({
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
+    });
+
+    setState(() {
+      _isLoadingComments = false;
     });
   }
 
@@ -94,10 +104,23 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadReplies(int commentId) async {
+    if (_currentLoadedCommentId == commentId) {
+      return; // 이미 로드된 댓글이라면 로드를 중단
+    }
+
+    setState(() {
+      _isLoadingComments = true;
+      _currentLoadedCommentId = commentId;
+    });
+
     await _uploadViewModel.replyRead({
       "parentId": commentId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
+    });
+
+    setState(() {
+      _isLoadingComments = false;
     });
   }
 
@@ -118,7 +141,7 @@ class _CommentSheetState extends State<CommentSheet> {
       };
     } else {
       sendData = {
-        Strings.poistIdKey: widget.postId,
+        Strings.postIdKey: widget.postId,
         Strings.contentKey: _textController.text,
       };
     }
@@ -578,6 +601,9 @@ class _CommentSheetState extends State<CommentSheet> {
               Expanded(
                 child: Consumer<UploadViewModel>(
                   builder: (context, uploadViewModel, child) {
+                    if (_isLoadingComments) {
+                      return const LoadingWidget();
+                    }
                     switch (uploadViewModel.commentReadData.status) {
                       case Status.loading:
                         return const LoadingWidget();

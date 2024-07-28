@@ -49,7 +49,7 @@ class ReportDialog {
             Provider.of<UploadViewModel>(context, listen: false);
 
         Map<String, dynamic> sendData = {
-          Strings.poistIdKey: postId,
+          Strings.postIdKey: postId,
           Strings.reasonCodeKey: reasonCode,
         };
 

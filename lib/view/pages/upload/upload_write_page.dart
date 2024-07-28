@@ -454,7 +454,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
     }
 
     Map<String, dynamic> sendData = {
-      Strings.poistIdKey: widget.uploadData?.postId.toString(),
+      Strings.postIdKey: widget.uploadData?.postId.toString(),
       Strings.contentKey: content,
       Strings.categoryCodeKey: selectCategory,
       Strings.keywordsKey: selectedKeywords,
