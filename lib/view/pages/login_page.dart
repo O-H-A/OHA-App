@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oha/network/api_url.dart';
 import 'package:oha/network/network_manager.dart';
 import 'package:oha/view/pages/agreements/agreements_page.dart';
+import 'package:oha/view/widgets/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -101,7 +102,22 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     );
                   } else {
-                    AppInitializer.initialize(context);
+                    await webViewCtrl?.loadUrl(
+                      urlRequest: URLRequest(url: WebUri("about:blank")),
+                    );
+
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return const Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: LoadingWidget(),
+                        );
+                      },
+                    );
+
+                    await AppInitializer.initialize(context);
 
                     navigator.pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const App()),
@@ -109,9 +125,6 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
 
-                  await webViewCtrl?.loadUrl(
-                    urlRequest: URLRequest(url: WebUri("about:blank")),
-                  );
                 } catch (e) {
                   print("Error decoding JSON or accessing accessToken: $e");
                   await _storage.write(

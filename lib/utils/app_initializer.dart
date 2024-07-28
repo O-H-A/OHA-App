@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -26,8 +27,8 @@ class AppInitializer {
         Provider.of<WeatherViewModel>(context, listen: false);
     final myPageViewModel =
         Provider.of<MyPageViewModel>(context, listen: false);
-    final uploadViewModel =
-        Provider.of<UploadViewModel>(context, listen: false);
+    final diaryViewModel =
+        Provider.of<DiaryViewModel>(context, listen: false);
 
     try {
       final result = await loginViewModel.refresh();
@@ -45,6 +46,7 @@ class AppInitializer {
         await locationViewModel.getDefaultFrequentDistricts();
         await weatherViewModel.getDefaultWeather();
         await myPageViewModel.myInfo();
+        await diaryViewModel.fetchMyDiary();
         // await uploadViewModel.myPosts();
         _checkLoginStatus(context);
       }
@@ -64,21 +66,21 @@ class AppInitializer {
   }
 
   static void _navigateToLoginPage(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
         (Route<dynamic> route) => false,
       );
-    });
+    // });
   }
 
   static void _navigateToApp(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const App()),
       );
-    });
+    // });
   }
 }

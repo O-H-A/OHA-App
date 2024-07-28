@@ -39,7 +39,7 @@ class MyDiaryWriter {
   final int userId;
   final String providerType;
   final String email;
-  final String? name;
+  final String name;
   final String? profileUrl;
   final String createdAt;
   final String updatedAt;
@@ -48,8 +48,8 @@ class MyDiaryWriter {
     required this.userId,
     required this.providerType,
     required this.email,
-    this.name,
-    this.profileUrl,
+    required this.name,
+    required this.profileUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -59,7 +59,7 @@ class MyDiaryWriter {
       userId: json['userId'] ?? 0,
       providerType: json['providerType'] ?? '',
       email: json['email'] ?? '',
-      name: json['name'],
+      name: json['name'] ?? '',
       profileUrl: json['profileUrl'],
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',

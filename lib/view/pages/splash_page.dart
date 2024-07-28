@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:oha/models/upload/upload_get_model.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/utils/app_initializer.dart';
-import 'package:oha/view_model/my_page_view_model.dart';
-import 'package:oha/view_model/weather_view_model.dart';
-import 'package:oha/view/pages/login_page.dart';
-import 'package:provider/provider.dart';
-
-import '../../app.dart';
-import '../../statics/strings.dart';
-import '../../view_model/location_view_model.dart';
-import '../../view_model/login_view_model.dart';
-import '../../view_model/upload_view_model.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -25,20 +13,103 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
-
   @override
   void initState() {
     super.initState();
-    AppInitializer.initialize(context);
+    _checkInternetConnection();
+  }
+
+  Future<void> _checkInternetConnection() async {
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        _showNoInternetDialog();
+      } else {
+        AppInitializer.initialize(context);
+      }
+    } catch (e) {
+      print("에러 발생 123123: $e");
+      _showErrorDialog(e.toString());
+    }
+  }
+
+  void _showNoInternetDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("인터넷 연결 끊김"),
+          content: const Text("인터넷에 연결되어 있지 않습니다. 앱을 종료합니다."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("확인"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _closeApp();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("오류 발생"),
+          content: Text("오류가 발생했습니다: $message"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("확인"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _closeApp();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _closeApp() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      SystemNavigator.pop();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SvgPicture.asset(
-        Images.splashBg,
-        fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: SvgPicture.asset(
+              Images.splashBg,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const Positioned(
+            right: 30,
+            bottom: 30,
+            child: Text(
+              "Ver 1.0.0\n240728",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
+        ],
       ),
     );
   }

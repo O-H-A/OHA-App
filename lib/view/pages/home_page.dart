@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage>
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48.0),
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   child: TabBar(
                     labelPadding: EdgeInsets.symmetric(
                         horizontal: ScreenUtil().setWidth(1.0)),

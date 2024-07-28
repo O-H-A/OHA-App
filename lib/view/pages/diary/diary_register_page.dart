@@ -11,6 +11,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/widgets/button_icon.dart';
+import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -19,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../../../view_model/diary_view_model.dart';
 import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
+import '../../widgets/loading_widget.dart'; // 추가된 로딩 위젯 import
 import '../home/weather/weather_select_dialog.dart';
 import '../upload/upload_page.dart';
 
@@ -42,6 +44,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   String _selectImage = "";
   String _showDay = "";
   String _writeDay = "";
+  bool _isLoading = false; // 로딩 상태 추가
   DiaryViewModel _diaryViewModel = DiaryViewModel();
 
   @override
@@ -244,6 +247,12 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   }
 
   void _sendDiaryRegist() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     Map<String, dynamic> sendData = {
       Strings.setDateKey: _writeDay,
       Strings.titleKey: _titleController.text,
@@ -260,8 +269,16 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
     try {
       await _diaryViewModel.diaryWrite(sendData, thumbnailData);
+
+      _diaryViewModel.fetchMyDiary();
+      Navigator.pop(context);
+      CompleteDialog.showCompleteDialog(context, Strings.diaryComplete);
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -413,6 +430,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -444,113 +462,121 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           callback: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPhotoArea(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setWidth(22.0)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        _buildTitleText(),
-                        SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _buildTitleTextField(),
-                        SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        _buildSelectWeatherTitleText(),
-                        SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        (_selectTitle == "" || _selectImage == "")
-                            ? _buildEmptyWeatherSelect()
-                            : _buildSelectWidgetWidget(),
-                        SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        _buildContentsTitleText(),
-                        SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        _buildContentsTextField(),
-                        SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        _buildPublicTitleText(),
-                        SizedBox(height: ScreenUtil().setHeight(10.0)),
-                        _buildPublicButton(),
-                        SizedBox(height: ScreenUtil().setHeight(22.0)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPhotoArea(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: ScreenUtil().setWidth(22.0)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return LocationInfoDialog();
+                            SizedBox(height: ScreenUtil().setHeight(22.0)),
+                            _buildTitleText(),
+                            SizedBox(height: ScreenUtil().setHeight(12.0)),
+                            _buildTitleTextField(),
+                            SizedBox(height: ScreenUtil().setHeight(22.0)),
+                            _buildSelectWeatherTitleText(),
+                            SizedBox(height: ScreenUtil().setHeight(12.0)),
+                            (_selectTitle == "" || _selectImage == "")
+                                ? _buildEmptyWeatherSelect()
+                                : _buildSelectWidgetWidget(),
+                            SizedBox(height: ScreenUtil().setHeight(22.0)),
+                            _buildContentsTitleText(),
+                            SizedBox(height: ScreenUtil().setHeight(12.0)),
+                            _buildContentsTextField(),
+                            SizedBox(height: ScreenUtil().setHeight(22.0)),
+                            _buildPublicTitleText(),
+                            SizedBox(height: ScreenUtil().setHeight(10.0)),
+                            _buildPublicButton(),
+                            SizedBox(height: ScreenUtil().setHeight(22.0)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return LocationInfoDialog();
+                                      },
+                                    );
                                   },
-                                );
-                              },
-                              child: const Text(
-                                Strings.location,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                                  child: const Text(
+                                    Strings.location,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Icon(Icons.arrow_forward_ios, color: Colors.black),
+                              ],
+                            ),
+                            SizedBox(height: ScreenUtil().setHeight(12.0)),
+                            Container(
+                              width: ScreenUtil().setWidth(101.0),
+                              height: ScreenUtil().setHeight(35.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    ScreenUtil().radius(18.0)),
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: const Color(UserColors.ui08)),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  Strings.exampleLocation,
+                                  style: TextStyle(
+                                    color: Color(UserColors.ui06),
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ),
-                            Icon(Icons.arrow_forward_ios, color: Colors.black),
+                            SizedBox(height: ScreenUtil().setHeight(35.0)),
                           ],
                         ),
-                        SizedBox(height: ScreenUtil().setHeight(12.0)),
-                        Container(
-                          width: ScreenUtil().setWidth(101.0),
-                          height: ScreenUtil().setHeight(35.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                ScreenUtil().radius(18.0)),
-                            color: Colors.white,
-                            border:
-                                Border.all(color: const Color(UserColors.ui08)),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              Strings.exampleLocation,
-                              style: TextStyle(
-                                color: Color(UserColors.ui06),
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: ScreenUtil().setHeight(35.0)),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom: ScreenUtil().setHeight(23.0),
+                    left: ScreenUtil().setWidth(22.0),
+                    right: ScreenUtil().setWidth(22.0)),
+                child: InfinityButton(
+                  height: ScreenUtil().setHeight(50.0),
+                  radius: ScreenUtil().radius(8.0),
+                  backgroundColor: _buttonEnabled()
+                      ? const Color(UserColors.primaryColor)
+                      : const Color(UserColors.ui10),
+                  textColor: _buttonEnabled() ? Colors.white : Colors.black,
+                  text: Strings.register,
+                  textSize: 16,
+                  textWeight: FontWeight.w600,
+                  callback: () => _sendDiaryRegist(),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                bottom: ScreenUtil().setHeight(23.0),
-                left: ScreenUtil().setWidth(22.0),
-                right: ScreenUtil().setWidth(22.0)),
-            child: InfinityButton(
-              height: ScreenUtil().setHeight(50.0),
-              radius: ScreenUtil().radius(8.0),
-              backgroundColor: _buttonEnabled()
-                  ? const Color(UserColors.primaryColor)
-                  : const Color(UserColors.ui10),
-              textColor: _buttonEnabled() ? Colors.white : Colors.black,
-              text: Strings.register,
-              textSize: 16,
-              textWeight: FontWeight.w600,
-              callback: () => _sendDiaryRegist(),
+          if (_isLoading)
+            const Center(
+              child: LoadingWidget(),
             ),
-          ),
         ],
       ),
     );

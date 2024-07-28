@@ -8,7 +8,6 @@ import '../models/upload/comment_write_model.dart';
 import '../models/upload/upload_get_model.dart';
 import '../models/upload/upload_like_model.dart';
 import '../network/api_response.dart';
-
 class UploadViewModel with ChangeNotifier {
   UploadRepository _uploadRepository = UploadRepository();
 

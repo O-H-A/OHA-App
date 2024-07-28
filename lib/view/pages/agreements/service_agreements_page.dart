@@ -10,6 +10,7 @@ class ServiceAgreementsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: const AgreementsAppBarWidget(title: Strings.termsOfUse),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),

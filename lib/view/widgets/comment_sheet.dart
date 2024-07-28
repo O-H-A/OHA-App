@@ -33,10 +33,13 @@ class _CommentSheetState extends State<CommentSheet> {
   int _offset = 0;
   final int _pageSize = 10;
   bool _isLoadingMore = false;
+  bool _isCommentLoading = false; // 댓글 작성 중 로딩 상태 추가
+  bool _isLoadingComments = true; // 댓글 로딩 상태 추가
   String? _replyHint;
   int? _replyCommentId;
   UploadViewModel _uploadViewModel = UploadViewModel();
   Map<int, bool> _showReplies = {};
+  int _currentLoadedCommentId = -1; // 현재 로드된 댓글 ID 추가
 
   @override
   void initState() {
@@ -65,10 +68,18 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadInitialComments() async {
+    setState(() {
+      _isLoadingComments = true;
+    });
+
     await _uploadViewModel.commentRead({
       "postId": widget.postId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
+    });
+
+    setState(() {
+      _isLoadingComments = false;
     });
   }
 
@@ -93,43 +104,71 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 
   Future<void> _loadReplies(int commentId) async {
+    if (_currentLoadedCommentId == commentId) {
+      return; // 이미 로드된 댓글이라면 로드를 중단
+    }
+
+    setState(() {
+      _isLoadingComments = true;
+      _currentLoadedCommentId = commentId;
+    });
+
     await _uploadViewModel.replyRead({
       "parentId": commentId.toString(),
       "offset": _offset.toString(),
       "size": _pageSize.toString(),
     });
+
+    setState(() {
+      _isLoadingComments = false;
+    });
   }
 
-  Future<void> _commentWrite() async {
-    if (_textController.text.isEmpty) {
-      return;
-    }
+Future<void> _commentWrite() async {
+  if (_textController.text.isEmpty || _isCommentLoading) {
+    return;
+  }
 
-    Map<String, dynamic> sendData;
+  setState(() {
+    _isCommentLoading = true;
+  });
+
+  Map<String, dynamic> sendData;
+  if (_replyCommentId != null) {
+    sendData = {
+      Strings.parentIdKey: _replyCommentId,
+      Strings.contentKey: _textController.text,
+    };
+  } else {
+    sendData = {
+      Strings.postIdKey: widget.postId,
+      Strings.contentKey: _textController.text,
+    };
+  }
+
+  try {
+    await _uploadViewModel.commentWrite(sendData);
+    _textController.clear();
+    _focusNode.unfocus();
+    setState(() {
+      _replyHint = null;
+      _replyCommentId = null;
+    });
+
     if (_replyCommentId != null) {
-      sendData = {
-        Strings.parentIdKey: _replyCommentId,
-        Strings.contentKey: _textController.text,
-      };
+      _loadReplies(_replyCommentId!); 
     } else {
-      sendData = {
-        Strings.poistIdKey: widget.postId,
-        Strings.contentKey: _textController.text,
-      };
+      _loadInitialComments();
     }
-
-    try {
-      await _uploadViewModel.commentWrite(sendData);
-      _textController.clear();
-      _focusNode.unfocus();
-      setState(() {
-        _replyHint = null;
-        _replyCommentId = null;
-      });
-    } catch (error) {
-      // _navigateToErrorPage(context);
-    }
+  } catch (error) {
+    // _navigateToErrorPage(context);
+  } finally {
+    setState(() {
+      _isCommentLoading = false;
+    });
   }
+}
+
 
   void _onCommentTap(CommentReadData commentData) {
     setState(() {
@@ -556,66 +595,77 @@ class _CommentSheetState extends State<CommentSheet> {
           topRight: Radius.circular(15.0),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: [
-          SizedBox(height: ScreenUtil().setHeight(19.0)),
-          _buildSMIndicator(),
-          SizedBox(height: ScreenUtil().setHeight(19.0)),
-          _buildCommentText(),
-          SizedBox(height: ScreenUtil().setHeight(10.0)),
-          Expanded(
-            child: Consumer<UploadViewModel>(
-              builder: (context, uploadViewModel, child) {
-                switch (uploadViewModel.commentReadData.status) {
-                  case Status.loading:
-                    return const LoadingWidget();
-                  case Status.complete:
-                    var comments =
-                        uploadViewModel.commentReadData.data?.data ?? [];
-                    var replies =
-                        uploadViewModel.replyReadData.data?.data ?? [];
-                    if (comments.isEmpty) {
-                      return Center(
-                        child: SvgPicture.asset(Images.commentEmpty),
-                      );
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: ScreenUtil().setHeight(19.0)),
+              _buildSMIndicator(),
+              SizedBox(height: ScreenUtil().setHeight(19.0)),
+              _buildCommentText(),
+              SizedBox(height: ScreenUtil().setHeight(10.0)),
+              Expanded(
+                child: Consumer<UploadViewModel>(
+                  builder: (context, uploadViewModel, child) {
+                    if (_isLoadingComments) {
+                      return const LoadingWidget();
                     }
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: comments.length + (_isLoadingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == comments.length) {
-                          return const LoadingWidget();
+                    switch (uploadViewModel.commentReadData.status) {
+                      case Status.loading:
+                        return const LoadingWidget();
+                      case Status.complete:
+                        var comments =
+                            uploadViewModel.commentReadData.data?.data ?? [];
+                        var replies =
+                            uploadViewModel.replyReadData.data?.data ?? [];
+                        if (comments.isEmpty) {
+                          return Center(
+                            child: SvgPicture.asset(Images.commentEmpty),
+                          );
                         }
-
-                        var commentData = comments[index];
-                        List<Widget> commentWidgets = [
-                          _buildCommentWidget(commentData),
-                        ];
-
-                        if (_showReplies[commentData.commentId] ?? false) {
-                          for (var reply in replies) {
-                            if (reply.parentId == commentData.commentId) {
-                              commentWidgets
-                                  .add(_buildReplyCommentWidget(reply));
+                        return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: comments.length + (_isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == comments.length) {
+                              return const LoadingWidget();
                             }
-                          }
-                        }
 
-                        return Column(
-                          children: commentWidgets,
+                            var commentData = comments[index];
+                            List<Widget> commentWidgets = [
+                              _buildCommentWidget(commentData),
+                            ];
+
+                            if (_showReplies[commentData.commentId] ?? false) {
+                              for (var reply in replies) {
+                                if (reply.parentId == commentData.commentId) {
+                                  commentWidgets
+                                      .add(_buildReplyCommentWidget(reply));
+                                }
+                              }
+                            }
+
+                            return Column(
+                              children: commentWidgets,
+                            );
+                          },
                         );
-                      },
-                    );
-                  case Status.error:
-                    return Center(child: Text('Error loading comments'));
-                  default:
-                    return Container();
-                }
-              },
-            ),
+                      case Status.error:
+                        return Center(child: Text('Error loading comments'));
+                      default:
+                        return Container();
+                    }
+                  },
+                ),
+              ),
+              _buildAddCommentArea(),
+            ],
           ),
-          _buildAddCommentArea(),
+          if (_isCommentLoading)
+            const Center(
+              child: LoadingWidget(),
+            ),
         ],
       ),
     );

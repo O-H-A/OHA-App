@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:oha/view_model/location_view_model.dart';
-import 'package:oha/view_model/upload_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 import '../../widgets/infinity_button.dart';
+import 'package:oha/view_model/upload_view_model.dart';
 
 class AddKeywordDialog extends StatefulWidget {
   const AddKeywordDialog({super.key});
@@ -19,12 +16,11 @@ class AddKeywordDialog extends StatefulWidget {
 
 class _AddKeywordDialogState extends State<AddKeywordDialog> {
   final _controller = TextEditingController();
-  UploadViewModel _uploadViewModel = UploadViewModel();
+  late UploadViewModel _uploadViewModel;
 
   @override
   void initState() {
     super.initState();
-
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
   }
 
@@ -247,7 +243,10 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                       textSize: 16,
                       textWeight: FontWeight.w600,
                       textColor: Colors.white,
-                      callback: addKeyword,
+                      callback: () {
+                        addKeyword();
+                        Navigator.pop(context, _uploadViewModel.getKetwordList);
+                      },
                     ),
                   ),
                 ],

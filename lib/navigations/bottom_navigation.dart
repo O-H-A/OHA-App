@@ -73,11 +73,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 5,
+              spreadRadius: 1,
               blurRadius: 7,
               offset: const Offset(0, -3),
             ),
@@ -96,6 +95,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             currentIndex: _selectIndex,
             onTap: _onBottomTapped,
             type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: _bottomIcon(
