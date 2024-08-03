@@ -474,7 +474,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     children: [
                       SvgPicture.asset(Images.location),
                       SizedBox(width: ScreenUtil().setWidth(3.0)),
-                      Container(
+                      SizedBox(
                         width: ScreenUtil().setWidth(150.0),
                         child: Text(
                           "${upload.firstAddress} ${upload.secondAddress} ${upload.thirdAddress}",
@@ -521,7 +521,10 @@ class _DiaryPageState extends State<DiaryPage> {
               ),
             ],
           ),
-          const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+          Padding(
+            padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
+            child: const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+          ),
         ],
       ),
     );
@@ -636,7 +639,10 @@ class _DiaryPageState extends State<DiaryPage> {
             ],
           ),
           if (diary != null)
-            const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+            Padding(
+              padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
+              child: const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+            ),
         ],
       ),
     );
