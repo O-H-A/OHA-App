@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
@@ -72,7 +73,6 @@ class _DiaryPageState extends State<DiaryPage> {
       }).catchError((error) {
         _retryCallback = () => _diaryViewModel.fetchMyDiary();
       });
-      // _diaryViewModel.setMyDiary(ApiResponse.loading());
 
       await _uploadViewModel.myPosts().then((_) {
         _retryCallback = null;
@@ -122,7 +122,6 @@ class _DiaryPageState extends State<DiaryPage> {
         await _uploadViewModel.myPosts();
       }
     } catch (error) {
-      // Handle error
     } finally {
       setState(() {
         _isLoadingMore = false;
@@ -523,7 +522,17 @@ class _DiaryPageState extends State<DiaryPage> {
           ),
           Padding(
             padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
-            child: const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+            child: ButtonIcon(
+              icon: Icons.more_horiz,
+              iconColor: const Color(UserColors.ui06),
+              callback: () => FourMoreDialog.show(
+                context,
+                (action) => _onMorePressed(upload.postId, action, null, upload),
+                true,
+                upload.thumbnailUrl ?? '',
+                upload.postId,
+              ),
+            ),
           ),
         ],
       ),
@@ -641,7 +650,19 @@ class _DiaryPageState extends State<DiaryPage> {
           if (diary != null)
             Padding(
               padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
-              child: const Icon(Icons.more_horiz, color: Color(UserColors.ui06)),
+              child: ButtonIcon(
+                icon: Icons.more_horiz,
+                iconColor: const Color(UserColors.ui06),
+                callback: () => FourMoreDialog.show(
+                  context,
+                  (action) => _onMorePressed(diary.diaryId, action, diary, null),
+                  true,
+                  diary.fileRelation?.isNotEmpty == true
+                      ? diary.fileRelation![0].fileUrl
+                      : '',
+                  diary.diaryId,
+                ),
+              ),
             ),
         ],
       ),
@@ -686,7 +707,7 @@ class _DiaryPageState extends State<DiaryPage> {
             onLikePressed: () => _onLikePressed(data.postId, data.isLike),
             onMorePressed: () => FourMoreDialog.show(
                 context,
-                (action) => _onMorePressed(data.postId, action, data),
+                (action) => _onMorePressed(data.postId, action, null, data),
                 data.isOwn,
                 data.files.isNotEmpty ? data.files[0].url : '',
                 data.postId),
@@ -712,22 +733,36 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
-  void _onMorePressed(int postId, String action, UploadData data) {
+  void _onMorePressed(int id, String action, MyDiary? diary, UploadData? upload) {
     switch (action) {
       case Strings.saveImage:
-        print('Save Image $postId');
+        print('Save Image $id');
         break;
       case Strings.edit:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DiaryRegisterPage(selectDate: selectedDate),
-          ),
-        );
+        if (upload != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UploadWritePage(
+                isEdit: true,
+                uploadData: upload,
+              ),
+            ),
+          );
+        } else if (diary != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DiaryRegisterPage(
+                selectDate: selectedDate,
+              ),
+            ),
+          );
+        }
         break;
       case Strings.delete:
-        print('Post ID to delete: $postId');
-        showDeleteDialog(postId);
+        print('Post ID to delete: $id');
+        showDeleteDialog(id);
         break;
       default:
         break;
