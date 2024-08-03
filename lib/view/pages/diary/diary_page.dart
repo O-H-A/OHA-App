@@ -767,6 +767,8 @@ class _DiaryPageState extends State<DiaryPage> {
             MaterialPageRoute(
               builder: (context) => DiaryRegisterPage(
                 selectDate: selectedDate,
+                isEdit: true,
+                diaryData: diary,
               ),
             ),
           );

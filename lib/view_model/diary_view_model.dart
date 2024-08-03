@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:oha/models/diary/diary_delete_model.dart';
+import 'package:oha/models/diary/diary_update_model.dart';
 import 'package:oha/models/diary/diary_write_model.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/network/api_response.dart';
@@ -16,6 +17,7 @@ class DiaryViewModel with ChangeNotifier {
 
   ApiResponse<DiaryWriteModel> diaryData = ApiResponse.loading();
   ApiResponse<DiaryDeleteModel> diaryDeleteData = ApiResponse.loading();
+  ApiResponse<DiaryUpdateModel> diaryUpdateData = ApiResponse.loading();
 
   void setMyDiary(ApiResponse<MyDiaryModel> response) {
     _myDiary = response;
@@ -34,6 +36,12 @@ class DiaryViewModel with ChangeNotifier {
 
   void setDiaryDelete(ApiResponse<DiaryDeleteModel> response) {
     diaryDeleteData = response;
+
+    notifyListeners();
+  }
+
+  void setDiaryUpdate(ApiResponse<DiaryUpdateModel> response) {
+    diaryUpdateData = response;
 
     notifyListeners();
   }
@@ -81,6 +89,20 @@ class DiaryViewModel with ChangeNotifier {
 
     if (result.statusCode == 200 || result.statusCode == 201) {
       setDiaryDelete(ApiResponse.complete(result));
+    } else {
+      setDiaryDelete(ApiResponse.error());
+    }
+
+    return result.statusCode;
+  }
+
+  Future<int> diaryUpdate(Map<String, dynamic> sendData, Uint8List? thumbnailData, int diaryId) async {
+    final result = await _diaryRepository.diaryUpdate(sendData, thumbnailData, diaryId);
+
+    print("Jehee : ${result.statusCode}");
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      setDiaryUpdate(ApiResponse.complete(result));
     } else {
       setDiaryDelete(ApiResponse.error());
     }

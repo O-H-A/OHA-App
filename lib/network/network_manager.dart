@@ -179,6 +179,50 @@ class NetworkManager {
     }
   }
 
+  Future<dynamic> notDtoimagePut(
+    String serverUrl,
+    Map<String, dynamic> userData,
+    Uint8List? thumbnailData,
+    String fileName,
+    String fileKey,
+    MediaType contentType,
+  ) async {
+    var dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      fileKey: await MultipartFile.fromBytes(
+        thumbnailData!,
+        filename: fileName,
+        contentType: contentType,
+      ),
+      ...userData,
+    });
+
+    try {
+      Response response = await dio.put(
+        serverUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            ...await commonHeaders,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Image upload successful');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}');
+      }
+
+      return response.data;
+    } catch (error) {
+      print('Error uploading: $error');
+      throw error;
+    }
+  }
+
   Future<dynamic> imagePost(
       String serverUrl,
       Map<String, dynamic> userData,

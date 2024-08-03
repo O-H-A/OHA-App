@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
@@ -20,14 +21,16 @@ import 'package:provider/provider.dart';
 import '../../../view_model/diary_view_model.dart';
 import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
-import '../../widgets/loading_widget.dart'; // 추가된 로딩 위젯 import
+import '../../widgets/loading_widget.dart';
 import '../home/weather/weather_select_dialog.dart';
 import '../upload/upload_page.dart';
 
 class DiaryRegisterPage extends StatefulWidget {
   final DateTime selectDate;
+  final bool isEdit;
+  final MyDiary? diaryData;
 
-  const DiaryRegisterPage({Key? key, required this.selectDate})
+  const DiaryRegisterPage({Key? key, required this.selectDate, this.isEdit = false, this.diaryData})
       : super(key: key);
 
   @override
@@ -44,17 +47,30 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   String _selectImage = "";
   String _showDay = "";
   String _writeDay = "";
-  bool _isLoading = false; // 로딩 상태 추가
+  bool _isLoading = false;
   DiaryViewModel _diaryViewModel = DiaryViewModel();
 
   @override
   void initState() {
+    super.initState();
     _writeDay = DateFormat('yyyyMMdd').format(widget.selectDate);
     _showDay =
         DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(widget.selectDate);
 
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    super.initState();
+
+    if (widget.isEdit && widget.diaryData != null) {
+      _initializeEditData();
+    }
+  }
+
+  void _initializeEditData() {
+    _titleController.text = widget.diaryData?.title ?? '';
+    _contentsController.text = widget.diaryData?.content ?? '';
+    _publicStatus = widget.diaryData?.isPublic ?? false;
+    _selectTitle = widget.diaryData?.weather ?? '';
+    _selectImage = Images.weatherImageMap[_selectTitle] ?? '';
+    setState(() {});
   }
 
   String _getToday() {
@@ -106,23 +122,33 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   bool _buttonEnabled() {
     return _titleController.text.isNotEmpty &&
-        _uploadImage != null &&
         _contentsController.text.isNotEmpty &&
         _selectTitle.isNotEmpty &&
         _selectImage.isNotEmpty;
   }
 
   Widget _buildPhotoArea() {
-    return _uploadImage != null
-        ? SizedBox(
-            width: double.infinity,
-            height: ScreenUtil().setHeight(360.0),
-            child: Image.file(
-              _uploadImage!,
-              fit: BoxFit.cover,
-            ),
-          )
-        : _buildImageEmptyWidget();
+    if (_uploadImage != null) {
+      return SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(360.0),
+        child: Image.file(
+          _uploadImage!,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (widget.isEdit && widget.diaryData?.fileRelation?.isNotEmpty == true) {
+      return SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(360.0),
+        child: Image.network(
+          widget.diaryData!.fileRelation![0].fileUrl,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return _buildImageEmptyWidget();
+    }
   }
 
   Widget _buildTitleText() {
@@ -275,6 +301,44 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       CompleteDialog.showCompleteDialog(context, Strings.diaryComplete);
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _sendDiaryEdit() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    Map<String, dynamic> sendData = {
+      Strings.diaryIdKey: widget.diaryData?.diaryId.toString(),
+      Strings.setDateKey: _writeDay,
+      Strings.titleKey: _titleController.text,
+      Strings.contentKey: _contentsController.text,
+      Strings.weatherKey: Strings.weatherCodeMap[_selectTitle],
+      Strings.isPublicKey: _publicStatus,
+      Strings.locationKey: "",
+      Strings.updateItemKey: "title,content,weather,isPublic",
+    };
+
+    Uint8List? thumbnailData;
+    if (_uploadImage != null) {
+      thumbnailData = await _uploadImage!.readAsBytes();
+    }
+
+    try {
+      await _diaryViewModel.diaryUpdate(sendData, thumbnailData, (widget.diaryData?.diaryId ?? 0));
+
+      _diaryViewModel.fetchMyDiary();
+      Navigator.pop(context);
+      CompleteDialog.showCompleteDialog(context, Strings.diaryEditComplete);
+    } catch (error) {
+      print('Error in _sendDiaryEdit: $error');
     } finally {
       setState(() {
         _isLoading = false;
@@ -565,10 +629,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                       ? const Color(UserColors.primaryColor)
                       : const Color(UserColors.ui10),
                   textColor: _buttonEnabled() ? Colors.white : Colors.black,
-                  text: Strings.register,
+                  text: widget.isEdit ? Strings.edit : Strings.register,
                   textSize: 16,
                   textWeight: FontWeight.w600,
-                  callback: () => _sendDiaryRegist(),
+                  callback: widget.isEdit ? _sendDiaryEdit : _sendDiaryRegist,
                 ),
               ),
             ],
