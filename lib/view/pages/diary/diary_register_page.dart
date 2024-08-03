@@ -11,12 +11,15 @@ import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/pages/error_page.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
 import 'package:oha/view/widgets/location_info_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
+
+import 'package:http/http.dart' as http;
 
 import '../../../view_model/diary_view_model.dart';
 import '../../widgets/date_picker_dialog.dart';
@@ -30,8 +33,12 @@ class DiaryRegisterPage extends StatefulWidget {
   final bool isEdit;
   final MyDiary? diaryData;
 
-  const DiaryRegisterPage({Key? key, required this.selectDate, this.isEdit = false, this.diaryData})
-      : super(key: key);
+  const DiaryRegisterPage({
+    Key? key,
+    required this.selectDate,
+    this.isEdit = false,
+    this.diaryData,
+  }) : super(key: key);
 
   @override
   State<DiaryRegisterPage> createState() => _DiaryRegisterPageState();
@@ -42,6 +49,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final _contentsController = TextEditingController();
   bool _publicStatus = false;
   File? _uploadImage;
+  Uint8List? _networkImageData;
   final ImagePicker picker = ImagePicker();
   String _selectTitle = "";
   String _selectImage = "";
@@ -64,12 +72,25 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     }
   }
 
-  void _initializeEditData() {
+  void _initializeEditData() async {
     _titleController.text = widget.diaryData?.title ?? '';
     _contentsController.text = widget.diaryData?.content ?? '';
     _publicStatus = widget.diaryData?.isPublic ?? false;
     _selectTitle = widget.diaryData?.weather ?? '';
     _selectImage = Images.weatherImageMap[_selectTitle] ?? '';
+
+    if (widget.diaryData?.fileRelation?.isNotEmpty ?? false) {
+      String fileUrl = widget.diaryData!.fileRelation![0].fileUrl;
+      try {
+        final response = await http.get(Uri.parse(fileUrl));
+        if (response.statusCode == 200) {
+          _networkImageData = response.bodyBytes;
+        }
+      } catch (e) {
+        print("Error loading network image: $e");
+      }
+    }
+
     setState(() {});
   }
 
@@ -100,6 +121,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       if (file != null) {
         setState(() {
           _uploadImage = file;
+          _networkImageData = null;
         });
       }
     }
@@ -122,6 +144,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   bool _buttonEnabled() {
     return _titleController.text.isNotEmpty &&
+        (_uploadImage != null || _networkImageData != null) &&
         _contentsController.text.isNotEmpty &&
         _selectTitle.isNotEmpty &&
         _selectImage.isNotEmpty;
@@ -137,12 +160,12 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           fit: BoxFit.cover,
         ),
       );
-    } else if (widget.isEdit && widget.diaryData?.fileRelation?.isNotEmpty == true) {
+    } else if (_networkImageData != null) {
       return SizedBox(
         width: double.infinity,
         height: ScreenUtil().setHeight(360.0),
-        child: Image.network(
-          widget.diaryData!.fileRelation![0].fileUrl,
+        child: Image.memory(
+          _networkImageData!,
           fit: BoxFit.cover,
         ),
       );
@@ -291,6 +314,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     Uint8List? thumbnailData;
     if (_uploadImage != null) {
       thumbnailData = await _uploadImage!.readAsBytes();
+    } else if (_networkImageData != null) {
+      thumbnailData = _networkImageData;
     }
 
     try {
@@ -329,16 +354,26 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     Uint8List? thumbnailData;
     if (_uploadImage != null) {
       thumbnailData = await _uploadImage!.readAsBytes();
+    } else if (_networkImageData != null) {
+      thumbnailData = _networkImageData;
     }
 
     try {
-      await _diaryViewModel.diaryUpdate(sendData, thumbnailData, (widget.diaryData?.diaryId ?? 0));
+      await _diaryViewModel.diaryUpdate(
+          sendData, thumbnailData, (widget.diaryData?.diaryId ?? 0));
 
       _diaryViewModel.fetchMyDiary();
       Navigator.pop(context);
       CompleteDialog.showCompleteDialog(context, Strings.diaryEditComplete);
     } catch (error) {
       print('Error in _sendDiaryEdit: $error');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ErrorPage(isNetworkError: false)),
+      );
+
+      print("Jehee 1111");
     } finally {
       setState(() {
         _isLoading = false;
@@ -583,7 +618,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                                     ),
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward_ios, color: Colors.black),
+                                Icon(Icons.arrow_forward_ios,
+                                    color: Colors.black),
                               ],
                             ),
                             SizedBox(height: ScreenUtil().setHeight(12.0)),
@@ -594,8 +630,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                                 borderRadius: BorderRadius.circular(
                                     ScreenUtil().radius(18.0)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: const Color(UserColors.ui08)),
+                                border: Border.all(
+                                    color: const Color(UserColors.ui08)),
                               ),
                               child: const Center(
                                 child: Text(
@@ -629,7 +665,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                       ? const Color(UserColors.primaryColor)
                       : const Color(UserColors.ui10),
                   textColor: _buttonEnabled() ? Colors.white : Colors.black,
-                  text: widget.isEdit ? Strings.edit : Strings.register,
+                  text: Strings.register,
                   textSize: 16,
                   textWeight: FontWeight.w600,
                   callback: widget.isEdit ? _sendDiaryEdit : _sendDiaryRegist,
