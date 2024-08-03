@@ -239,7 +239,8 @@ class _DiaryPageState extends State<DiaryPage> {
         final diaryCount = viewModel.diaryEntries.length;
         final totalLikes = _getTotalLikes(viewModel);
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
           child: Row(
             children: [
               Container(
@@ -354,7 +355,9 @@ class _DiaryPageState extends State<DiaryPage> {
                       });
                     },
                     child: SvgPicture.asset(
-                      showFeed ? Images.diaryFeedEnable : Images.diaryFeedDisable,
+                      showFeed
+                          ? Images.diaryFeedEnable
+                          : Images.diaryFeedDisable,
                     ),
                   ),
                 ],
@@ -421,7 +424,9 @@ class _DiaryPageState extends State<DiaryPage> {
 
     if (selectedDateUploads.isEmpty) {
       return Padding(
-        padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
+        padding: EdgeInsets.only(
+            bottom: ScreenUtil().setHeight(12.0),
+            left: ScreenUtil().setWidth(22.0)),
         child: Row(
           children: [
             _buildPostingImageWidget(null),
@@ -443,7 +448,9 @@ class _DiaryPageState extends State<DiaryPage> {
     final upload = selectedDateUploads.first;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
+      padding: EdgeInsets.only(
+          bottom: ScreenUtil().setHeight(12.0),
+          left: ScreenUtil().setWidth(22.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -559,7 +566,8 @@ class _DiaryPageState extends State<DiaryPage> {
             callback: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DiaryRegisterPage(selectDate: selectedDate),
+                builder: (context) =>
+                    DiaryRegisterPage(selectDate: selectedDate),
               ),
             ),
           ),
@@ -570,7 +578,9 @@ class _DiaryPageState extends State<DiaryPage> {
 
   Widget _buildDiaryWidget(MyDiary? diary) {
     return Padding(
-      padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(12.0), left: ScreenUtil().setWidth(22.0)),
+      padding: EdgeInsets.only(
+          bottom: ScreenUtil().setHeight(12.0),
+          left: ScreenUtil().setWidth(22.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -655,7 +665,8 @@ class _DiaryPageState extends State<DiaryPage> {
                 iconColor: const Color(UserColors.ui06),
                 callback: () => FourMoreDialog.show(
                   context,
-                  (action) => _onMorePressed(diary.diaryId, action, diary, null),
+                  (action) =>
+                      _onMorePressed(diary.diaryId, action, diary, null),
                   true,
                   diary.fileRelation?.isNotEmpty == true
                       ? diary.fileRelation![0].fileUrl
@@ -733,7 +744,8 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
-  void _onMorePressed(int id, String action, MyDiary? diary, UploadData? upload) {
+  void _onMorePressed(
+      int id, String action, MyDiary? diary, UploadData? upload) {
     switch (action) {
       case Strings.saveImage:
         print('Save Image $id');
@@ -762,7 +774,14 @@ class _DiaryPageState extends State<DiaryPage> {
         break;
       case Strings.delete:
         print('Post ID to delete: $id');
-        showDeleteDialog(id);
+        bool result;
+        if(upload != null) {
+          result = true;
+        }
+        else {
+          result = false;
+        }
+        showDeleteDialog(id, result);
         break;
       default:
         break;
@@ -777,7 +796,7 @@ class _DiaryPageState extends State<DiaryPage> {
     print("Profile Pressed");
   }
 
-  void showDeleteDialog(int postId) {
+  void showDeleteDialog(int postId, bool isUpload) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -785,15 +804,21 @@ class _DiaryPageState extends State<DiaryPage> {
           height: ScreenUtil().setHeight(178.0),
           titleText: Strings.postDeleteTitle,
           guideText: Strings.postDeleteContent,
-          yesCallback: () => onDeleteYes(context, postId),
-          noCallback: () => onDeleteNo(context),
+          yesCallback: () => onPostingDeleteYes(context, postId, isUpload),
+          noCallback: () => onPostingDeleteNo(context),
         );
       },
     );
   }
 
-  void onDeleteYes(BuildContext context, int postId) async {
-    final response = await _uploadViewModel.delete(postId.toString());
+  void onPostingDeleteYes(
+      BuildContext context, int postId, bool isUpload) async {
+    final response;
+    if (isUpload) {
+      response = await _uploadViewModel.delete(postId.toString());
+    } else {
+      response = await _diaryViewModel.diaryDelete(postId.toString());
+    }
 
     if (response == 201) {
       if (mounted) {
@@ -808,7 +833,7 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
-  void onDeleteNo(BuildContext context) {
+  void onPostingDeleteNo(BuildContext context) {
     Navigator.pop(context);
   }
 

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:oha/models/diary/diary_delete_model.dart';
 import 'package:oha/models/diary/diary_write_model.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/network/api_response.dart';
@@ -14,6 +15,7 @@ class DiaryViewModel with ChangeNotifier {
   ApiResponse<MyDiaryModel> get getMyDiary => _myDiary;
 
   ApiResponse<DiaryWriteModel> diaryData = ApiResponse.loading();
+  ApiResponse<DiaryDeleteModel> diaryDeleteData = ApiResponse.loading();
 
   void setMyDiary(ApiResponse<MyDiaryModel> response) {
     _myDiary = response;
@@ -26,6 +28,12 @@ class DiaryViewModel with ChangeNotifier {
 
   void setDiary(ApiResponse<DiaryWriteModel> response) {
     diaryData = response;
+
+    notifyListeners();
+  }
+
+  void setDiaryDelete(ApiResponse<DiaryDeleteModel> response) {
+    diaryDeleteData = response;
 
     notifyListeners();
   }
@@ -44,15 +52,17 @@ class DiaryViewModel with ChangeNotifier {
 
   List<MyDiary> getDiariesByDate(DateTime date) {
     return diaryEntries.where((diary) {
-      final diaryDate = DateTime.parse("${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}");
+      final diaryDate = DateTime.parse(
+          "${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}");
       print("Comparing: ${diaryDate} with ${date}");
       return diaryDate.year == date.year &&
-             diaryDate.month == date.month &&
-             diaryDate.day == date.day;
+          diaryDate.month == date.month &&
+          diaryDate.day == date.day;
     }).toList();
   }
 
-  Future<void> diaryWrite(Map<String, dynamic> data, Uint8List? thumbnailData) async {
+  Future<void> diaryWrite(
+      Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _diaryRepository.diaryWrite(data, thumbnailData);
 
     print("Jehee : ${result.statusCode}");
@@ -62,5 +72,19 @@ class DiaryViewModel with ChangeNotifier {
     } else {
       setDiary(ApiResponse.error());
     }
+  }
+
+  Future<int> diaryDelete(String diaryId) async {
+    final result = await _diaryRepository.diaryDelete(diaryId);
+
+    print("Jehee : ${result.statusCode}");
+
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      setDiaryDelete(ApiResponse.complete(result));
+    } else {
+      setDiaryDelete(ApiResponse.error());
+    }
+
+    return result.statusCode;
   }
 }

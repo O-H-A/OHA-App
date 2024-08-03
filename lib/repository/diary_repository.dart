@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:oha/models/diary/diary_delete_model.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/network/api_url.dart';
 import 'package:oha/network/network_manager.dart';
@@ -27,6 +28,17 @@ class DiaryRepository {
 
       dynamic response = await NetworkManager.instance.notDtoimagePost(ApiUrl.diary, data, thumbnailData, fileName, fileKey, contentType);
       return DiaryWriteModel.fromJson(response);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<DiaryDeleteModel> diaryDelete(String diaryId) async {
+      String url = '${ApiUrl.diary}/$diaryId';
+    try {
+      dynamic response =
+          await NetworkManager.instance.postDelete(url);
+      return DiaryDeleteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
     }

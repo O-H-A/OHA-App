@@ -354,11 +354,11 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> postDelete(String serverUrl, String postId) async {
+  Future<dynamic> postDelete(String serverUrl) async {
     dynamic responseJson;
 
     try {
-      final uri = Uri.parse('$serverUrl/$postId');
+      final uri = Uri.parse(serverUrl);
 
       final response = await http.delete(
         uri,
