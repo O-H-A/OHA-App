@@ -775,10 +775,9 @@ class _DiaryPageState extends State<DiaryPage> {
       case Strings.delete:
         print('Post ID to delete: $id');
         bool result;
-        if(upload != null) {
+        if (upload != null) {
           result = true;
-        }
-        else {
+        } else {
           result = false;
         }
         showDeleteDialog(id, result);
@@ -820,10 +819,11 @@ class _DiaryPageState extends State<DiaryPage> {
       response = await _diaryViewModel.diaryDelete(postId.toString());
     }
 
-    if (response == 201) {
+    if (response == 201 || response == 200) {
       if (mounted) {
         Navigator.pop(context);
         showCompleteDialog();
+        _fetchData();
       }
     } else {
       if (mounted) {
