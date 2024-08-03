@@ -208,6 +208,7 @@ class Strings {
   static const String isLocationAlreadyAdded = "이미 등록된 지역입니다.";
   static const String locationHintText = "ex) 뚝섬 전망 문화 콤플렉스 자벌레";
   static const String diaryComplete = "다이어리 등록이 완료되었습니다.";
+  static const String diaryEditComplete = "다이어리 수정이 완료되었습니다.";
 
   /*
     구름 	CTGR_CLOUD
@@ -321,4 +322,5 @@ class Strings {
   static const String commentIdKey = "commentId";
   static const String parentIdKey = "parentId";
   static const String nameKey = "name";
+  static const String diaryIdKey = "diaryId";
 }

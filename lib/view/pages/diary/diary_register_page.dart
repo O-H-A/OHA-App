@@ -7,9 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:oha/models/diary/my_diary_model.dart';
 import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
+import 'package:oha/view/pages/error_page.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view/widgets/infinity_button.dart';
@@ -17,18 +19,26 @@ import 'package:oha/view/widgets/location_info_dialog.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
+import 'package:http/http.dart' as http;
+
 import '../../../view_model/diary_view_model.dart';
 import '../../widgets/date_picker_dialog.dart';
 import '../../widgets/user_container.dart';
-import '../../widgets/loading_widget.dart'; // 추가된 로딩 위젯 import
+import '../../widgets/loading_widget.dart';
 import '../home/weather/weather_select_dialog.dart';
 import '../upload/upload_page.dart';
 
 class DiaryRegisterPage extends StatefulWidget {
   final DateTime selectDate;
+  final bool isEdit;
+  final MyDiary? diaryData;
 
-  const DiaryRegisterPage({Key? key, required this.selectDate})
-      : super(key: key);
+  const DiaryRegisterPage({
+    Key? key,
+    required this.selectDate,
+    this.isEdit = false,
+    this.diaryData,
+  }) : super(key: key);
 
   @override
   State<DiaryRegisterPage> createState() => _DiaryRegisterPageState();
@@ -39,22 +49,49 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final _contentsController = TextEditingController();
   bool _publicStatus = false;
   File? _uploadImage;
+  Uint8List? _networkImageData;
   final ImagePicker picker = ImagePicker();
   String _selectTitle = "";
   String _selectImage = "";
   String _showDay = "";
   String _writeDay = "";
-  bool _isLoading = false; // 로딩 상태 추가
+  bool _isLoading = false;
   DiaryViewModel _diaryViewModel = DiaryViewModel();
 
   @override
   void initState() {
+    super.initState();
     _writeDay = DateFormat('yyyyMMdd').format(widget.selectDate);
     _showDay =
         DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(widget.selectDate);
 
     _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    super.initState();
+
+    if (widget.isEdit && widget.diaryData != null) {
+      _initializeEditData();
+    }
+  }
+
+  void _initializeEditData() async {
+    _titleController.text = widget.diaryData?.title ?? '';
+    _contentsController.text = widget.diaryData?.content ?? '';
+    _publicStatus = widget.diaryData?.isPublic ?? false;
+    _selectTitle = widget.diaryData?.weather ?? '';
+    _selectImage = Images.weatherImageMap[_selectTitle] ?? '';
+
+    if (widget.diaryData?.fileRelation?.isNotEmpty ?? false) {
+      String fileUrl = widget.diaryData!.fileRelation![0].fileUrl;
+      try {
+        final response = await http.get(Uri.parse(fileUrl));
+        if (response.statusCode == 200) {
+          _networkImageData = response.bodyBytes;
+        }
+      } catch (e) {
+        print("Error loading network image: $e");
+      }
+    }
+
+    setState(() {});
   }
 
   String _getToday() {
@@ -84,6 +121,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       if (file != null) {
         setState(() {
           _uploadImage = file;
+          _networkImageData = null;
         });
       }
     }
@@ -106,23 +144,34 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   bool _buttonEnabled() {
     return _titleController.text.isNotEmpty &&
-        _uploadImage != null &&
+        (_uploadImage != null || _networkImageData != null) &&
         _contentsController.text.isNotEmpty &&
         _selectTitle.isNotEmpty &&
         _selectImage.isNotEmpty;
   }
 
   Widget _buildPhotoArea() {
-    return _uploadImage != null
-        ? SizedBox(
-            width: double.infinity,
-            height: ScreenUtil().setHeight(360.0),
-            child: Image.file(
-              _uploadImage!,
-              fit: BoxFit.cover,
-            ),
-          )
-        : _buildImageEmptyWidget();
+    if (_uploadImage != null) {
+      return SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(360.0),
+        child: Image.file(
+          _uploadImage!,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (_networkImageData != null) {
+      return SizedBox(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(360.0),
+        child: Image.memory(
+          _networkImageData!,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return _buildImageEmptyWidget();
+    }
   }
 
   Widget _buildTitleText() {
@@ -265,6 +314,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     Uint8List? thumbnailData;
     if (_uploadImage != null) {
       thumbnailData = await _uploadImage!.readAsBytes();
+    } else if (_networkImageData != null) {
+      thumbnailData = _networkImageData;
     }
 
     try {
@@ -275,6 +326,54 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       CompleteDialog.showCompleteDialog(context, Strings.diaryComplete);
     } catch (error) {
       print('Error in _sendDiaryRegist: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _sendDiaryEdit() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    Map<String, dynamic> sendData = {
+      Strings.diaryIdKey: widget.diaryData?.diaryId.toString(),
+      Strings.setDateKey: _writeDay,
+      Strings.titleKey: _titleController.text,
+      Strings.contentKey: _contentsController.text,
+      Strings.weatherKey: Strings.weatherCodeMap[_selectTitle],
+      Strings.isPublicKey: _publicStatus,
+      Strings.locationKey: "",
+      Strings.updateItemKey: "title,content,weather,isPublic",
+    };
+
+    Uint8List? thumbnailData;
+    if (_uploadImage != null) {
+      thumbnailData = await _uploadImage!.readAsBytes();
+    } else if (_networkImageData != null) {
+      thumbnailData = _networkImageData;
+    }
+
+    try {
+      await _diaryViewModel.diaryUpdate(
+          sendData, thumbnailData, (widget.diaryData?.diaryId ?? 0));
+
+      _diaryViewModel.fetchMyDiary();
+      Navigator.pop(context);
+      CompleteDialog.showCompleteDialog(context, Strings.diaryEditComplete);
+    } catch (error) {
+      print('Error in _sendDiaryEdit: $error');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ErrorPage(isNetworkError: false)),
+      );
+
+      print("Jehee 1111");
     } finally {
       setState(() {
         _isLoading = false;
@@ -519,7 +618,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                                     ),
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward_ios, color: Colors.black),
+                                Icon(Icons.arrow_forward_ios,
+                                    color: Colors.black),
                               ],
                             ),
                             SizedBox(height: ScreenUtil().setHeight(12.0)),
@@ -530,8 +630,8 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                                 borderRadius: BorderRadius.circular(
                                     ScreenUtil().radius(18.0)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: const Color(UserColors.ui08)),
+                                border: Border.all(
+                                    color: const Color(UserColors.ui08)),
                               ),
                               child: const Center(
                                 child: Text(
@@ -568,7 +668,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                   text: Strings.register,
                   textSize: 16,
                   textWeight: FontWeight.w600,
-                  callback: () => _sendDiaryRegist(),
+                  callback: widget.isEdit ? _sendDiaryEdit : _sendDiaryRegist,
                 ),
               ),
             ],

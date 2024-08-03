@@ -80,6 +80,15 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
     );
   }
 
+  void _onLocationFound(Map<String, String>? location) {
+    if (location != null) {
+      setState(() {
+        _controller.text = location['fullAddress']!;
+        _displayLocationList = [location];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +136,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
               },
             ),
             SizedBox(height: ScreenUtil().setHeight(14.0)),
-            const LocationFindButton(),
+            LocationFindButton(onLocationFound: _onLocationFound),
             SizedBox(height: ScreenUtil().setHeight(22.0)),
             const Text(
               Strings.neighborhoodLocation,

@@ -93,9 +93,10 @@ class UploadRepository {
   }
 
   Future<UploadDeleteModel> delete(String postId) async {
+    String url = '${ApiUrl.posting}/$postId';
     try {
       dynamic response =
-          await NetworkManager.instance.postDelete(ApiUrl.posting, postId);
+          await NetworkManager.instance.postDelete(url);
       return UploadDeleteModel.fromJson(jsonDecode(response));
     } catch (e) {
       rethrow;
