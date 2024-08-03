@@ -232,6 +232,23 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
+  Widget _buildProfileWidget() {
+    String profileUrl =
+        _diaryViewModel.getMyDiary.data?.data?.writer?.profileUrl ?? '';
+
+    if (profileUrl.isEmpty) {
+      return SvgPicture.asset(
+        Images.defaultProfile,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        profileUrl,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
   Widget _buildUserInfoWidget() {
     return Consumer<DiaryViewModel>(
       builder: (context, viewModel, child) {
@@ -250,7 +267,7 @@ class _DiaryPageState extends State<DiaryPage> {
                   shape: BoxShape.circle,
                 ),
                 child: ClipOval(
-                  child: SvgPicture.asset(Images.defaultProfile),
+                  child: _buildProfileWidget(),
                 ),
               ),
               SizedBox(width: ScreenUtil().setWidth(14.0)),
