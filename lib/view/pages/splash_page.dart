@@ -100,7 +100,7 @@ class _SplashPageState extends State<SplashPage> {
             right: 30,
             bottom: 30,
             child: Text(
-              "Ver 1.0.0\n240728",
+              "Ver 1.1.1\n240803",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
