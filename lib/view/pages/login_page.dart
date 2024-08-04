@@ -60,7 +60,9 @@ class _LoginPageState extends State<LoginPage> {
             },
             initialUrlRequest: URLRequest(url: WebUri(_getLoginUrl(type))),
             initialOptions: InAppWebViewGroupOptions(
-              crossPlatform: InAppWebViewOptions(),
+              crossPlatform: InAppWebViewOptions(
+                userAgent: "random",
+              ),
               android: AndroidInAppWebViewOptions(
                 useHybridComposition: true,
               ),
@@ -189,6 +191,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
