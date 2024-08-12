@@ -78,6 +78,7 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
 
   Widget _buildTitleGuide() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: ScreenUtil().setHeight(12.0)),
         const Text(
@@ -377,7 +378,6 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
         setState(() {
           _weatherViewModel.fetchWeatherPostingMy();
         });
-        
 
         Navigator.pop(context, true);
         showDialog(
@@ -390,13 +390,10 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
                     : Strings.addWeatherCompleteText);
           },
         );
-      } 
-      else if(response == 409){
-        
+      } else if (response == 409) {
         CompleteDialog.showCompleteDialog(context, Strings.weatherOnce);
       }
-    }).catchError((error) {
-    });
+    }).catchError((error) {});
   }
 
   @override
