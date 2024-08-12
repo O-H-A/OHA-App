@@ -100,6 +100,7 @@ class WeatherSelectDialog extends StatelessWidget {
         width: double.infinity,
         height: ScreenUtil().setHeight(507.0),
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
         ),
         child: Center(

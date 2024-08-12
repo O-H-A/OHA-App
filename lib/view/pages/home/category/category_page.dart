@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:oha/view/widgets/back_app_bar.dart';
 import 'package:provider/provider.dart';
 import '../../../../models/upload/upload_get_model.dart';
 import '../../../../network/api_response.dart';
@@ -43,6 +44,8 @@ class _CategoryPageState extends State<CategoryPage>
   List<String> imageS = [];
   late TabController tabController;
 
+  String _currentTabTitle = Strings.cloud;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +58,16 @@ class _CategoryPageState extends State<CategoryPage>
       initialIndex: widget.categoryIndex,
       animationDuration: const Duration(milliseconds: 300),
     );
+
+    _currentTabTitle = Strings.cateogryTitleList[tabController.index];
+
+    tabController.addListener(() {
+      setState(() {
+        _currentTabTitle = Strings.cateogryTitleList[tabController.index];
+        _offset = 0;
+        _loadInitialData();
+      });
+    });
 
     _loadInitialData();
 
@@ -130,9 +143,11 @@ class _CategoryPageState extends State<CategoryPage>
             EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(7.0)),
         controller: tabController,
         isScrollable: true,
+        dividerColor: Colors.transparent,
+        tabAlignment: TabAlignment.start,
         onTap: (index) {
           setState(() {
-            _offset = 0; // Reset offset when tab changes
+            _offset = 0;
             _loadInitialData();
           });
         },
@@ -358,9 +373,9 @@ class _CategoryPageState extends State<CategoryPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: BackAppBar(title: _currentTabTitle),
       body: Column(
         children: [
-          SizedBox(height: ScreenUtil().statusBarHeight),
           _buildTabBarWidget(),
           SizedBox(height: ScreenUtil().setHeight(34.0)),
           _buildTypeWidget(),

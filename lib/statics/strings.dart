@@ -219,6 +219,15 @@ class Strings {
     맑은 하늘	CTGR_CLEAR_SKY
   */
 
+  static List<String> cateogryTitleList = [
+    Strings.cloud,
+    Strings.moon,
+    Strings.rainbow,
+    Strings.sunsetSunrise,
+    Strings.nightSky,
+    Strings.sunny,
+  ];
+
   static Map<int, String> categoryMap = {
     0: "CTGR_CLOUD",
     1: "CTGR_MOON",
