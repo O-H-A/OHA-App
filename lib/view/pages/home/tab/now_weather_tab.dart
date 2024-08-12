@@ -138,7 +138,7 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
         SizedBox(height: ScreenUtil().setHeight(12.0)),
         _buildNowWeatherNewsText(),
         SizedBox(height: ScreenUtil().setHeight(12.0)),
-        const NowWeatherWidget(), 
+        const NowWeatherWidget(),
         _buildMyRegisterWeatherWidget(),
         _buildWeatherRegisterWidget(),
         SizedBox(height: ScreenUtil().setHeight(100.0)),
@@ -148,11 +148,11 @@ class _NowWeatherTabState extends State<NowWeatherTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
