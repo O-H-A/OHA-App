@@ -9,7 +9,9 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
 class LocationSettingPage extends StatefulWidget {
-  const LocationSettingPage({super.key});
+  final bool isWrite;
+
+  const LocationSettingPage({super.key, this.isWrite = false});
 
   @override
   State<LocationSettingPage> createState() => _LocationSettingPageState();
@@ -62,24 +64,6 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
     return locations;
   }
 
-  void _showAlreadyAddedDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("이미 설정된 지역"),
-          content: Text("이 지역은 이미 설정되어 있습니다."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("확인"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _onLocationFound(Map<String, String>? location) {
     if (location != null) {
       setState(() {
@@ -124,7 +108,8 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              maxLines: null,
+              maxLines: 1,
+              textInputAction: TextInputAction.done,
               onChanged: (value) {
                 setState(() {
                   _displayLocationList = _allLocationList
@@ -165,9 +150,11 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: GestureDetector(
                         onTap: () async {
-                          if (_locationViewModel
-                              .isLocationAlreadyAdded(locationCode)) {
-                                CompleteDialog.showCompleteDialog(context, Strings.isLocationAlreadyAdded);
+                          if (!widget.isWrite &&
+                              _locationViewModel
+                                  .isLocationAlreadyAdded(locationCode)) {
+                            CompleteDialog.showCompleteDialog(
+                                context, Strings.isLocationAlreadyAdded);
                           } else {
                             await _locationViewModel.fetchFrequentDistricts();
                             Navigator.pop(context, locationMap);

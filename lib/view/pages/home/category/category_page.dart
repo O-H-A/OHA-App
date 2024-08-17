@@ -172,7 +172,7 @@ class _CategoryPageState extends State<CategoryPage>
           fontSize: 16,
           fontWeight: FontWeight.w700,
         ),
-        overlayColor: const MaterialStatePropertyAll(Colors.white),
+        overlayColor: const WidgetStatePropertyAll(Colors.white),
         indicatorColor: Colors.black,
         indicatorWeight: 2,
       ),
@@ -263,8 +263,6 @@ class _CategoryPageState extends State<CategoryPage>
   }
 
   void _onLikePressed(int postId, bool isCurrentlyLiked) async {
-    print("Like pressed for postId: $postId");
-
     Map<String, dynamic> data = {
       "postId": postId,
       "type": isCurrentlyLiked ? "U" : "L"
@@ -379,6 +377,7 @@ class _CategoryPageState extends State<CategoryPage>
           _buildTabBarWidget(),
           SizedBox(height: ScreenUtil().setHeight(34.0)),
           _buildTypeWidget(),
+          SizedBox(height: ScreenUtil().setHeight(24.0)),
           Expanded(
             child: _buildBody(),
           ),

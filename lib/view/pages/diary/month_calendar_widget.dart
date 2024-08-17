@@ -52,22 +52,34 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   @override
   void didUpdateWidget(covariant MonthCalendarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentDate != widget.currentDate || oldWidget.userId != widget.userId) {
-      _updateCalendar();
-    }
+    _updateCalendar();
   }
 
   void _updateCalendar() {
+    if (selectedDay == null ||
+        selectedDay!.month != widget.currentDate.month ||
+        selectedDay!.year != widget.currentDate.year) {
+      selectedDay =
+          DateTime(widget.currentDate.year, widget.currentDate.month, 1);
+    }
+
     setState(() {
-      firstDayOfMonth = DateTime(widget.currentDate.year, widget.currentDate.month, 1);
+      firstDayOfMonth =
+          DateTime(widget.currentDate.year, widget.currentDate.month, 1);
       firstWeekday = firstDayOfMonth!.weekday;
-      daysInMonth = DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0).day;
+      daysInMonth =
+          DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0)
+              .day;
       daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
 
       recordedDays = {};
 
       if (widget.userId != null) {
-        final postEntries = Provider.of<UploadViewModel>(context, listen: false).userUploadGetData.data?.data ?? [];
+        final postEntries = Provider.of<UploadViewModel>(context, listen: false)
+                .userUploadGetData
+                .data
+                ?.data ??
+            [];
         for (var entry in postEntries) {
           final postDate = DateTime.parse(entry.regDtm);
           if (postDate.month == widget.currentDate.month) {
@@ -75,8 +87,13 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
           }
         }
       } else {
-        final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
-        final postEntries = Provider.of<UploadViewModel>(context, listen: false).myUploadGetData.data?.data ?? [];
+        final diaryEntries =
+            Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+        final postEntries = Provider.of<UploadViewModel>(context, listen: false)
+                .myUploadGetData
+                .data
+                ?.data ??
+            [];
 
         for (var entry in diaryEntries) {
           final diaryDate = DateTime(
@@ -96,14 +113,14 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
           }
         }
       }
-  
+
       today = DateTime.now();
-      selectedDay = today;
     });
   }
 
   void _onDaySelected(int day) {
-    DateTime selected = DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
 
     setState(() {
       selectedDay = selected;
@@ -116,7 +133,9 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
       onTap: () => _onDaySelected(day),
       child: Column(
         children: [
-          recorded ? SvgPicture.asset(Images.recordEnable) : SvgPicture.asset(Images.recordDisable),
+          recorded
+              ? SvgPicture.asset(Images.recordEnable)
+              : SvgPicture.asset(Images.recordDisable),
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
@@ -131,7 +150,8 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
               child: Text(
                 day.toString(),
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,
                   fontSize: 13,

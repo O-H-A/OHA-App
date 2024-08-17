@@ -88,7 +88,7 @@ class _LocationSettingBottomSheetContentState
   void _addFrequentLocation(BuildContext context, int index) async {
     Map<String, String?>? result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LocationSettingPage()),
+      MaterialPageRoute(builder: (context) => const LocationSettingPage(isWrite: false)),
     );
 
     if (result != null) {
@@ -235,7 +235,8 @@ class _LocationSettingBottomSheetContentState
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      color: Colors.white,
       height: ScreenUtil().setHeight(293.0),
       child: Padding(
         padding: EdgeInsets.symmetric(

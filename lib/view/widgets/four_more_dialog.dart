@@ -89,6 +89,7 @@ class FourMoreDialog {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.white,
           alignment: Alignment.bottomCenter,
           insetPadding: EdgeInsets.only(
               bottom: ScreenUtil().setHeight(35.0),

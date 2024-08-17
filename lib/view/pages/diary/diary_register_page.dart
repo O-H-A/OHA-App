@@ -321,11 +321,20 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
     try {
       await _diaryViewModel.diaryWrite(sendData, thumbnailData);
 
+      if (!mounted) return;
+
       _diaryViewModel.fetchMyDiary();
       Navigator.pop(context);
       CompleteDialog.showCompleteDialog(context, Strings.diaryComplete);
     } catch (error) {
-      print('Error in _sendDiaryRegist: $error');
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ErrorPage(isNetworkError: false),
+        ),
+      );
     } finally {
       setState(() {
         _isLoading = false;
@@ -362,18 +371,19 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       await _diaryViewModel.diaryUpdate(
           sendData, thumbnailData, (widget.diaryData?.diaryId ?? 0));
 
+      if (!mounted) return;
+
       _diaryViewModel.fetchMyDiary();
       Navigator.pop(context);
       CompleteDialog.showCompleteDialog(context, Strings.diaryEditComplete);
     } catch (error) {
-      print('Error in _sendDiaryEdit: $error');
+      if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ErrorPage(isNetworkError: false)),
+        MaterialPageRoute(
+            builder: (context) => const ErrorPage(isNetworkError: false)),
       );
-
-      print("Jehee 1111");
     } finally {
       setState(() {
         _isLoading = false;
@@ -528,42 +538,42 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        titleSpacing: ScreenUtil().setWidth(22.0),
-        title: GestureDetector(
-          onTap: () => _showDatePicker(),
-          child: UserContainer(
-            width: ScreenUtil().setWidth(149.0),
-            height: ScreenUtil().setHeight(35.0),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
             backgroundColor: Colors.white,
-            borderRadius: ScreenUtil().radius(18.0),
-            borderColor: const Color(UserColors.ui08),
-            child: Center(
-              child: Text(
-                _showDay,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w500,
-                  fontSize: ScreenUtil().setSp(12.0),
+            elevation: 0,
+            titleSpacing: ScreenUtil().setWidth(22.0),
+            title: GestureDetector(
+              onTap: () => _showDatePicker(),
+              child: UserContainer(
+                width: ScreenUtil().setWidth(149.0),
+                height: ScreenUtil().setHeight(35.0),
+                backgroundColor: Colors.white,
+                borderRadius: ScreenUtil().radius(18.0),
+                borderColor: const Color(UserColors.ui08),
+                child: Center(
+                  child: Text(
+                    _showDay,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w500,
+                      fontSize: ScreenUtil().setSp(12.0),
+                    ),
+                  ),
                 ),
               ),
             ),
+            leading: ButtonIcon(
+              icon: Icons.close,
+              iconColor: Colors.black,
+              callback: () => Navigator.pop(context),
+            ),
           ),
-        ),
-        leading: ButtonIcon(
-          icon: Icons.close,
-          iconColor: Colors.black,
-          callback: () => Navigator.pop(context),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Column(
+          body: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
@@ -618,7 +628,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                                     ),
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward_ios,
+                                const Icon(Icons.arrow_forward_ios,
                                     color: Colors.black),
                               ],
                             ),
@@ -673,12 +683,21 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
               ),
             ],
           ),
-          if (_isLoading)
-            const Center(
-              child: LoadingWidget(),
+        ),
+        if (_isLoading) ...[
+          const Center(
+            child: LoadingWidget(),
+          ),
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+              ),
             ),
+          ),
         ],
-      ),
+      ],
     );
   }
 }

@@ -55,37 +55,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildTabBarWidget() {
-    return TabBar(
-      labelPadding:
-          EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(1.0)),
-      controller: tabController,
-      tabs: const <Widget>[
-        Tab(text: Strings.home),
-        Tab(text: Strings.popularity),
-        Tab(text: Strings.imageVideo),
-        Tab(text: Strings.nowWeather),
-      ],
-      labelColor: const Color(0xFF333333),
-      labelStyle: const TextStyle(
-        fontFamily: "Pretendard",
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
-      unselectedLabelColor: const Color(0xFF444444),
-      unselectedLabelStyle: const TextStyle(
-        fontFamily: "Pretendard",
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
-      overlayColor: const MaterialStatePropertyAll(
-        Colors.white,
-      ),
-      indicatorColor: Colors.black,
-      indicatorWeight: 2,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,7 +92,7 @@ class _HomePageState extends State<HomePage>
                   );
                 },
               ),
-              Icon(Icons.expand_more, color: Colors.black),
+              const Icon(Icons.expand_more, color: Colors.black),
             ],
           ),
         ),
@@ -158,33 +127,38 @@ class _HomePageState extends State<HomePage>
                 preferredSize: const Size.fromHeight(48.0),
                 child: Container(
                   color: Colors.transparent,
-                  child: TabBar(
-                    labelPadding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setWidth(1.0)),
-                    controller: tabController,
-                    tabs: const <Widget>[
-                      Tab(text: Strings.home),
-                      Tab(text: Strings.popularity),
-                      Tab(text: Strings.imageVideo),
-                      Tab(text: Strings.nowWeather),
-                    ],
-                    labelColor: const Color(0xFF333333),
-                    labelStyle: const TextStyle(
-                      fontFamily: "Pretendard",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(27.0),),
+                    child: TabBar(
+                      labelPadding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(1.0)),
+                      controller: tabController,
+                      tabs: const <Widget>[
+                        Tab(text: Strings.home),
+                        Tab(text: Strings.popularity),
+                        Tab(text: Strings.imageVideo),
+                        Tab(text: Strings.nowWeather),
+                      ],
+                      labelColor: const Color(0xFF333333),
+                      labelStyle: const TextStyle(
+                        fontFamily: "Pretendard",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      unselectedLabelColor: const Color(0xFF444444),
+                      unselectedLabelStyle: const TextStyle(
+                        fontFamily: "Pretendard",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overlayColor: const WidgetStatePropertyAll(
+                        Colors.white,
+                      ),
+                      indicatorColor: Colors.black,
+                      indicatorWeight: 2,
+                      dividerColor: Colors.transparent,
+                      indicatorSize: TabBarIndicatorSize.tab,
                     ),
-                    unselectedLabelColor: const Color(0xFF444444),
-                    unselectedLabelStyle: const TextStyle(
-                      fontFamily: "Pretendard",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overlayColor: const MaterialStatePropertyAll(
-                      Colors.white,
-                    ),
-                    indicatorColor: Colors.black,
-                    indicatorWeight: 2,
                   ),
                 ),
               ),
