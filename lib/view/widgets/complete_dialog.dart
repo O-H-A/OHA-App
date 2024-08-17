@@ -2,10 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../statics/Colors.dart';
-import '../../../statics/images.dart';
-import '../../../statics/strings.dart';
-
 class CompleteDialog extends StatefulWidget {
   final String title;
 
@@ -20,6 +16,7 @@ class CompleteDialog extends StatefulWidget {
   static void showCompleteDialog(BuildContext context, String title) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return CompleteDialog(title: title);
       },
@@ -34,7 +31,9 @@ class _CompleteDialogState extends State<CompleteDialog> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(seconds: 1), () {
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     });
   }
 

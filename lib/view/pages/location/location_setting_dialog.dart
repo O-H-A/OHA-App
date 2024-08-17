@@ -235,7 +235,8 @@ class _LocationSettingBottomSheetContentState
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      color: Colors.white,
       height: ScreenUtil().setHeight(293.0),
       child: Padding(
         padding: EdgeInsets.symmetric(

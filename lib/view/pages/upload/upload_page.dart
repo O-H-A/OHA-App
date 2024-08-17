@@ -131,17 +131,6 @@ class _UploadPageState extends State<UploadPage> {
                 onChanged: (value) => getPhotos(value!, albumChange: true),
               )
             : const SizedBox(),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: ScreenUtil().setWidth(22.0)),
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
       ),
       body: _paths == null
           ? const Center(child: CircularProgressIndicator())
