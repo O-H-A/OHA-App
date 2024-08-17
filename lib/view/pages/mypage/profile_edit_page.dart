@@ -130,7 +130,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ),
         inputFormatters: [
           LengthLimitingTextInputFormatter(8),
-          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_.]')),
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_.ㄱ-ㅎㅏ-ㅣ가-힣]')),
         ],
       ),
     );
