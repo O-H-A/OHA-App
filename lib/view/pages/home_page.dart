@@ -185,6 +185,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     indicatorColor: Colors.black,
                     indicatorWeight: 2,
+                    dividerColor: Colors.transparent,
                   ),
                 ),
               ),
