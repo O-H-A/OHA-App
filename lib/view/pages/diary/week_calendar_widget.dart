@@ -5,6 +5,7 @@ import 'package:oha/statics/Colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:provider/provider.dart';
+import '../../../view_model/diary_view_model.dart';
 import '../../../view_model/upload_view_model.dart';
 
 class WeekCalendarWidget extends StatefulWidget {
@@ -51,15 +52,20 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   @override
   void didUpdateWidget(covariant WeekCalendarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentDate != widget.currentDate || oldWidget.userId != widget.userId) {
-      _updateWeek();
-    }
+    _updateWeek();
   }
 
   void _updateWeek() {
     setState(() {
       firstDayOfWeek = widget.currentDate
           .subtract(Duration(days: widget.currentDate.weekday - 1));
+
+      if (selectedDay == null ||
+          selectedDay!.isBefore(firstDayOfWeek!) ||
+          selectedDay!.isAfter(firstDayOfWeek!.add(const Duration(days: 6)))) {
+        selectedDay = firstDayOfWeek;
+      }
+
       daysList = List<int>.generate(7, (index) {
         DateTime day = firstDayOfWeek!.add(Duration(days: index));
         return day.day;
@@ -68,32 +74,55 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
       recordedDays = {};
 
       if (widget.userId != null) {
-        final uploadEntries = _uploadViewModel!.userUploadGetData.data?.data ?? [];
+        final uploadEntries =
+            _uploadViewModel!.userUploadGetData.data?.data ?? [];
         for (var entry in uploadEntries) {
           DateTime entryDate = DateTime.parse(entry.regDtm);
-          if (entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
-              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+          if (entryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              entryDate
+                  .isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
             recordedDays!.add(entryDate.day);
           }
         }
       } else {
-        final uploadEntries = _uploadViewModel!.myUploadGetData.data?.data ?? [];
+        final diaryEntries =
+            Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+        final uploadEntries =
+            _uploadViewModel!.myUploadGetData.data?.data ?? [];
+
+        for (var entry in diaryEntries) {
+          final diaryDate = DateTime(
+            int.parse(entry.setDate.substring(0, 4)),
+            int.parse(entry.setDate.substring(4, 6)),
+            int.parse(entry.setDate.substring(6, 8)),
+          );
+          if (diaryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              diaryDate
+                  .isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+            recordedDays!.add(diaryDate.day);
+          }
+        }
+
         for (var entry in uploadEntries) {
           DateTime entryDate = DateTime.parse(entry.regDtm);
-          if (entryDate.isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
-              entryDate.isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+          if (entryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              entryDate
+                  .isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
             recordedDays!.add(entryDate.day);
           }
         }
       }
 
       today = DateTime.now();
-      selectedDay = today;
     });
   }
 
   void _onDaySelected(int day) {
-    DateTime selected = DateTime(widget.currentDate.year, widget.currentDate.month, day);
+    DateTime selected =
+        DateTime(widget.currentDate.year, widget.currentDate.month, day);
 
     setState(() {
       selectedDay = selected;
@@ -106,7 +135,9 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
       onTap: () => _onDaySelected(day),
       child: Column(
         children: [
-          recorded ? SvgPicture.asset(Images.recordEnable) : SvgPicture.asset(Images.recordDisable),
+          recorded
+              ? SvgPicture.asset(Images.recordEnable)
+              : SvgPicture.asset(Images.recordDisable),
           SizedBox(
             height: ScreenUtil().setHeight(4.0),
           ),
@@ -121,7 +152,8 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
               child: Text(
                 day.toString(),
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(UserColors.ui01),
+                  color:
+                      isSelected ? Colors.white : const Color(UserColors.ui01),
                   fontFamily: "Pretendard",
                   fontWeight: FontWeight.w400,
                   fontSize: 13,
