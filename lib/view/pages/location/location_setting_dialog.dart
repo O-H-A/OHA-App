@@ -88,7 +88,7 @@ class _LocationSettingBottomSheetContentState
   void _addFrequentLocation(BuildContext context, int index) async {
     Map<String, String?>? result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LocationSettingPage()),
+      MaterialPageRoute(builder: (context) => const LocationSettingPage(isWrite: false)),
     );
 
     if (result != null) {

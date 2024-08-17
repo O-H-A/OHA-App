@@ -176,7 +176,7 @@ class _UploadWritePageState extends State<UploadWritePage> {
   void getLocationInfo() async {
     Map<String, String?>? result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LocationSettingPage()),
+      MaterialPageRoute(builder: (context) => const LocationSettingPage(isWrite: true)),
     );
 
     if (result != null) {

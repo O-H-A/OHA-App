@@ -9,7 +9,9 @@ import '../../../statics/Colors.dart';
 import '../../../statics/strings.dart';
 
 class LocationSettingPage extends StatefulWidget {
-  const LocationSettingPage({super.key});
+  final bool isWrite;
+
+  const LocationSettingPage({super.key, this.isWrite = false});
 
   @override
   State<LocationSettingPage> createState() => _LocationSettingPageState();
@@ -165,9 +167,11 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
                           EdgeInsets.only(bottom: ScreenUtil().setHeight(24.0)),
                       child: GestureDetector(
                         onTap: () async {
-                          if (_locationViewModel
-                              .isLocationAlreadyAdded(locationCode)) {
-                                CompleteDialog.showCompleteDialog(context, Strings.isLocationAlreadyAdded);
+                          if (!widget.isWrite &&
+                              _locationViewModel
+                                  .isLocationAlreadyAdded(locationCode)) {
+                            CompleteDialog.showCompleteDialog(
+                                context, Strings.isLocationAlreadyAdded);
                           } else {
                             await _locationViewModel.fetchFrequentDistricts();
                             Navigator.pop(context, locationMap);
