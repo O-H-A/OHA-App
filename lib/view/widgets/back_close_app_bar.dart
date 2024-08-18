@@ -12,6 +12,7 @@ class BackCloseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       title: Padding(
         padding: EdgeInsets.only(

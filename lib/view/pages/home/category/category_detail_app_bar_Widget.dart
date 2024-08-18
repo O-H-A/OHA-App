@@ -17,6 +17,7 @@ class CategoryDetailAppBarWidget extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      scrolledUnderElevation: 0,
       titleSpacing: 0,
       backgroundColor: Colors.black,
       elevation: 0,

@@ -599,6 +599,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
         Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            scrolledUnderElevation: 0,
             backgroundColor: Colors.white,
             elevation: 0,
             titleSpacing: ScreenUtil().setWidth(22.0),
