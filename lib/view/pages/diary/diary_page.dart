@@ -6,6 +6,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/upload/upload_write_page.dart';
+import 'package:oha/view/widgets/posting_bottom_sheet.dart';
 import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
 import 'package:oha/view/pages/diary/month_calendar_widget.dart';
@@ -464,45 +465,65 @@ class _DiaryPageState extends State<DiaryPage> {
 
     final upload = selectedDateUploads.first;
 
-    return Padding(
-      padding: EdgeInsets.only(
-          bottom: ScreenUtil().setHeight(12.0),
-          left: ScreenUtil().setWidth(22.0)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPostingImageWidget(upload.thumbnailUrl),
-              SizedBox(width: ScreenUtil().setWidth(12.0)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: ScreenUtil().setWidth(180.0),
-                    child: Text(
-                      upload.content,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
+    return GestureDetector(
+      onTap: () {
+        PostingBottomSheet.show(context, selectedDateUploads);
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+            bottom: ScreenUtil().setHeight(12.0),
+            left: ScreenUtil().setWidth(22.0)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPostingImageWidget(upload.thumbnailUrl),
+                SizedBox(width: ScreenUtil().setWidth(12.0)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: ScreenUtil().setWidth(180.0),
+                      child: Text(
+                        upload.content,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      SvgPicture.asset(Images.location),
-                      SizedBox(width: ScreenUtil().setWidth(3.0)),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(150.0),
-                        child: Text(
-                          "${upload.firstAddress} ${upload.secondAddress} ${upload.thirdAddress}",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                    Row(
+                      children: [
+                        SvgPicture.asset(Images.location),
+                        SizedBox(width: ScreenUtil().setWidth(3.0)),
+                        SizedBox(
+                          width: ScreenUtil().setWidth(150.0),
+                          child: Text(
+                            "${upload.firstAddress} ${upload.secondAddress} ${upload.thirdAddress}",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(Images.heart),
+                        SizedBox(width: ScreenUtil().setWidth(3.0)),
+                        Text(
+                          "${upload.likeCount}",
                           style: const TextStyle(
                             color: Colors.black,
                             fontFamily: "Pretendard",
@@ -510,55 +531,41 @@ class _DiaryPageState extends State<DiaryPage> {
                             fontSize: 14,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SvgPicture.asset(Images.heart),
-                      SizedBox(width: ScreenUtil().setWidth(3.0)),
-                      Text(
-                        "${upload.likeCount}",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                        SizedBox(width: ScreenUtil().setWidth(3.0)),
+                        SvgPicture.asset(Images.views),
+                        SizedBox(width: ScreenUtil().setWidth(3.0)),
+                        Text(
+                          "${upload.commentCount}",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: ScreenUtil().setWidth(3.0)),
-                      SvgPicture.asset(Images.views),
-                      SizedBox(width: ScreenUtil().setWidth(3.0)),
-                      Text(
-                        "${upload.commentCount}",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
-            child: ButtonIcon(
-              icon: Icons.more_horiz,
-              iconColor: const Color(UserColors.ui06),
-              callback: () => FourMoreDialog.show(
-                context,
-                (action) => _onMorePressed(upload.postId, action, null, upload),
-                true,
-                upload.thumbnailUrl ?? '',
-                upload.postId,
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
+              child: ButtonIcon(
+                icon: Icons.more_horiz,
+                iconColor: const Color(UserColors.ui06),
+                callback: () => FourMoreDialog.show(
+                  context,
+                  (action) =>
+                      _onMorePressed(upload.postId, action, null, upload),
+                  true,
+                  upload.thumbnailUrl ?? '',
+                  upload.postId,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
