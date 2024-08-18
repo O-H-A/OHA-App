@@ -275,9 +275,14 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
               color: Colors.white,
-              border: Border.all(
-                color: const Color(UserColors.ui08),
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: SizedBox(
               height: ScreenUtil().setHeight(82.0),
