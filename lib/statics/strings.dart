@@ -209,6 +209,7 @@ class Strings {
   static const String locationHintText = "ex) 뚝섬 전망 문화 콤플렉스 자벌레";
   static const String diaryComplete = "다이어리 등록이 완료되었습니다.";
   static const String diaryEditComplete = "다이어리 수정이 완료되었습니다.";
+  static const String diaryLocationHint = "위치를 입력해 주세요";
 
   /*
     구름 	CTGR_CLOUD

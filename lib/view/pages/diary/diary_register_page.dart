@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:oha/models/diary/my_diary_model.dart';
@@ -47,6 +48,7 @@ class DiaryRegisterPage extends StatefulWidget {
 class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   final _titleController = TextEditingController();
   final _contentsController = TextEditingController();
+  final _locationController = TextEditingController();
   bool _publicStatus = false;
   File? _uploadImage;
   Uint8List? _networkImageData;
@@ -144,10 +146,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   bool _buttonEnabled() {
     return _titleController.text.isNotEmpty &&
-        (_uploadImage != null || _networkImageData != null) &&
-        _contentsController.text.isNotEmpty &&
-        _selectTitle.isNotEmpty &&
-        _selectImage.isNotEmpty;
+        (_uploadImage != null || _networkImageData != null) && _selectImage.isNotEmpty;
   }
 
   Widget _buildPhotoArea() {
@@ -191,10 +190,10 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       controller: _titleController,
       textAlign: TextAlign.start,
       style: TextStyle(
-        color: const Color(UserColors.ui06),
+        color: const Color(UserColors.ui01),
         fontFamily: "Pretendard",
-        fontWeight: FontWeight.w700,
-        fontSize: ScreenUtil().setSp(16.0),
+        fontWeight: FontWeight.w500,
+        fontSize: ScreenUtil().setSp(14.0),
       ),
       decoration: InputDecoration(
         filled: true,
@@ -211,6 +210,9 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           borderSide: BorderSide.none,
         ),
       ),
+      onChanged: (text) {
+        setState(() {});
+      },
     );
   }
 
@@ -252,9 +254,14 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
               color: Colors.white,
-              border: Border.all(
-                color: const Color(UserColors.ui08),
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: SizedBox(
               height: ScreenUtil().setHeight(82.0),
@@ -296,7 +303,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   }
 
   void _sendDiaryRegist() async {
-    if (_isLoading) return;
+    if (_isLoading || !_buttonEnabled()) return;
 
     setState(() {
       _isLoading = true;
@@ -343,7 +350,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
   }
 
   void _sendDiaryEdit() async {
-    if (_isLoading) return;
+    if (_isLoading || !_buttonEnabled()) return;
 
     setState(() {
       _isLoading = true;
@@ -416,9 +423,14 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
               color: Colors.white,
-              border: Border.all(
-                color: const Color(UserColors.ui08),
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: SizedBox(
               height: ScreenUtil().setHeight(82.0),
@@ -472,11 +484,11 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       child: TextField(
         controller: _contentsController,
         textAlign: TextAlign.start,
-        style: const TextStyle(
-          color: Color(UserColors.ui06),
+        style: TextStyle(
+          color: const Color(UserColors.ui01),
           fontFamily: "Pretendard",
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          fontSize: ScreenUtil().setSp(14.0),
         ),
         decoration: InputDecoration(
           filled: true,
@@ -523,16 +535,60 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
           ),
         ),
         SizedBox(width: ScreenUtil().setWidth(16.0)),
-        CupertinoSwitch(
-          value: _publicStatus,
-          activeColor: const Color(UserColors.primaryColor),
-          onChanged: (bool? value) {
-            setState(() {
-              _publicStatus = value ?? false;
-            });
-          },
+        SizedBox(
+          child: FlutterSwitch(
+            width: ScreenUtil().setWidth(55.0),
+            height: ScreenUtil().setHeight(27.0),
+            toggleSize: ScreenUtil().setWidth(20.0),
+            value: _publicStatus,
+            activeColor: const Color(UserColors.primaryColor),
+            borderRadius: ScreenUtil().radius(14.0),
+            showOnOff: false,
+            onToggle: (val) {
+              setState(() {
+                _publicStatus = val;
+              });
+            },
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLocationTextField() {
+    return Container(
+      width: double.infinity,
+      height: ScreenUtil().setHeight(50.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+        color: const Color(UserColors.ui11),
+      ),
+      child: TextField(
+        controller: _locationController,
+        textAlign: TextAlign.start,
+        style: TextStyle(
+          color: const Color(UserColors.ui01),
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w500,
+          fontSize: ScreenUtil().setSp(14.0),
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color(UserColors.ui11),
+          hintText: Strings.diaryLocationHint,
+          hintStyle: TextStyle(
+            color: const Color(UserColors.ui06),
+            fontFamily: "Pretendard",
+            fontWeight: FontWeight.w400,
+            fontSize: ScreenUtil().setSp(14.0),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        maxLines: null,
+      ),
     );
   }
 
@@ -543,6 +599,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
         Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            scrolledUnderElevation: 0,
             backgroundColor: Colors.white,
             elevation: 0,
             titleSpacing: ScreenUtil().setWidth(22.0),
@@ -606,55 +663,17 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
                             SizedBox(height: ScreenUtil().setHeight(10.0)),
                             _buildPublicButton(),
                             SizedBox(height: ScreenUtil().setHeight(22.0)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return LocationInfoDialog();
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    Strings.location,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "Pretendard",
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios,
-                                    color: Colors.black),
-                              ],
+                            const Text(
+                              Strings.location,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Pretendard",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
                             ),
                             SizedBox(height: ScreenUtil().setHeight(12.0)),
-                            Container(
-                              width: ScreenUtil().setWidth(101.0),
-                              height: ScreenUtil().setHeight(35.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil().radius(18.0)),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: const Color(UserColors.ui08)),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  Strings.exampleLocation,
-                                  style: TextStyle(
-                                    color: Color(UserColors.ui06),
-                                    fontFamily: "Pretendard",
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            _buildLocationTextField(),
                             SizedBox(height: ScreenUtil().setHeight(35.0)),
                           ],
                         ),
