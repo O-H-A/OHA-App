@@ -45,38 +45,36 @@ class PostingBottomSheet {
           minChildSize: 0.9,
           maxChildSize: 0.9,
           builder: (BuildContext context, ScrollController scrollController) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16.0)),
-              child: Column(
-                children: [
-                  SizedBox(height: ScreenUtil().setHeight(19.0)),
-                  _buildSMIndicator(),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: uploads.length,
-                      itemBuilder: (context, index) {
-                        final data = uploads[index];
-                        return Padding(
-                          padding: EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
-                          child: FeedWidget(
-                            uploadData: data,
-                            onLikePressed: () => _onLikePressed(
-                                context, data.postId, data.isLike, _uploadViewModel),
-                            onMorePressed: () => FourMoreDialog.show(
-                                context,
-                                (action) => _onMorePressed(context, data.postId,
-                                    action, data, _uploadViewModel),
-                                data.isOwn,
-                                data.files.isNotEmpty ? data.files[0].url : '',
-                                data.postId),
-                          ),
-                        );
-                      },
-                    ),
+            return Column(
+              children: [
+                SizedBox(height: ScreenUtil().setHeight(19.0)),
+                _buildSMIndicator(),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: uploads.length,
+                    itemBuilder: (context, index) {
+                      final data = uploads[index];
+                      return Padding(
+                        padding:
+                            EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
+                        child: FeedWidget(
+                          uploadData: data,
+                          onLikePressed: () => _onLikePressed(context,
+                              data.postId, data.isLike, _uploadViewModel),
+                          onMorePressed: () => FourMoreDialog.show(
+                              context,
+                              (action) => _onMorePressed(context, data.postId,
+                                  action, data, _uploadViewModel),
+                              data.isOwn,
+                              data.files.isNotEmpty ? data.files[0].url : '',
+                              data.postId),
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         );
@@ -93,8 +91,7 @@ class PostingBottomSheet {
 
     final statusCode = await uploadViewModel.like(data);
 
-    if (statusCode == 201 || statusCode == 200) {
-    }
+    if (statusCode == 201 || statusCode == 200) {}
   }
 
   static void _onMorePressed(BuildContext context, int postId, String action,
