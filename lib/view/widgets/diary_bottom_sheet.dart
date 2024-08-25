@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/mypage/delete_dialog.dart';
 import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
-import 'package:oha/view/widgets/feed_widget.dart';
+import 'package:oha/view/widgets/diary_feed_widget.dart';
 import 'package:oha/view/widgets/four_more_dialog.dart';
 import 'package:provider/provider.dart';
-import '../../../models/upload/upload_get_model.dart';
-import '../../../view_model/upload_view_model.dart';
+import '../../../models/diary/my_diary_model.dart';
+import '../../../view_model/diary_view_model.dart';
 import '../../../statics/strings.dart';
 
-class PostingBottomSheet {
+class DiaryBottomSheet {
   static Widget _buildSMIndicator() {
     return Padding(
       padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(16.0)),
@@ -25,9 +26,9 @@ class PostingBottomSheet {
     );
   }
 
-  static void show(BuildContext context, List<UploadData> uploads) {
-    final UploadViewModel _uploadViewModel =
-        Provider.of<UploadViewModel>(context, listen: false);
+  static void show(BuildContext context, MyDiaryData diaryData) {
+    final DiaryViewModel _diaryViewModel =
+        Provider.of<DiaryViewModel>(context, listen: false);
 
     showModalBottomSheet(
       context: context,
@@ -52,23 +53,38 @@ class PostingBottomSheet {
                 Expanded(
                   child: ListView.builder(
                     controller: scrollController,
-                    itemCount: uploads.length,
+                    itemCount: diaryData.diaries?.length ?? 0,
                     itemBuilder: (context, index) {
-                      final data = uploads[index];
+                      final diary = diaryData.diaries![index];
                       return Padding(
                         padding:
                             EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
-                        child: FeedWidget(
-                          uploadData: data,
-                          onLikePressed: () => _onLikePressed(context,
-                              data.postId, data.isLike, _uploadViewModel),
+                        child: DiaryFeedWidget(
+                          diaryData: diary,
+                          writerData: diaryData.writer!,
+                          onLikePressed: () => _onLikePressed(
+                            context,
+                            diary.diaryId,
+                            diary.likes,
+                            _diaryViewModel,
+                          ),
+                          showLine: index < (diaryData.diaries!.length - 1),
                           onMorePressed: () => FourMoreDialog.show(
+                            context,
+                            (action) => _onMorePressed(
                               context,
-                              (action) => _onMorePressed(context, data.postId,
-                                  action, data, _uploadViewModel),
-                              data.isOwn,
-                              data.files.isNotEmpty ? data.files[0].url : '',
-                              data.postId),
+                              diary.diaryId,
+                              action,
+                              diary,
+                              _diaryViewModel,
+                            ),
+                            true,
+                            (diary.fileRelation != null &&
+                                    diary.fileRelation!.isNotEmpty)
+                                ? diary.fileRelation![0].fileUrl
+                                : '',
+                            diary.diaryId,
+                          ),
                         ),
                       );
                     },
@@ -82,36 +98,42 @@ class PostingBottomSheet {
     );
   }
 
-  static void _onLikePressed(BuildContext context, int postId,
-      bool isCurrentlyLiked, UploadViewModel uploadViewModel) async {
+  static void _onLikePressed(BuildContext context, int diaryId, String likes,
+      DiaryViewModel diaryViewModel) async {
     Map<String, dynamic> data = {
-      "postId": postId,
-      "type": isCurrentlyLiked ? "U" : "L"
+      "diaryId": diaryId,
+      "type": int.parse(likes) > 0 ? "U" : "L"
     };
 
-    final statusCode = await uploadViewModel.like(data);
+    // final statusCode = await diaryViewModel.like(data);
 
-    if (statusCode == 201 || statusCode == 200) {}
+    // if (statusCode == 201 || statusCode == 200) {
+    // }
   }
 
-  static void _onMorePressed(BuildContext context, int postId, String action,
-      UploadData data, UploadViewModel uploadViewModel) {
+  static void _onMorePressed(BuildContext context, int diaryId, String action,
+      MyDiary diary, DiaryViewModel diaryViewModel) {
     switch (action) {
       case Strings.saveImage:
+        // Save Image Logic
         break;
       case Strings.edit:
+        final dateTime = DateTime.parse(
+          '${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}',
+        );
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UploadWritePage(
+            builder: (context) => DiaryRegisterPage(
+              selectDate: dateTime,
               isEdit: true,
-              uploadData: data,
+              diaryData: diary,
             ),
           ),
         );
         break;
       case Strings.delete:
-        _showDeleteDialog(context, postId, uploadViewModel);
+        _showDeleteDialog(context, diaryId, diaryViewModel);
         break;
       default:
         break;
@@ -119,15 +141,15 @@ class PostingBottomSheet {
   }
 
   static void _showDeleteDialog(
-      BuildContext context, int postId, UploadViewModel uploadViewModel) {
+      BuildContext context, int diaryId, DiaryViewModel diaryViewModel) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return DeleteDialog(
           height: ScreenUtil().setHeight(178.0),
-          titleText: Strings.postDeleteTitle,
-          guideText: Strings.postDeleteContent,
-          yesCallback: () => _onDeleteYes(context, postId, uploadViewModel),
+          titleText: Strings.diaryDeleteTitle,
+          guideText: Strings.diaryDeleteContent,
+          yesCallback: () => _onDeleteYes(context, diaryId, diaryViewModel),
           noCallback: () => Navigator.pop(context),
         );
       },
@@ -135,8 +157,8 @@ class PostingBottomSheet {
   }
 
   static void _onDeleteYes(
-      BuildContext context, int postId, UploadViewModel uploadViewModel) async {
-    final response = await uploadViewModel.delete(postId.toString());
+      BuildContext context, int diaryId, DiaryViewModel diaryViewModel) async {
+    final response = await diaryViewModel.diaryDelete(diaryId.toString());
 
     if (response == 201) {
       Navigator.pop(context);
@@ -151,7 +173,7 @@ class PostingBottomSheet {
       context: context,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return const CompleteDialog(title: Strings.postDeleteComplete);
+        return const CompleteDialog(title: Strings.diaryDeleteComplete);
       },
     );
   }

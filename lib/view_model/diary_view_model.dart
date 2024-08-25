@@ -85,8 +85,6 @@ class DiaryViewModel with ChangeNotifier {
   Future<int> diaryDelete(String diaryId) async {
     final result = await _diaryRepository.diaryDelete(diaryId);
 
-    print("Jehee : ${result.statusCode}");
-
     if (result.statusCode == 200 || result.statusCode == 201) {
       setDiaryDelete(ApiResponse.complete(result));
     } else {

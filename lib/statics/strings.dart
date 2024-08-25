@@ -19,6 +19,7 @@ class Strings {
   static const String nowWeather = "지금의 날씨";
   static const String category = "카테고리";
   static const String likes = "개의 좋아요";
+  static const String diaryLikes = "Likes";
   static const String comments = "개의 댓글";
   static const String comment = "댓글";
   static const String todaySky = "오늘의 하늘은 🌤";
@@ -210,6 +211,9 @@ class Strings {
   static const String diaryComplete = "다이어리 등록이 완료되었습니다.";
   static const String diaryEditComplete = "다이어리 수정이 완료되었습니다.";
   static const String diaryLocationHint = "위치를 입력해 주세요";
+  static const String diaryDeleteTitle = "다이어리 삭제";
+  static const String diaryDeleteContent = "게시물을 삭제하시겠습니까?";
+  static const String diaryDeleteComplete = "다이어리를 삭제하시겠습니까?";
 
   /*
     구름 	CTGR_CLOUD

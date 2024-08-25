@@ -146,7 +146,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
 
   bool _buttonEnabled() {
     return _titleController.text.isNotEmpty &&
-        (_uploadImage != null || _networkImageData != null) && _selectImage.isNotEmpty;
+        (_uploadImage != null || _networkImageData != null) && _selectImage.isNotEmpty && _locationController.text.isNotEmpty;
   }
 
   Widget _buildPhotoArea() {
@@ -315,7 +315,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       Strings.contentKey: _contentsController.text,
       Strings.weatherKey: Strings.weatherCodeMap[_selectTitle],
       Strings.isPublicKey: _publicStatus,
-      Strings.locationKey: "",
+      Strings.locationKey: _locationController.text,
     };
 
     Uint8List? thumbnailData;

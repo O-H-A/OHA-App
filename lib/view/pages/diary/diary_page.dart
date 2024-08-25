@@ -6,6 +6,7 @@ import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 import 'package:oha/statics/strings.dart';
 import 'package:oha/view/pages/upload/upload_write_page.dart';
+import 'package:oha/view/widgets/diary_bottom_sheet.dart';
 import 'package:oha/view/widgets/posting_bottom_sheet.dart';
 import 'package:oha/view_model/diary_view_model.dart';
 import 'package:oha/view_model/upload_view_model.dart';
@@ -163,6 +164,22 @@ class _DiaryPageState extends State<DiaryPage> {
       print(
           "Diaries on Selected Date: ${_diaryViewModel.getDiariesByDate(selectedDate)}");
     });
+  }
+
+  void _showDiaryBottomSheet(BuildContext context, DateTime selectedDate) {
+    final diariesOnSelectedDate =
+        _diaryViewModel.getDiariesByDate(selectedDate);
+
+    if (diariesOnSelectedDate.isNotEmpty) {
+      // 해당 날짜에 있는 모든 다이어리를 리스트로 전달
+      DiaryBottomSheet.show(
+        context,
+        MyDiaryData(
+          writer: _diaryViewModel.getMyDiary.data?.data?.writer,
+          diaries: diariesOnSelectedDate,
+        ),
+      );
+    }
   }
 
   Widget _buildCalendarTypeWidget(bool month, String type) {
@@ -601,44 +618,66 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildDiaryWidget(MyDiary? diary) {
-    return Padding(
-      padding: EdgeInsets.only(
-          bottom: ScreenUtil().setHeight(12.0),
-          left: ScreenUtil().setWidth(22.0)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              _buildPostingImageWidget(diary?.fileRelation?.isNotEmpty == true
-                  ? (diary?.fileRelation?[0].fileUrl)
-                  : null),
-              SizedBox(width: ScreenUtil().setWidth(12.0)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    diary?.title ?? Strings.diaryEmpty,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: const Color(UserColors.ui06),
-                      fontFamily: "Pretendard",
-                      fontWeight: FontWeight.w500,
-                      fontSize: ScreenUtil().setSp(14.0),
+    return GestureDetector(
+      onTap: () {
+        if (diary != null) {
+          _showDiaryBottomSheet(context, selectedDate);
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+            bottom: ScreenUtil().setHeight(12.0),
+            left: ScreenUtil().setWidth(22.0)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                _buildPostingImageWidget(diary?.fileRelation?.isNotEmpty == true
+                    ? (diary?.fileRelation?[0].fileUrl)
+                    : null),
+                SizedBox(width: ScreenUtil().setWidth(12.0)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      diary?.title ?? Strings.diaryEmpty,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: const Color(UserColors.ui06),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: ScreenUtil().setSp(14.0),
+                      ),
                     ),
-                  ),
-                  if (diary != null) ...[
-                    Row(
-                      children: [
-                        SvgPicture.asset(Images.location),
-                        SizedBox(width: ScreenUtil().setWidth(3.0)),
-                        Container(
-                          width: ScreenUtil().setWidth(150.0),
-                          child: Text(
-                            diary.location,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                    if (diary != null) ...[
+                      Row(
+                        children: [
+                          SvgPicture.asset(Images.location),
+                          SizedBox(width: ScreenUtil().setWidth(3.0)),
+                          Container(
+                            width: ScreenUtil().setWidth(150.0),
+                            child: Text(
+                              diary.location,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Pretendard",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(Images.heart),
+                          SizedBox(width: ScreenUtil().setWidth(3.0)),
+                          Text(
+                            diary.likes,
                             style: const TextStyle(
                               color: Colors.black,
                               fontFamily: "Pretendard",
@@ -646,60 +685,45 @@ class _DiaryPageState extends State<DiaryPage> {
                               fontSize: 14,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(Images.heart),
-                        SizedBox(width: ScreenUtil().setWidth(3.0)),
-                        Text(
-                          diary.likes,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                          SizedBox(width: ScreenUtil().setWidth(3.0)),
+                          SvgPicture.asset(Images.views),
+                          SizedBox(width: ScreenUtil().setWidth(3.0)),
+                          Text(
+                            diary.views,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: ScreenUtil().setWidth(3.0)),
-                        SvgPicture.asset(Images.views),
-                        SizedBox(width: ScreenUtil().setWidth(3.0)),
-                        Text(
-                          diary.views,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
-              ),
-            ],
-          ),
-          if (diary != null)
-            Padding(
-              padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
-              child: ButtonIcon(
-                icon: Icons.more_horiz,
-                iconColor: const Color(UserColors.ui06),
-                callback: () => FourMoreDialog.show(
-                  context,
-                  (action) =>
-                      _onMorePressed(diary.diaryId, action, diary, null),
-                  true,
-                  diary.fileRelation?.isNotEmpty == true
-                      ? diary.fileRelation![0].fileUrl
-                      : '',
-                  diary.diaryId,
+                ),
+              ],
+            ),
+            if (diary != null)
+              Padding(
+                padding: EdgeInsets.only(right: ScreenUtil().setWidth(25.0)),
+                child: ButtonIcon(
+                  icon: Icons.more_horiz,
+                  iconColor: const Color(UserColors.ui06),
+                  callback: () => FourMoreDialog.show(
+                    context,
+                    (action) =>
+                        _onMorePressed(diary.diaryId, action, diary, null),
+                    true,
+                    diary.fileRelation?.isNotEmpty == true
+                        ? diary.fileRelation![0].fileUrl
+                        : '',
+                    diary.diaryId,
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
