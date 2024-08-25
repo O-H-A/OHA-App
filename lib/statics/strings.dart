@@ -211,6 +211,9 @@ class Strings {
   static const String diaryComplete = "다이어리 등록이 완료되었습니다.";
   static const String diaryEditComplete = "다이어리 수정이 완료되었습니다.";
   static const String diaryLocationHint = "위치를 입력해 주세요";
+  static const String diaryDeleteTitle = "다이어리 삭제";
+  static const String diaryDeleteContent = "게시물을 삭제하시겠습니까?";
+  static const String diaryDeleteComplete = "다이어리를 삭제하시겠습니까?";
 
   /*
     구름 	CTGR_CLOUD

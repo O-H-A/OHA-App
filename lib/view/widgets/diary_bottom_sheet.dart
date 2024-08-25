@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/view/pages/diary/diary_register_page.dart';
 import 'package:oha/view/pages/mypage/delete_dialog.dart';
 import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
@@ -56,7 +57,8 @@ class DiaryBottomSheet {
                     itemBuilder: (context, index) {
                       final diary = diaryData.diaries![index];
                       return Padding(
-                        padding: EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
+                        padding:
+                            EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
                         child: DiaryFeedWidget(
                           diaryData: diary,
                           writerData: diaryData.writer!,
@@ -77,9 +79,10 @@ class DiaryBottomSheet {
                               _diaryViewModel,
                             ),
                             true,
-                            (diary.fileRelation != null && diary.fileRelation!.isNotEmpty)
-                              ? diary.fileRelation![0].fileUrl
-                              : '',
+                            (diary.fileRelation != null &&
+                                    diary.fileRelation!.isNotEmpty)
+                                ? diary.fileRelation![0].fileUrl
+                                : '',
                             diary.diaryId,
                           ),
                         ),
@@ -115,11 +118,16 @@ class DiaryBottomSheet {
         // Save Image Logic
         break;
       case Strings.edit:
+        final dateTime = DateTime.parse(
+          '${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}',
+        );
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UploadWritePage(
+            builder: (context) => DiaryRegisterPage(
+              selectDate: dateTime,
               isEdit: true,
+              diaryData: diary,
             ),
           ),
         );
@@ -139,8 +147,8 @@ class DiaryBottomSheet {
       builder: (BuildContext context) {
         return DeleteDialog(
           height: ScreenUtil().setHeight(178.0),
-          titleText: "Strings.diaryDeleteTitle",
-          guideText: "Strings.diaryDeleteContent",
+          titleText: Strings.diaryDeleteTitle,
+          guideText: Strings.diaryDeleteContent,
           yesCallback: () => _onDeleteYes(context, diaryId, diaryViewModel),
           noCallback: () => Navigator.pop(context),
         );
@@ -150,14 +158,14 @@ class DiaryBottomSheet {
 
   static void _onDeleteYes(
       BuildContext context, int diaryId, DiaryViewModel diaryViewModel) async {
-    // final response = await diaryViewModel.delete(diaryId.toString());
+    final response = await diaryViewModel.diaryDelete(diaryId.toString());
 
-    // if (response == 201) {
-    //   Navigator.pop(context);
-    //   _showCompleteDialog(context);
-    // } else {
-    //   Navigator.pop(context);
-    // }
+    if (response == 201) {
+      Navigator.pop(context);
+      _showCompleteDialog(context);
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   static void _showCompleteDialog(BuildContext context) {
@@ -165,7 +173,7 @@ class DiaryBottomSheet {
       context: context,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return const CompleteDialog(title: "Strings.diaryDeleteComplete");
+        return const CompleteDialog(title: Strings.diaryDeleteComplete);
       },
     );
   }
