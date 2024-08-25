@@ -19,6 +19,7 @@ class Strings {
   static const String nowWeather = "지금의 날씨";
   static const String category = "카테고리";
   static const String likes = "개의 좋아요";
+  static const String diaryLikes = "Likes";
   static const String comments = "개의 댓글";
   static const String comment = "댓글";
   static const String todaySky = "오늘의 하늘은 🌤";

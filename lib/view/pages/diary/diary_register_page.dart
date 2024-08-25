@@ -315,7 +315,7 @@ class _DiaryRegisterPageState extends State<DiaryRegisterPage> {
       Strings.contentKey: _contentsController.text,
       Strings.weatherKey: Strings.weatherCodeMap[_selectTitle],
       Strings.isPublicKey: _publicStatus,
-      Strings.locationKey: "",
+      Strings.locationKey: _locationController.text,
     };
 
     Uint8List? thumbnailData;
