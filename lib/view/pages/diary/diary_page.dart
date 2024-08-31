@@ -45,6 +45,7 @@ class _DiaryPageState extends State<DiaryPage> {
   bool _isLoadingMore = false;
   int _offset = 0;
   final int _pageSize = 10;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -55,6 +56,8 @@ class _DiaryPageState extends State<DiaryPage> {
 
     if (widget.userId != null) {
       _fetchUserPosts(widget.userId!);
+
+      _isLoading = true;
     } else {
       _fetchData();
     }
@@ -91,7 +94,12 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Future<void> _fetchUserPosts(int userId) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
+      await _diaryViewModel.fetchUserDiary(userId);
       await _uploadViewModel.userPosts(userId).then((_) {
         _retryCallback = null;
       }).catchError((error) {
@@ -102,6 +110,10 @@ class _DiaryPageState extends State<DiaryPage> {
       _retryCallback = () {
         _uploadViewModel.userPosts(userId);
       };
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -171,7 +183,6 @@ class _DiaryPageState extends State<DiaryPage> {
         _diaryViewModel.getDiariesByDate(selectedDate);
 
     if (diariesOnSelectedDate.isNotEmpty) {
-      // 해당 날짜에 있는 모든 다이어리를 리스트로 전달
       DiaryBottomSheet.show(
         context,
         MyDiaryData(
@@ -251,8 +262,15 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget _buildProfileWidget() {
-    String profileUrl =
-        _diaryViewModel.getMyDiary.data?.data?.writer?.profileUrl ?? '';
+    String profileUrl = '';
+
+    if (widget.userId == null) {
+      profileUrl =
+          _diaryViewModel.getMyDiary.data?.data?.writer?.profileUrl ?? '';
+    } else {
+      profileUrl =
+          _diaryViewModel.getUserDiary.data?.data?.writer?.profileUrl ?? '';
+    }
 
     if (profileUrl.isEmpty) {
       return SvgPicture.asset(
@@ -270,7 +288,14 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget _buildUserInfoWidget() {
     return Consumer<DiaryViewModel>(
       builder: (context, viewModel, child) {
-        final userName = viewModel.getMyDiary.data?.data?.writer?.name ?? '';
+        MyDiaryModel? model;
+        if (widget.userId == null) {
+          model = viewModel.getMyDiary.data;
+        } else {
+          model = viewModel.getUserDiary.data;
+        }
+
+        final userName = model?.data?.writer?.name ?? '';
         final diaryCount = viewModel.diaryEntries.length;
         final totalLikes = _getTotalLikes(viewModel);
         return Padding(
@@ -931,49 +956,51 @@ class _DiaryPageState extends State<DiaryPage> {
         title: Strings.diary,
       ),
       backgroundColor: Colors.white,
-      body: Consumer<DiaryViewModel>(
-        builder: (context, diaryViewModel, child) {
-          final diaries = diaryViewModel.getDiariesByDate(selectedDate);
-          final myDiary = diaries.isNotEmpty ? diaries.first : null;
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildUserInfoWidget(),
-                SizedBox(height: ScreenUtil().setHeight(36.0)),
-                _buildMonthChangeWidget(),
-                SizedBox(height: ScreenUtil().setHeight(12.0)),
-                _buildCalendarTypeContainerWidget(),
-                if (!showFeed) ...[
-                  SizedBox(height: ScreenUtil().setHeight(18.0)),
-                  (viewMonth)
-                      ? MonthCalendarWidget(
-                          currentDate: currentTime,
-                          onDateSelected: onDateSelected,
-                          userId: widget.userId,
-                        )
-                      : WeekCalendarWidget(
-                          currentDate: currentTime,
-                          onDateSelected: onDateSelected,
-                          userId: widget.userId,
-                        ),
-                  SizedBox(height: ScreenUtil().setHeight(22.0)),
-                  _buildPostingText(),
-                  SizedBox(height: ScreenUtil().setHeight(19.0)),
-                  _buildPostingWidget(),
-                  SizedBox(height: ScreenUtil().setHeight(37.0)),
-                  _buildDiaryText(),
-                  SizedBox(height: ScreenUtil().setHeight(19.0)),
-                  _buildDiaryWidget(myDiary),
-                ] else ...[
-                  _buildFeedWidget(),
-                ],
-                SizedBox(height: ScreenUtil().setHeight(150.0)),
-              ],
+      body: _isLoading
+          ? _buildLoadingWidget()
+          : Consumer<DiaryViewModel>(
+              builder: (context, diaryViewModel, child) {
+                final diaries = diaryViewModel.getDiariesByDate(selectedDate);
+                final myDiary = diaries.isNotEmpty ? diaries.first : null;
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildUserInfoWidget(),
+                      SizedBox(height: ScreenUtil().setHeight(36.0)),
+                      _buildMonthChangeWidget(),
+                      SizedBox(height: ScreenUtil().setHeight(12.0)),
+                      _buildCalendarTypeContainerWidget(),
+                      if (!showFeed) ...[
+                        SizedBox(height: ScreenUtil().setHeight(18.0)),
+                        (viewMonth)
+                            ? MonthCalendarWidget(
+                                currentDate: currentTime,
+                                onDateSelected: onDateSelected,
+                                userId: widget.userId,
+                              )
+                            : WeekCalendarWidget(
+                                currentDate: currentTime,
+                                onDateSelected: onDateSelected,
+                                userId: widget.userId,
+                              ),
+                        SizedBox(height: ScreenUtil().setHeight(22.0)),
+                        _buildPostingText(),
+                        SizedBox(height: ScreenUtil().setHeight(19.0)),
+                        _buildPostingWidget(),
+                        SizedBox(height: ScreenUtil().setHeight(37.0)),
+                        _buildDiaryText(),
+                        SizedBox(height: ScreenUtil().setHeight(19.0)),
+                        _buildDiaryWidget(myDiary),
+                      ] else ...[
+                        _buildFeedWidget(),
+                      ],
+                      SizedBox(height: ScreenUtil().setHeight(150.0)),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
