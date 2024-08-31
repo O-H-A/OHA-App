@@ -62,6 +62,7 @@ class ApiUrl {
 
   // Diary
   static const String myDiary = "http://152.67.219.168/api/diary/my";
+  static const String userDiary = "http://152.67.219.168/api/diary/all-diaries";
   static const String diary = "http://152.67.219.168/api/diary";
 
   // Notification

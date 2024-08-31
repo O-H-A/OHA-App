@@ -21,6 +21,16 @@ class DiaryRepository {
     }
   }
 
+  Future<MyDiaryModel> getUserDiary(int userId) async {
+    try {
+      final response =
+          await NetworkManager.instance.get("${ApiUrl.userDiary}/$userId");
+      return MyDiaryModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<DiaryWriteModel> diaryWrite(
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     try {
@@ -46,10 +56,9 @@ class DiaryRepository {
     }
   }
 
-
   Future<DiaryUpdateModel> diaryUpdate(
       Map<String, dynamic> data, Uint8List? thumbnailData, int diaryId) async {
-        String url = '${ApiUrl.diary}/$diaryId';
+    String url = '${ApiUrl.diary}/$diaryId';
     try {
       const String fileName = "file.png";
       const String fileKey = "file";

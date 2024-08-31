@@ -12,6 +12,7 @@ class DiaryViewModel with ChangeNotifier {
 
   ApiResponse<MyDiaryModel> _myDiary = ApiResponse.loading();
   List<MyDiary> diaryEntries = [];
+  ApiResponse<MyDiaryModel> _userDiary = ApiResponse.loading();
 
   ApiResponse<MyDiaryModel> get getMyDiary => _myDiary;
 
@@ -21,6 +22,15 @@ class DiaryViewModel with ChangeNotifier {
 
   void setMyDiary(ApiResponse<MyDiaryModel> response) {
     _myDiary = response;
+    if (response.status == Status.complete) {
+      diaryEntries = response.data?.data?.diaries ?? [];
+    }
+
+    notifyListeners();
+  }
+
+  void setUserDiary(ApiResponse<MyDiaryModel> response) {
+    _userDiary = response;
     if (response.status == Status.complete) {
       diaryEntries = response.data?.data?.diaries ?? [];
     }
@@ -48,6 +58,18 @@ class DiaryViewModel with ChangeNotifier {
 
   Future<int> fetchMyDiary() async {
     final result = await _diaryRepository.getMyDiary();
+
+    if (result.statusCode == 200) {
+      setMyDiary(ApiResponse.complete(result));
+    } else {
+      setMyDiary(ApiResponse.error());
+    }
+
+    return result.statusCode;
+  }
+
+  Future<int> fetchUserDiary(int userId) async {
+    final result = await _diaryRepository.getUserDiary(userId);
 
     if (result.statusCode == 200) {
       setMyDiary(ApiResponse.complete(result));
@@ -94,8 +116,10 @@ class DiaryViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  Future<int> diaryUpdate(Map<String, dynamic> sendData, Uint8List? thumbnailData, int diaryId) async {
-    final result = await _diaryRepository.diaryUpdate(sendData, thumbnailData, diaryId);
+  Future<int> diaryUpdate(Map<String, dynamic> sendData,
+      Uint8List? thumbnailData, int diaryId) async {
+    final result =
+        await _diaryRepository.diaryUpdate(sendData, thumbnailData, diaryId);
 
     print("Jehee : ${result.statusCode}");
 
