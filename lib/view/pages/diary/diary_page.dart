@@ -55,7 +55,6 @@ class _DiaryPageState extends State<DiaryPage> {
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
 
     if (widget.userId != null) {
-      
       _fetchUserPosts(widget.userId!);
 
       _isLoading = true;
@@ -265,15 +264,13 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget _buildProfileWidget() {
     String profileUrl = '';
 
-    if(widget.userId == null) {
-    profileUrl =
-        _diaryViewModel.getMyDiary.data?.data?.writer?.profileUrl ?? '';
+    if (widget.userId == null) {
+      profileUrl =
+          _diaryViewModel.getMyDiary.data?.data?.writer?.profileUrl ?? '';
+    } else {
+      profileUrl =
+          _diaryViewModel.getUserDiary.data?.data?.writer?.profileUrl ?? '';
     }
-    else {
-      
-    }
-
-
 
     if (profileUrl.isEmpty) {
       return SvgPicture.asset(
@@ -291,7 +288,14 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget _buildUserInfoWidget() {
     return Consumer<DiaryViewModel>(
       builder: (context, viewModel, child) {
-        final userName = viewModel.getMyDiary.data?.data?.writer?.name ?? '';
+        MyDiaryModel? model;
+        if (widget.userId == null) {
+          model = viewModel.getMyDiary.data;
+        } else {
+          model = viewModel.getUserDiary.data;
+        }
+
+        final userName = model?.data?.writer?.name ?? '';
         final diaryCount = viewModel.diaryEntries.length;
         final totalLikes = _getTotalLikes(viewModel);
         return Padding(
@@ -952,7 +956,7 @@ class _DiaryPageState extends State<DiaryPage> {
         title: Strings.diary,
       ),
       backgroundColor: Colors.white,
-      body: _isLoading // 로딩 중일 때 로딩 위젯을 표시
+      body: _isLoading
           ? _buildLoadingWidget()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {

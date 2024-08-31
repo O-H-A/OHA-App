@@ -15,6 +15,7 @@ class DiaryViewModel with ChangeNotifier {
   ApiResponse<MyDiaryModel> _userDiary = ApiResponse.loading();
 
   ApiResponse<MyDiaryModel> get getMyDiary => _myDiary;
+  ApiResponse<MyDiaryModel> get getUserDiary => _userDiary;
 
   ApiResponse<DiaryWriteModel> diaryData = ApiResponse.loading();
   ApiResponse<DiaryDeleteModel> diaryDeleteData = ApiResponse.loading();
@@ -72,9 +73,9 @@ class DiaryViewModel with ChangeNotifier {
     final result = await _diaryRepository.getUserDiary(userId);
 
     if (result.statusCode == 200) {
-      setMyDiary(ApiResponse.complete(result));
+      setUserDiary(ApiResponse.complete(result));
     } else {
-      setMyDiary(ApiResponse.error());
+      setUserDiary(ApiResponse.error());
     }
 
     return result.statusCode;
