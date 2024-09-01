@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -91,8 +92,8 @@ class LocationFindButton extends StatelessWidget {
   }
 
   Future<Map<String, String>?> _getAddressFromCoordinates(double latitude, double longitude) async {
-    final String clientId = '2hwkvju5mw';
-    final String clientSecret = 'tVBIF6Olj6BOed8j9pmYIomWW8g5bLcWHD7wMUuO';
+    final String clientId = dotenv.get("NAVER_CLIENT_ID");
+    final String clientSecret = dotenv.get("NAVER_CLIENT_SECRET");
     
     final String url =
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$longitude,$latitude&output=json&orders=legalcode,admcode';
