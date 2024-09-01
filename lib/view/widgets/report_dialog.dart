@@ -84,6 +84,7 @@ class ReportDialog {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.white,
           alignment: Alignment.bottomCenter,
           insetPadding: EdgeInsets.only(
               bottom: ScreenUtil().setHeight(75.0),
