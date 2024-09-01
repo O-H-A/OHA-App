@@ -88,7 +88,7 @@ class _LocationSettingPageState extends State<LocationSettingPage> {
               controller: _controller,
               textAlign: TextAlign.start,
               style: const TextStyle(
-                color: Color(UserColors.ui06),
+                color: Color(UserColors.ui01),
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w700,
                 fontSize: 16,

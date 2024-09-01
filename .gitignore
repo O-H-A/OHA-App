@@ -45,3 +45,5 @@ app.*.map.json
 
 # Secret Key
 /lib/utils/secret_key.dart
+
+.env

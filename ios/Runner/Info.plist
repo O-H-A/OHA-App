@@ -66,6 +66,11 @@
 	<string>영상 촬영물에 대한 음성 접근 권한이 필요합니다.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>게시물 및 다이어리 등록시 위치 정보 접근 권한이 필요합니다.</string>
-
+	<key>NMFClientId</key>
+	<string>2hwkvju5mw</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
 </dict>
 </plist>
