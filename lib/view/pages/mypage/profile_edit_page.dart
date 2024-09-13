@@ -64,7 +64,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 shape: BoxShape.circle,
               ),
               child: ClipOval(
-                child: Image.file(File(_getProfileImage!.path)),
+                child: Image.file(
+                  File(_getProfileImage!.path),
+                  fit: BoxFit.cover,
+                ),
               ),
             )
           : (_myPageViewModel.myInfoData.data?.data.profileUrl?.isEmpty ?? true)

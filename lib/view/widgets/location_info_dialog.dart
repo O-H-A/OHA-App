@@ -124,6 +124,7 @@ class _LocationInfoDialogState extends State<LocationInfoDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
       content: SizedBox(
         width: ScreenUtil().setWidth(366.0),
         height: ScreenUtil().setHeight(389.0),
