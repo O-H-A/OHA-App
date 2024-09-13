@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage>
               backgroundColor: Colors.white,
               pinned: true,
               floating: true,
-              expandedHeight: 200.0,
+              expandedHeight: ScreenUtil().setHeight(200.0),
               flexibleSpace: const FlexibleSpaceBar(
                 background: Column(
                   children: [
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage>
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48.0),
                 child: Container(
-                  color: Colors.transparent,
+                  color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(27.0),),
                     child: TabBar(
