@@ -16,12 +16,17 @@ class AddKeywordDialog extends StatefulWidget {
 
 class _AddKeywordDialogState extends State<AddKeywordDialog> {
   final _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   late UploadViewModel _uploadViewModel;
 
   @override
   void initState() {
     super.initState();
     _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
   }
 
   TextSpan _buildTextSpan(String text) {
@@ -137,7 +142,10 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
           child: Container(
             width: double.infinity,
             height: ScreenUtil().setHeight(347.0),
-            color: Colors.white,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             child: Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
@@ -204,6 +212,7 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                       minLines: null,
                       expands: true,
                       controller: _controller,
+                      focusNode: _focusNode,
                       textAlign: TextAlign.start,
                       textAlignVertical: TextAlignVertical.top,
                       style: const TextStyle(
@@ -229,6 +238,10 @@ class _AddKeywordDialogState extends State<AddKeywordDialog> {
                           borderSide: BorderSide.none,
                         ),
                       ),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (value) {
+                        addKeyword();
+                      },
                     ),
                   ),
                   SizedBox(height: ScreenUtil().setHeight(22.0)),
