@@ -88,7 +88,8 @@ class _LocationSettingBottomSheetContentState
   void _addFrequentLocation(BuildContext context, int index) async {
     Map<String, String?>? result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LocationSettingPage(isWrite: false)),
+      MaterialPageRoute(
+          builder: (context) => const LocationSettingPage(isWrite: false)),
     );
 
     if (result != null) {
@@ -131,8 +132,9 @@ class _LocationSettingBottomSheetContentState
   }
 
   Widget _buildLocationWidget(BuildContext context, int index) {
-    bool isSelectedLocation = _locationViewModel.getDefaultLocation == _selectedLocations[index];
-    
+    bool isSelectedLocation =
+        _locationViewModel.getDefaultLocation == _selectedLocations[index];
+
     return GestureDetector(
       onTap: () async {
         if (_selectedLocations[index] == "") {
@@ -153,7 +155,9 @@ class _LocationSettingBottomSheetContentState
             },
           );
 
-          Map<String, dynamic> sendData = {Strings.codeKey: _frequentRegionCode[index]};
+          Map<String, dynamic> sendData = {
+            Strings.codeKey: _frequentRegionCode[index]
+          };
 
           try {
             await _locationViewModel.changeDefaultFrequentDistricts(sendData);
@@ -162,8 +166,8 @@ class _LocationSettingBottomSheetContentState
                 .setDefaultLocationCode(_frequentRegionCode[index]);
 
             await _weatherViewModel.getDefaultWeather();
-            await _weatherViewModel
-                .fetchWeatherCount({Strings.regionCodeKey: _frequentRegionCode[index]});
+            await _weatherViewModel.fetchWeatherCount(
+                {Strings.regionCodeKey: _frequentRegionCode[index]});
 
             sendData = {
               Strings.regionCodeKey: _locationViewModel.getDefaultLocationCode,
@@ -199,13 +203,15 @@ class _LocationSettingBottomSheetContentState
                 children: [
                   Flexible(
                     child: Text(
-                      (_selectedLocations[index] == "")
-                          ? Strings.locationSetting
+                      (_selectedLocations[index].isEmpty)
+                          ? Strings.addLocation
                           : _selectedLocations[index],
                       style: TextStyle(
                         color: isSelectedLocation
                             ? Colors.white
-                            : const Color(UserColors.ui06),
+                            : (_selectedLocations[index].isEmpty
+                                ? const Color(UserColors.ui06)
+                                : const Color(UserColors.ui01)),
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w600,
                         fontSize: 16,

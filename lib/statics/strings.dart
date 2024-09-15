@@ -79,6 +79,7 @@ class Strings {
   static const String onlyLocationRegister = "위치만 등록하기";
   static const String allAlbum = "모든 앨범";
   static const String locationSetting = "위치 설정";
+  static const String addLocation = "추가하기";
   static const String locationHint = "동명(읍, 면)으로 검색해 주세요. (ex. 논현동))";
   static const String findCurrentLocation = "현재 위치로 찾기";
   static const String neighborhoodLocation = "내 위치 근처 지역";
