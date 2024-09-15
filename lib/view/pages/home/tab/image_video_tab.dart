@@ -23,9 +23,16 @@ Widget _buildCategoryWidget(int index, Function(int) onTap) {
     Images.sunnyCategory,
   ];
 
-  return GestureDetector(
-    onTap: () => onTap(index),
-    child: SvgPicture.asset(categoryIcons[index]),
+  return Flexible(
+    child: GestureDetector(
+      onTap: () => onTap(index),
+      child: SvgPicture.asset(
+        categoryIcons[index],
+        width: double.infinity,
+        height: ScreenUtil().setHeight(85.0),
+        fit: BoxFit.contain,
+      ),
+    ),
   );
 }
 
@@ -63,7 +70,7 @@ class _ImageVideoTabState extends State<ImageVideoTab> {
           _buildCategoryTextWidget(),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(ScreenUtil().setWidth(12.0)),
+              padding: EdgeInsets.all(ScreenUtil().setWidth(22.0)),
               child: Column(
                 children: [
                   _buildRow(0),
@@ -82,9 +89,9 @@ class _ImageVideoTabState extends State<ImageVideoTab> {
 
   Widget _buildRow(int startIndex) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildCategoryWidget(startIndex, _navigateToCategoryPage),
+        SizedBox(width: ScreenUtil().setWidth(12.0)),
         if (startIndex + 1 < 6)
           _buildCategoryWidget(startIndex + 1, _navigateToCategoryPage),
       ],

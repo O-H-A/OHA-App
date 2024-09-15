@@ -129,16 +129,30 @@ class _HomePageState extends State<HomePage>
                 child: Container(
                   color: Colors.white,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(27.0),),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(0.0),
+                    ),
                     child: TabBar(
+                      tabAlignment: TabAlignment.start,
+                      isScrollable: true,
                       labelPadding: EdgeInsets.symmetric(
                           horizontal: ScreenUtil().setWidth(1.0)),
                       controller: tabController,
-                      tabs: const <Widget>[
-                        Tab(text: Strings.home),
-                        Tab(text: Strings.popularity),
-                        Tab(text: Strings.imageVideo),
-                        Tab(text: Strings.nowWeather),
+                      tabs: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil().setWidth(80),
+                            child: const Tab(text: Strings.home)),
+                        SizedBox(
+                            width: ScreenUtil().setWidth(80),
+                            child: const Tab(text: Strings.popularity)),
+                        SizedBox(
+                            width: ScreenUtil().setWidth(84),
+                            child: const Tab(text: Strings.imageVideo)),
+                        Container(
+                            width: ScreenUtil().setWidth(82),
+                            margin: EdgeInsets.only(
+                                left: ScreenUtil().setWidth(25)),
+                            child: const Tab(text: Strings.nowWeather)),
                       ],
                       labelColor: const Color(0xFF333333),
                       labelStyle: const TextStyle(
@@ -152,13 +166,19 @@ class _HomePageState extends State<HomePage>
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
-                      overlayColor: const WidgetStatePropertyAll(
-                        Colors.white,
-                      ),
+                      overlayColor: const WidgetStatePropertyAll(Colors.white),
                       indicatorColor: Colors.black,
-                      indicatorWeight: 2,
+                      indicatorWeight: 1,
                       dividerColor: Colors.transparent,
-                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorPadding: EdgeInsets.only(
+                        left: tabController.index == 3
+                            ? ScreenUtil().setWidth(25)
+                            : 0,
+                      ),
+                      onTap: (index) {
+                        setState(() {});
+                      },
                     ),
                   ),
                 ),
