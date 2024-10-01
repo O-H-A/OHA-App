@@ -96,8 +96,6 @@ class DiaryViewModel with ChangeNotifier {
       Map<String, dynamic> data, Uint8List? thumbnailData) async {
     final result = await _diaryRepository.diaryWrite(data, thumbnailData);
 
-    print("Jehee : ${result.statusCode}");
-
     if (result.statusCode == 200 || result.statusCode == 201) {
       setDiary(ApiResponse.complete(result));
     } else {
@@ -121,8 +119,6 @@ class DiaryViewModel with ChangeNotifier {
       Uint8List? thumbnailData, int diaryId) async {
     final result =
         await _diaryRepository.diaryUpdate(sendData, thumbnailData, diaryId);
-
-    print("Jehee : ${result.statusCode}");
 
     if (result.statusCode == 200 || result.statusCode == 201) {
       setDiaryUpdate(ApiResponse.complete(result));

@@ -46,22 +46,11 @@ class _DiaryPageState extends State<DiaryPage> {
   int _offset = 0;
   final int _pageSize = 10;
   bool _isLoading = false;
+  bool _didLoadData = false;
 
   @override
   void initState() {
     super.initState();
-
-    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
-
-    if (widget.userId != null) {
-      _fetchUserPosts(widget.userId!);
-
-      _isLoading = true;
-    } else {
-      _fetchData();
-    }
-
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 100 &&
@@ -69,6 +58,26 @@ class _DiaryPageState extends State<DiaryPage> {
         _loadMoreData();
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didLoadData) {
+      _didLoadData = true;
+      _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+      _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+
+      print("Jehee 6  ${widget.userId}");
+
+      if (widget.userId != null) {
+        print("Jehee 5");
+        _fetchUserPosts(widget.userId!);
+        _isLoading = true;
+      } else {
+        _fetchData();
+      }
+    }
   }
 
   Future<void> _fetchData() async {
@@ -100,6 +109,7 @@ class _DiaryPageState extends State<DiaryPage> {
 
     try {
       await _diaryViewModel.fetchUserDiary(userId);
+      print("Jehee 4");
       await _uploadViewModel.userPosts(userId).then((_) {
         _retryCallback = null;
       }).catchError((error) {
