@@ -74,9 +74,26 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
       recordedDays = {};
 
       if (widget.userId != null) {
-        final uploadEntries =
+        final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false)
+            .userDiaryEntries;
+        final postEntries =
             _uploadViewModel!.userUploadGetData.data?.data ?? [];
-        for (var entry in uploadEntries) {
+
+        for (var entry in diaryEntries) {
+          final diaryDate = DateTime(
+            int.parse(entry.setDate.substring(0, 4)),
+            int.parse(entry.setDate.substring(4, 6)),
+            int.parse(entry.setDate.substring(6, 8)),
+          );
+          if (diaryDate
+                  .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
+              diaryDate
+                  .isBefore(firstDayOfWeek!.add(const Duration(days: 7)))) {
+            recordedDays!.add(diaryDate.day);
+          }
+        }
+
+        for (var entry in postEntries) {
           DateTime entryDate = DateTime.parse(entry.regDtm);
           if (entryDate
                   .isAfter(firstDayOfWeek!.subtract(const Duration(days: 1))) &&
@@ -87,7 +104,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
         }
       } else {
         final diaryEntries =
-            Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+            Provider.of<DiaryViewModel>(context, listen: false).myDiaryEntries;
         final uploadEntries =
             _uploadViewModel!.myUploadGetData.data?.data ?? [];
 
@@ -210,8 +227,8 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
                   int day = daysList![index];
                   bool recorded = recordedDays!.contains(day);
                   bool isSelected = (day == selectedDay!.day &&
-                      firstDayOfWeek!.month == selectedDay!.month &&
-                      firstDayOfWeek!.year == selectedDay!.year);
+                      widget.currentDate.month == selectedDay!.month &&
+                      widget.currentDate.year == selectedDay!.year);
                   return _buildDayWidget(day, recorded, isSelected);
                 },
               ),

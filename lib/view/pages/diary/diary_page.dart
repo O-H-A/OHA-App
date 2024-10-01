@@ -61,6 +61,24 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+
+    if (widget.userId != null) {
+      Future.microtask(() {
+        _uploadViewModel.clearUserUploadGetData();
+        if (mounted) {
+          setState(() {
+            // UI 상태를 업데이트
+          });
+        }
+      });
+    }
+
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didLoadData) {
@@ -68,10 +86,7 @@ class _DiaryPageState extends State<DiaryPage> {
       _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
       _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
 
-      print("Jehee 6  ${widget.userId}");
-
       if (widget.userId != null) {
-        print("Jehee 5");
         _fetchUserPosts(widget.userId!);
         _isLoading = true;
       } else {
@@ -109,13 +124,11 @@ class _DiaryPageState extends State<DiaryPage> {
 
     try {
       await _diaryViewModel.fetchUserDiary(userId);
-      print("Jehee 4");
       await _uploadViewModel.userPosts(userId).then((_) {
         _retryCallback = null;
       }).catchError((error) {
         _retryCallback = () => _uploadViewModel.userPosts(userId);
       });
-      _uploadViewModel.clearUserUploadGetData();
     } catch (error) {
       _retryCallback = () {
         _uploadViewModel.userPosts(userId);
@@ -306,7 +319,7 @@ class _DiaryPageState extends State<DiaryPage> {
         }
 
         final userName = model?.data?.writer?.name ?? '';
-        final diaryCount = viewModel.diaryEntries.length;
+        final diaryCount = model?.data?.diaries?.length;
         final totalLikes = _getTotalLikes(viewModel);
         return Padding(
           padding:
@@ -337,7 +350,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     ),
                   ),
                   Text(
-                    Strings.diaryInfoText(diaryCount, totalLikes),
+                    Strings.diaryInfoText(diaryCount ?? 0, totalLikes),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Pretendard",
@@ -970,7 +983,10 @@ class _DiaryPageState extends State<DiaryPage> {
           ? _buildLoadingWidget()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {
-                final diaries = diaryViewModel.getDiariesByDate(selectedDate);
+                final diaries = diaryViewModel.getDiariesByDate(
+                  selectedDate,
+                  isUserDiary: widget.userId != null,
+                );
                 final myDiary = diaries.isNotEmpty ? diaries.first : null;
                 return SingleChildScrollView(
                   child: Column(

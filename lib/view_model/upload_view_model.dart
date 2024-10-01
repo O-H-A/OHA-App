@@ -8,6 +8,7 @@ import '../models/upload/comment_write_model.dart';
 import '../models/upload/upload_get_model.dart';
 import '../models/upload/upload_like_model.dart';
 import '../network/api_response.dart';
+
 class UploadViewModel with ChangeNotifier {
   UploadRepository _uploadRepository = UploadRepository();
 
@@ -133,12 +134,14 @@ class UploadViewModel with ChangeNotifier {
 
   Future<int> posting(
       Map<String, dynamic> data, Uint8List? thumbnailData, bool isVideo) async {
-    final result = await _uploadRepository.posting(data, thumbnailData, isVideo);
+    final result =
+        await _uploadRepository.posting(data, thumbnailData, isVideo);
 
     return result.statusCode;
   }
 
-  Future<int> edit(Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
+  Future<int> edit(
+      Map<String, dynamic> data, Uint8List? thumbnailData, isVideo) async {
     final result = await _uploadRepository.edit(data, thumbnailData, isVideo);
 
     return result.statusCode;

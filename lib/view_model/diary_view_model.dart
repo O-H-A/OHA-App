@@ -11,8 +11,9 @@ class DiaryViewModel with ChangeNotifier {
   final _diaryRepository = DiaryRepository();
 
   ApiResponse<MyDiaryModel> _myDiary = ApiResponse.loading();
-  List<MyDiary> diaryEntries = [];
+  List<MyDiary> myDiaryEntries = []; // 내 다이어리 데이터
   ApiResponse<MyDiaryModel> _userDiary = ApiResponse.loading();
+  List<MyDiary> userDiaryEntries = []; // 사용자 다이어리 데이터
 
   ApiResponse<MyDiaryModel> get getMyDiary => _myDiary;
   ApiResponse<MyDiaryModel> get getUserDiary => _userDiary;
@@ -24,18 +25,17 @@ class DiaryViewModel with ChangeNotifier {
   void setMyDiary(ApiResponse<MyDiaryModel> response) {
     _myDiary = response;
     if (response.status == Status.complete) {
-      diaryEntries = response.data?.data?.diaries ?? [];
+      myDiaryEntries = response.data?.data?.diaries ?? [];
     }
-
     notifyListeners();
   }
 
+  // 사용자 다이어리 설정
   void setUserDiary(ApiResponse<MyDiaryModel> response) {
     _userDiary = response;
     if (response.status == Status.complete) {
-      diaryEntries = response.data?.data?.diaries ?? [];
+      userDiaryEntries = response.data?.data?.diaries ?? [];
     }
-
     notifyListeners();
   }
 
@@ -81,11 +81,11 @@ class DiaryViewModel with ChangeNotifier {
     return result.statusCode;
   }
 
-  List<MyDiary> getDiariesByDate(DateTime date) {
-    return diaryEntries.where((diary) {
+  List<MyDiary> getDiariesByDate(DateTime date, {bool isUserDiary = false}) {
+    List<MyDiary> diaries = isUserDiary ? userDiaryEntries : myDiaryEntries;
+    return diaries.where((diary) {
       final diaryDate = DateTime.parse(
           "${diary.setDate.substring(0, 4)}-${diary.setDate.substring(4, 6)}-${diary.setDate.substring(6, 8)}");
-      print("Comparing: ${diaryDate} with ${date}");
       return diaryDate.year == date.year &&
           diaryDate.month == date.month &&
           diaryDate.day == date.day;
