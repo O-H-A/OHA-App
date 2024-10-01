@@ -46,22 +46,11 @@ class _DiaryPageState extends State<DiaryPage> {
   int _offset = 0;
   final int _pageSize = 10;
   bool _isLoading = false;
+  bool _didLoadData = false;
 
   @override
   void initState() {
     super.initState();
-
-    _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
-
-    if (widget.userId != null) {
-      _fetchUserPosts(widget.userId!);
-
-      _isLoading = true;
-    } else {
-      _fetchData();
-    }
-
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 100 &&
@@ -69,6 +58,41 @@ class _DiaryPageState extends State<DiaryPage> {
         _loadMoreData();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+
+    if (widget.userId != null) {
+      Future.microtask(() {
+        _uploadViewModel.clearUserUploadGetData();
+        if (mounted) {
+          setState(() {
+            // UI 상태를 업데이트
+          });
+        }
+      });
+    }
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didLoadData) {
+      _didLoadData = true;
+      _diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+      _uploadViewModel = Provider.of<UploadViewModel>(context, listen: false);
+
+      if (widget.userId != null) {
+        _fetchUserPosts(widget.userId!);
+        _isLoading = true;
+      } else {
+        _fetchData();
+      }
+    }
   }
 
   Future<void> _fetchData() async {
@@ -105,7 +129,6 @@ class _DiaryPageState extends State<DiaryPage> {
       }).catchError((error) {
         _retryCallback = () => _uploadViewModel.userPosts(userId);
       });
-      _uploadViewModel.clearUserUploadGetData();
     } catch (error) {
       _retryCallback = () {
         _uploadViewModel.userPosts(userId);
@@ -296,7 +319,7 @@ class _DiaryPageState extends State<DiaryPage> {
         }
 
         final userName = model?.data?.writer?.name ?? '';
-        final diaryCount = viewModel.diaryEntries.length;
+        final diaryCount = model?.data?.diaries?.length;
         final totalLikes = _getTotalLikes(viewModel);
         return Padding(
           padding:
@@ -327,7 +350,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     ),
                   ),
                   Text(
-                    Strings.diaryInfoText(diaryCount, totalLikes),
+                    Strings.diaryInfoText(diaryCount ?? 0, totalLikes),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Pretendard",
@@ -960,7 +983,10 @@ class _DiaryPageState extends State<DiaryPage> {
           ? _buildLoadingWidget()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {
-                final diaries = diaryViewModel.getDiariesByDate(selectedDate);
+                final diaries = diaryViewModel.getDiariesByDate(
+                  selectedDate,
+                  isUserDiary: widget.userId != null,
+                );
                 final myDiary = diaries.isNotEmpty ? diaries.first : null;
                 return SingleChildScrollView(
                   child: Column(

@@ -69,7 +69,7 @@ class MyDiaryWriter {
 
 class MyDiary {
   final int diaryId;
-  final String userId;
+  final int userId;
   final String title;
   final String weather;
   final String content;
@@ -101,7 +101,7 @@ class MyDiary {
   factory MyDiary.fromJson(Map<String, dynamic> json) {
     return MyDiary(
       diaryId: json['diaryId'] ?? 0,
-      userId: json['userId'] ?? '',
+      userId: json['userId'] ?? 0,
       title: json['title'] ?? '',
       weather: json['weather'] ?? '',
       content: json['content'] ?? '',

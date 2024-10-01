@@ -71,24 +71,39 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
           DateTime(widget.currentDate.year, widget.currentDate.month + 1, 0)
               .day;
       daysList = List<int>.generate(daysInMonth!, (index) => index + 1);
-
       recordedDays = {};
 
       if (widget.userId != null) {
+        final diaryEntries = Provider.of<DiaryViewModel>(context, listen: false)
+            .userDiaryEntries;
         final postEntries = Provider.of<UploadViewModel>(context, listen: false)
                 .userUploadGetData
                 .data
                 ?.data ??
             [];
+
+        for (var entry in diaryEntries) {
+          final diaryDate = DateTime(
+            int.parse(entry.setDate.substring(0, 4)),
+            int.parse(entry.setDate.substring(4, 6)),
+            int.parse(entry.setDate.substring(6, 8)),
+          );
+          if (diaryDate.month == widget.currentDate.month &&
+              diaryDate.year == widget.currentDate.year) {
+            recordedDays!.add(diaryDate.day);
+          }
+        }
+
         for (var entry in postEntries) {
           final postDate = DateTime.parse(entry.regDtm);
-          if (postDate.month == widget.currentDate.month) {
+          if (postDate.month == widget.currentDate.month &&
+              postDate.year == widget.currentDate.year) {
             recordedDays!.add(postDate.day);
           }
         }
       } else {
         final diaryEntries =
-            Provider.of<DiaryViewModel>(context, listen: false).diaryEntries;
+            Provider.of<DiaryViewModel>(context, listen: false).myDiaryEntries;
         final postEntries = Provider.of<UploadViewModel>(context, listen: false)
                 .myUploadGetData
                 .data
@@ -101,6 +116,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
             int.parse(entry.setDate.substring(4, 6)),
             int.parse(entry.setDate.substring(6, 8)),
           );
+
           if (diaryDate.month == widget.currentDate.month) {
             recordedDays!.add(diaryDate.day);
           }
