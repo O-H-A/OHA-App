@@ -64,10 +64,8 @@ class Images {
   static const String thunderRainDisable =
       "assets/images/thunder_rain_disable.svg";
   static const String veryHotDisable = "assets/images/very_hot_disable.svg";
-  static const String nightAirDisable = "assets/images/night_air_disable.svg";
   static const String windDisable = "assets/images/wind_disable.svg";
   static const String veryColdDisable = "assets/images/very_cold_disable.svg";
-  static const String rainbowDisable = "assets/images/rainbow_disable.svg";
   static const String littleCloudyEnable =
       "assets/images/little_cloudy_enable.svg";
   static const String manyCloudEnable = "assets/images/many_cloud_disable.svg";
@@ -78,10 +76,8 @@ class Images {
   static const String thunderRainEnable =
       "assets/images/thunder_rain_enable.svg";
   static const String veryHotEnable = "assets/images/very_hot_enable.svg";
-  static const String nightAirEnable = "assets/images/night_air_enable.svg";
   static const String windEnable = "assets/images/wind_enable.svg";
   static const String veryColdEnable = "assets/images/very_cold_enable.svg";
-  static const String rainbowEnable = "assets/images/rainbow_enable.svg";
   static const String nowWeatherEmpty = "assets/images/now_weather_empty.svg";
   static const String snowRain = "assets/images/snow_rain.svg";
   static const String loading_1 = "assets/images/loading_1.svg";
@@ -113,9 +109,7 @@ class Images {
     "천둥 비": Images.thunderRainEnable,
     "매우 추움": Images.veryColdEnable,
     "매우 더움": Images.veryHotEnable,
-    "밤공기": Images.nightAirEnable,
     "바람": Images.windEnable,
-    "무지개": Images.rainbowEnable
   };
 
   static const Map<String, String> diaryWeatherImageMap = {
@@ -129,9 +123,7 @@ class Images {
     "WTHR_THUNDER_RAIN": Images.thunderRainEnable,
     "WTHR_VERY_COLD": Images.veryColdEnable,
     "매우 더움": Images.veryHotEnable,
-    "WTHR_NIGHT_AIR": Images.nightAirEnable,
     "WTHR_WIND": Images.windEnable,
-    "WTHR_RAINBOW": Images.rainbowEnable
   };
 
   static const Map<String, String> mainWeatherImageMap = {

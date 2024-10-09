@@ -126,7 +126,6 @@ class Strings {
   static const String snow = "눈";
   static const String thunderSnow = "천둥 비";
   static const String veryHot = "매우 더움";
-  static const String nightAir = "밤공기";
   static const String wind = "바람";
   static const String veryCold = "매우 추움";
   static const String loginedWithKakao = "카카오 계정으로 로그인 됨";
@@ -253,10 +252,8 @@ class Strings {
     snow: "WTHR_SNOW",
     thunderSnow: "WTHR_THUNDER_RAIN",
     veryHot: "WTHR_VERY_HOT",
-    nightAir: "WTHR_NIGHT_AIR",
     wind: "WTHR_WIND",
     veryCold: "WTHR_VERY_COLD",
-    rainbow: "WTHR_RAINBOW",
   };
 
   static const Map<String, String> mainWeatherStringMap = {
