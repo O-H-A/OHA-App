@@ -77,28 +77,49 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   }
 
   Widget _buildTitleGuide() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: ScreenUtil().setHeight(12.0)),
-        const Text(
-          Strings.neighborhoodWeather,
-          style: TextStyle(
-              color: Colors.black,
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w600,
-              fontSize: 20),
+    return Padding(
+      padding: EdgeInsets.only(top: ScreenUtil().setHeight(11.0)),
+      child: Container(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(111.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        SizedBox(height: ScreenUtil().setHeight(9.0)),
-        const Text(
-          Strings.weatherRegisterGuide,
-          style: TextStyle(
-              color: Color(UserColors.ui06),
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w400,
-              fontSize: 13),
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SvgPicture.asset(Images.weatherRegisterGuide),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    Strings.neighborhoodWeather,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20),
+                  ),
+                  SizedBox(height: ScreenUtil().setHeight(9.0)),
+                  const Text(
+                    Strings.weatherRegisterGuide,
+                    style: TextStyle(
+                        color: Color(UserColors.ui05),
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 
@@ -106,76 +127,65 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          Strings.questionWeather,
-          style: TextStyle(
-              color: Color(UserColors.ui01),
-              fontFamily: "Pretendard",
-              fontWeight: FontWeight.w600,
-              fontSize: 16),
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(
+                text: Strings.questionWeather,
+                style: TextStyle(
+                    color: Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16),
+              ),
+              TextSpan(
+                text: Strings.requiredIcon,
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(UserColors.primaryColor),
+                ),
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: ScreenUtil().setHeight(9.0)),
         const Text(
           Strings.chooseIcon,
           style: TextStyle(
               color: Color(UserColors.ui06),
               fontFamily: "Pretendard",
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w700,
               fontSize: 13),
         ),
-        SizedBox(height: ScreenUtil().setHeight(22.0)),
-      ],
-    );
-  }
-
-  Widget _buildWeatherInfoWIdget(String imagePath, String title, int count) {
-    return Column(
-      children: [
-        SvgPicture.asset(imagePath),
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: "Pretendard",
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(UserColors.ui01),
-          ),
-        ),
-        SizedBox(height: ScreenUtil().setHeight(17.0)),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: count.toString(),
-                style: const TextStyle(
-                    color: Color(UserColors.primaryColor),
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12),
-              ),
-              const TextSpan(
-                text: Strings.weatherRegistered,
-                style: TextStyle(
-                    color: Color(UserColors.ui06),
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12),
-              ),
-            ],
-          ),
-        ),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
       ],
     );
   }
 
   Widget _buildCurrentLocationGuide() {
-    return const Text(
-      Strings.curretLocationNeighborhood,
-      style: TextStyle(
-        fontFamily: "Pretendard",
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: Color(UserColors.ui01),
+    return RichText(
+      text: const TextSpan(
+        children: [
+          TextSpan(
+            text: Strings.curretLocationNeighborhood,
+            style: TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(UserColors.ui01),
+            ),
+          ),
+          TextSpan(
+            text: Strings.requiredIcon,
+            style: TextStyle(
+              fontFamily: "Pretendard",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(UserColors.primaryColor),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -215,15 +225,22 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
           border: Border.all(
-              color: const Color(UserColors.ui08),
+              color: const Color(UserColors.ui10),
               width: ScreenUtil().setWidth(1.0)),
           color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0D000000),
+              offset: Offset(0, 0),
+              blurRadius: 5,
+            ),
+          ],
         ),
         child: Padding(
           padding: EdgeInsets.only(left: ScreenUtil().setWidth(15.0)),
           child: Row(
             children: [
-              const Icon(Icons.expand_more, color: Color(UserColors.ui06)),
+              const Icon(Icons.expand_more, color: Colors.black),
               SizedBox(width: ScreenUtil().setWidth(10.0)),
               Text(
                 (widget.editState == true)
@@ -267,42 +284,35 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       onTap: () async {
         _getWeatherSelect();
       },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 1,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+      child: Container(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(82.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 0),
+              blurRadius: 5,
             ),
-            child: SizedBox(
-              height: ScreenUtil().setHeight(82.0),
-            ),
+          ],
+          border: Border.all(
+            color: const Color(UserColors.ui10),
+            width: 1.0,
           ),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(25.0)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset(Images.cloudyDisable),
-                SvgPicture.asset(Images.littleCloudyDisable),
-                SvgPicture.asset(Images.manyCloudDisable),
-                SvgPicture.asset(Images.sunnyDisable),
-              ],
-            ),
-          ),
-        ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(Images.sunnyDisable),
+            SizedBox(width: ScreenUtil().setWidth(44.0)),
+            SvgPicture.asset(Images.manyCloudDisable),
+            SizedBox(width: ScreenUtil().setWidth(44.0)),
+            SvgPicture.asset(Images.cloudyDisable),
+          ],
+        ),
       ),
     );
   }
@@ -312,44 +322,56 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
       onTap: () {
         _getWeatherSelect();
       },
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-              color: Colors.white,
-              border: Border.all(
-                color: const Color(UserColors.ui08),
+      child: Container(
+        width: double.infinity,
+        height: ScreenUtil().setHeight(82.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 0),
+              blurRadius: 5,
+            ),
+          ],
+          border: Border.all(
+            color: const Color(UserColors.ui10),
+            width: 1.0,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: ScreenUtil().setWidth(25.0)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(_selectImage),
+              SizedBox(
+                width: ScreenUtil().setWidth(32.0),
               ),
-            ),
-            child: SizedBox(
-              height: ScreenUtil().setHeight(82.0),
-            ),
+              Text(
+                _selectTitle,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16),
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(left: ScreenUtil().setWidth(25.0)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset(_selectImage),
-                SizedBox(
-                  width: ScreenUtil().setWidth(32.0),
-                ),
-                Text(
-                  _selectTitle,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Pretendard",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildNowWeatherGuideText() {
+    return const Text(
+      Strings.peopleWeatherInfo,
+      style: TextStyle(
+          color: Color(UserColors.ui06),
+          fontFamily: "Pretendard",
+          fontWeight: FontWeight.w600,
+          fontSize: 14),
     );
   }
 
@@ -404,64 +426,76 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(UserColors.ui11),
       appBar: const BackCloseAppBar(title: Strings.weatherRegister),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-        child: Column(
-          children: [
-            Expanded(
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTitleGuide(),
-                    SizedBox(height: ScreenUtil().setHeight(46.0)),
+                    SizedBox(height: ScreenUtil().setHeight(28.0)),
                     _buildCurrentLocationGuide(),
                     SizedBox(height: ScreenUtil().setHeight(12.0)),
                     _buildCurrentLocation(),
-                    SizedBox(height: ScreenUtil().setHeight(50.0)),
+                    SizedBox(height: ScreenUtil().setHeight(32.0)),
                     _buildWeatherInfoGuide(),
                     (_selectTitle == "" || _selectImage == "")
                         ? _buildEmptyWeatherSelect()
                         : _buildSelectWidgetWidget(),
-                    SizedBox(height: ScreenUtil().setHeight(23.0)),
-                    const Text(
-                      Strings.peopleWeatherInfo,
-                      style: TextStyle(
-                          color: Color(UserColors.ui06),
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13),
-                    ),
-                    SizedBox(height: ScreenUtil().setHeight(12.0)),
+                    SizedBox(height: ScreenUtil().setHeight(32.0)),
+                    _buildNowWeatherGuideText(),
+                    SizedBox(height: ScreenUtil().setHeight(4.0)),
                     const NowWeatherWidget(),
                     SizedBox(height: ScreenUtil().setHeight(52.0)),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(23.0)),
-              child: InfinityButton(
-                height: ScreenUtil().setHeight(50.0),
-                radius: ScreenUtil().radius(8.0),
-                backgroundColor: (completeState())
-                    ? const Color(UserColors.primaryColor)
-                    : const Color(UserColors.ui10),
-                text: (widget.editState == true)
-                    ? Strings.editComple
-                    : Strings.register,
-                textSize: 16,
-                textWeight: FontWeight.w600,
-                textColor: (completeState())
-                    ? Colors.white
-                    : const Color(UserColors.ui06),
-                callback: sendWeatherPosting,
+          ),
+          Container(
+            width: double.infinity,
+            height: ScreenUtil().setHeight(104.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: const Color(UserColors.ui10),
+                width: 1.0,
               ),
-            )
-          ],
-        ),
+            ),
+            child: Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(top: ScreenUtil().setHeight(10.0)),
+                  child: InfinityButton(
+                    height: ScreenUtil().setHeight(50.0),
+                    radius: ScreenUtil().radius(8.0),
+                    backgroundColor: (completeState())
+                        ? const Color(UserColors.primaryColor)
+                        : const Color(UserColors.ui10),
+                    text: (widget.editState == true)
+                        ? Strings.editComple
+                        : Strings.register,
+                    textSize: 16,
+                    textWeight: FontWeight.w600,
+                    textColor: (completeState())
+                        ? Colors.white
+                        : const Color(UserColors.ui06),
+                    callback: sendWeatherPosting,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

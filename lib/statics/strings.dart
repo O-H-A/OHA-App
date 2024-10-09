@@ -32,7 +32,7 @@ class Strings {
       "동네 사용자들과 함께 날씨 정보를 공유해 주세요!\n공유 할수록 더 정확한 날씨를 알 수 있어요";
   static const String questionWeather = "현재 동네 날씨를 알려 주세요";
   static const String chooseIcon = "아이콘을 선택해 주세요.";
-  static const String peopleWeatherInfo = "동네 사람들의 날씨 정보";
+  static const String peopleWeatherInfo = "동네 사람들의 날씨 정보를 참고해 보세요!";
   static const String next = "다음";
   static const String albumAgreement = "앨범 읽기/쓰기 허용";
   static const String albumAgreementGuide = "게시물 등록에 사용될 앨범 접근 권한";
@@ -118,7 +118,6 @@ class Strings {
   static const String frequentlyVistedAreaGuide = "자주가는 지역을 추가해 보세요";
   static const String curretLocationNeighborhood = "현재 위치하고 있는 동네를 선택해 주세요";
   static const String cloudy = "흐림";
-  static const String littleCloudy = "약간 흐림";
   static const String manyCloud = "구름 많음";
   static const String sunny = "맑음";
   static const String rain = "비";
@@ -126,7 +125,6 @@ class Strings {
   static const String snow = "눈";
   static const String thunderSnow = "천둥 비";
   static const String veryHot = "매우 더움";
-  static const String nightAir = "밤공기";
   static const String wind = "바람";
   static const String veryCold = "매우 추움";
   static const String loginedWithKakao = "카카오 계정으로 로그인 됨";
@@ -215,6 +213,7 @@ class Strings {
   static const String diaryDeleteTitle = "다이어리 삭제";
   static const String diaryDeleteContent = "게시물을 삭제하시겠습니까?";
   static const String diaryDeleteComplete = "다이어리를 삭제하시겠습니까?";
+  static const String requiredIcon = " *";
 
   /*
     구름 	CTGR_CLOUD
@@ -245,7 +244,6 @@ class Strings {
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",
-    littleCloudy: "WTHR_PARTLY_CLOUDY",
     manyCloud: "WTHR_MOSTLY_CLOUDY",
     sunny: "WTHR_CLEAR",
     rain: "WTHR_RAIN",
@@ -253,10 +251,8 @@ class Strings {
     snow: "WTHR_SNOW",
     thunderSnow: "WTHR_THUNDER_RAIN",
     veryHot: "WTHR_VERY_HOT",
-    nightAir: "WTHR_NIGHT_AIR",
     wind: "WTHR_WIND",
     veryCold: "WTHR_VERY_COLD",
-    rainbow: "WTHR_RAINBOW",
   };
 
   static const Map<String, String> mainWeatherStringMap = {

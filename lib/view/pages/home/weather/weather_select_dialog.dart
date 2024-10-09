@@ -13,7 +13,6 @@ class WeatherSelectDialog extends StatelessWidget {
 
   final List<String> weatherTitleList = [
     Strings.cloudy,
-    Strings.littleCloudy,
     Strings.manyCloud,
     Strings.sunny,
     Strings.rain,
@@ -21,15 +20,12 @@ class WeatherSelectDialog extends StatelessWidget {
     Strings.snow,
     Strings.thunderSnow,
     Strings.veryHot,
-    Strings.nightAir,
     Strings.wind,
     Strings.veryCold,
-    Strings.rainbow
   ];
 
   final List<String> weatherImageList = [
     Images.cloudyDisable,
-    Images.littleCloudyDisable,
     Images.manyCloudDisable,
     Images.sunnyDisable,
     Images.rainDisable,
@@ -37,15 +33,12 @@ class WeatherSelectDialog extends StatelessWidget {
     Images.snowDisable,
     Images.thunderRainDisable,
     Images.veryHotDisable,
-    Images.nightAirDisable,
     Images.windDisable,
     Images.veryColdDisable,
-    Images.rainbowDisable,
   ];
 
   final List<String> weatherEnableImageList = [
     Images.cloudyEnable,
-    Images.littleCloudyEnable,
     Images.manyCloudEnable,
     Images.sunnyEnable,
     Images.rainEnable,
@@ -53,10 +46,8 @@ class WeatherSelectDialog extends StatelessWidget {
     Images.snowEnable,
     Images.thunderRainEnable,
     Images.veryHotEnable,
-    Images.nightAirEnable,
     Images.windEnable,
     Images.veryColdEnable,
-    Images.rainbowEnable,
   ];
 
   Widget _contentsWidget(
@@ -108,10 +99,10 @@ class WeatherSelectDialog extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 3,
               childAspectRatio: 1,
             ),
-            itemCount: 13,
+            itemCount: weatherImageList.length,
             itemBuilder: (context, index) {
               return _contentsWidget(context, weatherImageList[index],
                   weatherTitleList[index], index);

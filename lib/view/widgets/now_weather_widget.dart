@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -86,9 +84,10 @@ class _NowWeatherWidgetState extends State<NowWeatherWidget> {
 
   Widget _buildWeatherInfoWidget(String imagePath, String title, int count) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SvgPicture.asset(imagePath),
-        SizedBox(height: ScreenUtil().setHeight(36.0)),
+        SizedBox(height: ScreenUtil().setHeight(26.0)),
         Text(
           title,
           style: const TextStyle(
@@ -98,7 +97,7 @@ class _NowWeatherWidgetState extends State<NowWeatherWidget> {
             color: Color(UserColors.ui01),
           ),
         ),
-        SizedBox(height: ScreenUtil().setHeight(17.0)),
+        SizedBox(height: ScreenUtil().setHeight(12.0)),
         RichText(
           text: TextSpan(
             children: [
@@ -133,57 +132,47 @@ class _NowWeatherWidgetState extends State<NowWeatherWidget> {
           case Status.loading:
             return const LoadingWidget();
           case Status.complete:
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(ScreenUtil().radius(8.0)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 7,
-                        offset: const Offset(3, 3),
-                      ),
-                    ],
+            return Container(
+              width: double.infinity,
+              height: ScreenUtil().setHeight(158.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, 0),
+                    blurRadius: 5,
                   ),
-                  child: SizedBox(
-                    height: ScreenUtil().setHeight(182.0),
-                  ),
+                ],
+                border: Border.all(
+                  color: const Color(UserColors.ui10),
+                  width: 1.0,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: ScreenUtil().setWidth(46.0)),
-                  child: weatherViewModel.topThreeWeatherData.isEmpty
-                      ? _buildWeatherEmptyWidget()
-                      : Row(
-                          mainAxisAlignment:
-                              weatherViewModel.topThreeWeatherData.length == 1
-                                  ? MainAxisAlignment.center
-                                  : MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: weatherViewModel.topThreeWeatherData
-                              .map((weatherData) {
-                            return _buildWeatherInfoWidget(
-                                Images.weatherImageMap[
-                                        weatherData.weatherName] ??
-                                    '',
-                                weatherData.weatherName,
-                                weatherData.count);
-                          }).toList(),
-                        ),
-                ),
-              ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: ScreenUtil().setWidth(46.0)),
+                child: weatherViewModel.topThreeWeatherData.isEmpty
+                    ? _buildWeatherEmptyWidget()
+                    : Row(
+                        mainAxisAlignment: weatherViewModel
+                                    .topThreeWeatherData.length ==
+                                1
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: weatherViewModel.topThreeWeatherData
+                            .map((weatherData) {
+                          return _buildWeatherInfoWidget(
+                              Images.weatherImageMap[
+                                      weatherData.weatherName] ??
+                                  '',
+                              weatherData.weatherName,
+                              weatherData.count);
+                        }).toList(),
+                      ),
+              ),
             );
           default:
             return ErrorPage(isNetworkError: false, onRetry: _retryCallback);

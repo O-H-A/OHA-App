@@ -62,7 +62,7 @@ class _MainWeatherWidgetState extends State<MainWeatherWidget> {
         final widgetType = weatherViewModel.defaultWeatherData.data?.data.widget ?? '';
         final probPrecip = weatherViewModel.defaultWeatherData.data?.data.probPrecip ?? '';
 
-        final String widgetImage = Images.mainWeatherImageMap[widgetType] ?? Images.littleCloudyEnable;
+        final String widgetImage = Images.mainWeatherImageMap[widgetType] ?? Images.cloudyEnable;
         String weatherName;
 
         if (widgetType == "KMA_MOSTLY_CLOUDY" && probPrecip.isNotEmpty) {
