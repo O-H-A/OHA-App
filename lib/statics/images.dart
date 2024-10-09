@@ -54,8 +54,6 @@ class Images {
   static const String myImageDefault = "assets/images/my_image_default.png";
   static const String cloudyDisable = "assets/images/cloudy_disable.svg";
   static const String cloudyEnable = "assets/images/cloudy_enable.svg";
-  static const String littleCloudyDisable =
-      "assets/images/little_cloudy_disable.svg";
   static const String manyCloudDisable = "assets/images/many_cloud_disable.svg";
   static const String sunnyDisable = "assets/images/sunny_disable.svg";
   static const String rainDisable = "assets/images/rain_disable.svg";
@@ -66,8 +64,6 @@ class Images {
   static const String veryHotDisable = "assets/images/very_hot_disable.svg";
   static const String windDisable = "assets/images/wind_disable.svg";
   static const String veryColdDisable = "assets/images/very_cold_disable.svg";
-  static const String littleCloudyEnable =
-      "assets/images/little_cloudy_enable.svg";
   static const String manyCloudEnable = "assets/images/many_cloud_disable.svg";
   static const String sunnyEnable = "assets/images/sunny_enable.svg";
   static const String rainEnable = "assets/images/rain_enable.svg";
@@ -101,7 +97,6 @@ class Images {
   static const Map<String, String> weatherImageMap = {
     "흐림": Images.cloudyEnable,
     "구름 많음": Images.manyCloudEnable,
-    "구름 조금": Images.littleCloudyEnable,
     "맑음": Images.sunnyEnable,
     "비": Images.rainEnable,
     "천둥": Images.thunderEnable,
@@ -115,7 +110,6 @@ class Images {
   static const Map<String, String> diaryWeatherImageMap = {
     "WTHR_CLOUDY": Images.cloudyEnable,
     "WTHR_MOSTLY_CLOUDY": Images.manyCloudEnable,
-    "WTHR_PARTLY_CLOUDY": Images.littleCloudyEnable,
     "WTHR_CLEAR": Images.sunnyEnable,
     "WTHR_RAIN": Images.rainEnable,
     "WTHR_THUNDER": Images.thunderEnable,

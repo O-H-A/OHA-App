@@ -296,7 +296,6 @@ class _WeatherRegisterPageState extends State<WeatherRegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(Images.cloudyDisable),
-                SvgPicture.asset(Images.littleCloudyDisable),
                 SvgPicture.asset(Images.manyCloudDisable),
                 SvgPicture.asset(Images.sunnyDisable),
               ],

@@ -118,7 +118,6 @@ class Strings {
   static const String frequentlyVistedAreaGuide = "자주가는 지역을 추가해 보세요";
   static const String curretLocationNeighborhood = "현재 위치하고 있는 동네를 선택해 주세요";
   static const String cloudy = "흐림";
-  static const String littleCloudy = "약간 흐림";
   static const String manyCloud = "구름 많음";
   static const String sunny = "맑음";
   static const String rain = "비";
@@ -244,7 +243,6 @@ class Strings {
 
   static const Map<String, String> weatherCodeMap = {
     cloudy: "WTHR_CLOUDY",
-    littleCloudy: "WTHR_PARTLY_CLOUDY",
     manyCloud: "WTHR_MOSTLY_CLOUDY",
     sunny: "WTHR_CLEAR",
     rain: "WTHR_RAIN",

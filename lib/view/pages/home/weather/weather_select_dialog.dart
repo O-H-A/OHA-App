@@ -13,7 +13,6 @@ class WeatherSelectDialog extends StatelessWidget {
 
   final List<String> weatherTitleList = [
     Strings.cloudy,
-    Strings.littleCloudy,
     Strings.manyCloud,
     Strings.sunny,
     Strings.rain,
@@ -27,7 +26,6 @@ class WeatherSelectDialog extends StatelessWidget {
 
   final List<String> weatherImageList = [
     Images.cloudyDisable,
-    Images.littleCloudyDisable,
     Images.manyCloudDisable,
     Images.sunnyDisable,
     Images.rainDisable,
@@ -41,7 +39,6 @@ class WeatherSelectDialog extends StatelessWidget {
 
   final List<String> weatherEnableImageList = [
     Images.cloudyEnable,
-    Images.littleCloudyEnable,
     Images.manyCloudEnable,
     Images.sunnyEnable,
     Images.rainEnable,
@@ -102,7 +99,7 @@ class WeatherSelectDialog extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 3,
               childAspectRatio: 1,
             ),
             itemCount: weatherImageList.length,

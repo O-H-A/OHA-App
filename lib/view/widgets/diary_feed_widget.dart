@@ -86,9 +86,9 @@ class _DiaryFeedWidgetState extends State<DiaryFeedWidget> {
 
   Widget _buildWeatherWidget() {
     final imagePath = Images.diaryWeatherImageMap[widget.diaryData.weather] ??
-        Images.littleCloudyEnable;
+        Images.cloudyEnable;
     final weather = Strings.weatherCodeMap[widget.diaryData.weather] ??
-        Strings.littleCloudy;
+        Strings.cloudy;
 
     return Padding(
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(22.0)),
