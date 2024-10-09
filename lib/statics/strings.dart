@@ -32,7 +32,7 @@ class Strings {
       "동네 사용자들과 함께 날씨 정보를 공유해 주세요!\n공유 할수록 더 정확한 날씨를 알 수 있어요";
   static const String questionWeather = "현재 동네 날씨를 알려 주세요";
   static const String chooseIcon = "아이콘을 선택해 주세요.";
-  static const String peopleWeatherInfo = "동네 사람들의 날씨 정보";
+  static const String peopleWeatherInfo = "동네 사람들의 날씨 정보를 참고해 보세요!";
   static const String next = "다음";
   static const String albumAgreement = "앨범 읽기/쓰기 허용";
   static const String albumAgreementGuide = "게시물 등록에 사용될 앨범 접근 권한";
@@ -213,6 +213,7 @@ class Strings {
   static const String diaryDeleteTitle = "다이어리 삭제";
   static const String diaryDeleteContent = "게시물을 삭제하시겠습니까?";
   static const String diaryDeleteComplete = "다이어리를 삭제하시겠습니까?";
+  static const String requiredIcon = " *";
 
   /*
     구름 	CTGR_CLOUD

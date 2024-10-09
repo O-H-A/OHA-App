@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oha/statics/colors.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 
 import '../../app.dart';
@@ -50,8 +51,15 @@ class BackCloseAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       titleSpacing: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(UserColors.ui11),
       elevation: 0,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0),
+        child: Container(
+          color: const Color(UserColors.ui10),
+          height: 1.0,
+        ),
+      ),
     );
   }
 
