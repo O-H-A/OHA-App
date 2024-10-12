@@ -3,8 +3,15 @@ import 'package:oha/view/widgets/button_icon.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final Color? backgroundColor;
+  final bool isUnderLine;
 
-  const BackAppBar({Key? key, required this.title}) : super(key: key);
+  const BackAppBar({
+    Key? key,
+    required this.title,
+    this.backgroundColor = Colors.white,
+    this.isUnderLine = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       titleSpacing: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       elevation: 0,
       leading: IconButton(
         onPressed: () {
@@ -34,9 +41,19 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
       ),
+      bottom: isUnderLine
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(1.0),
+              child: Container(
+                color: const Color(0xFFE0E0E0),
+                height: 1.0,
+              ),
+            )
+          : null,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (isUnderLine ? 1.0 : 0.0));
 }

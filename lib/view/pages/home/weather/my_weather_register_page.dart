@@ -43,14 +43,16 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
           height: ScreenUtil().setHeight(228.0),
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
-          yesCallback: () => onChangeHistoryDeleteYes(context, address, weatherId),
+          yesCallback: () =>
+              onChangeHistoryDeleteYes(context, address, weatherId),
           noCallback: () => onChangeHistoryDeleteNo(context),
         );
       },
     );
   }
 
-  void onChangeHistoryDeleteYes(BuildContext context, String address, weatherId) {
+  void onChangeHistoryDeleteYes(
+      BuildContext context, String address, weatherId) {
     Map<String, dynamic> sendData = {
       "weatherId": weatherId,
     };
@@ -74,6 +76,18 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
     Navigator.pop(context);
   }
 
+  Widget _buildRegisterWeatherInfoText() {
+    return const Text(
+      Strings.registerWeatherInfo,
+      style: TextStyle(
+        fontFamily: "Pretendard",
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Colors.black,
+      ),
+    );
+  }
+
   Widget _buildMyWeatherWidget() {
     return Consumer<WeatherViewModel>(
       builder: (context, weatherViewModel, child) {
@@ -81,7 +95,8 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
           case Status.loading:
             return const LoadingWidget();
           case Status.complete:
-            var weatherList = weatherViewModel.getWeatherPostingMy.data?.data ?? [];
+            var weatherList =
+                weatherViewModel.getWeatherPostingMy.data?.data ?? [];
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -95,8 +110,9 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                       MaterialPageRoute(
                           builder: (context) => WeatherRegisterPage(
                                 editState: true,
-                                address: _locationViewModel.getThirdAddressByRegionCode(
-                                    weather.regionCode.toString()),
+                                address: _locationViewModel
+                                    .getThirdAddressByRegionCode(
+                                        weather.regionCode.toString()),
                                 weatherId: weather.weatherId,
                               )),
                     );
@@ -104,65 +120,64 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                       _weatherViewModel.fetchWeatherPostingMy();
                     }
                   },
-                  child: Padding(
-                    padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(UserColors.ui10),
-                              width: ScreenUtil().setWidth(1.0),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: ScreenUtil().setHeight(50.0),
-                          ),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: Colors.white,
+                      border: Border.all(
+                        color: const Color(UserColors.ui10),
+                        width: ScreenUtil().setWidth(1.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          offset: const Offset(0, 0),
+                          blurRadius: 5,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: ScreenUtil().setWidth(12.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ],
+                    ),
+                    height: ScreenUtil().setHeight(50.0),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(12.0)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    Images.weatherImageMap[weather.weatherName] ?? '',
-                                    width: ScreenUtil().setWidth(22.0),
-                                    height: ScreenUtil().setHeight(22.0),
-                                  ),
-                                  SizedBox(width: ScreenUtil().setWidth(11.0)),
-                                  Text(
-                                    _locationViewModel.getThirdAddressByRegionCode(
-                                        weather.regionCode.toString()),
-                                    style: const TextStyle(
-                                      fontFamily: "Pretendard",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
+                              SvgPicture.asset(
+                                Images.weatherImageMap[weather.weatherName] ??
+                                    '',
+                                width: ScreenUtil().setWidth(22.0),
+                                height: ScreenUtil().setHeight(22.0),
                               ),
-                              ButtonIcon(
-                                icon: Icons.close,
-                                iconColor: Colors.black,
-                                callback: () {
-                                  showDeleteDialog(
-                                      _locationViewModel.getThirdAddressByRegionCode(
-                                          weather.regionCode.toString()),
-                                      weather.weatherId);
-                                },
+                              SizedBox(width: ScreenUtil().setWidth(11.0)),
+                              Text(
+                                _locationViewModel.getThirdAddressByRegionCode(
+                                    weather.regionCode.toString()),
+                                style: const TextStyle(
+                                  fontFamily: "Pretendard",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          ButtonIcon(
+                            icon: Icons.close,
+                            iconColor: Colors.black,
+                            callback: () {
+                              showDeleteDialog(
+                                  _locationViewModel
+                                      .getThirdAddressByRegionCode(
+                                          weather.regionCode.toString()),
+                                  weather.weatherId);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -183,54 +198,53 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
         bool? result = await Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const WeatherRegisterPage(editState: false)),
+              builder: (context) =>
+                  const WeatherRegisterPage(editState: false)),
         );
         if (result == true) {
           _weatherViewModel.fetchWeatherPostingMy();
         }
       },
-      child: Padding(
-        padding: EdgeInsets.only(top: ScreenUtil().setHeight(22.0)),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-                color: Colors.white,
-                border: Border.all(
-                  color: const Color(UserColors.ui10),
-                  width: ScreenUtil().setWidth(1.0),
-                ),
-              ),
-              child: SizedBox(
-                height: ScreenUtil().setHeight(50.0),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
-              child: Row(
-                children: [
-                  ButtonIcon(
-                    icon: Icons.add,
-                    iconColor: Colors.black,
-                    callback: () {},
-                  ),
-                  SizedBox(width: ScreenUtil().setWidth(17.0)),
-                  const Text(
-                    Strings.add,
-                    style: TextStyle(
-                      fontFamily: "Pretendard",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.white,
+          border: Border.all(
+            color: const Color(UserColors.ui10),
+            width: ScreenUtil().setWidth(1.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 0),
+              blurRadius: 5,
             ),
           ],
+        ),
+        height: ScreenUtil().setHeight(50.0),
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(12.0)),
+          child: Row(
+            children: [
+              ButtonIcon(
+                icon: Icons.add,
+                iconColor: Colors.black,
+                callback: () {},
+              ),
+              SizedBox(width: ScreenUtil().setWidth(17.0)),
+              const Text(
+                Strings.add,
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -239,13 +253,20 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const BackAppBar(title: Strings.myWeatherInformation),
+      backgroundColor: const Color(UserColors.ui11),
+      appBar: const BackAppBar(
+          title: Strings.myWeatherInformation,
+          backgroundColor: Color(UserColors.ui11),
+          isUnderLine: true),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: ScreenUtil().setHeight(16.0)),
+              _buildRegisterWeatherInfoText(),
+              SizedBox(height: ScreenUtil().setHeight(24.0)),
               _buildMyWeatherWidget(),
               _buildAddWeatherWidget(),
               SizedBox(height: ScreenUtil().setHeight(50.0)),
