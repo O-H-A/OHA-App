@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/upload/upload_image_widget.dart';
@@ -111,27 +109,41 @@ class _UploadPageState extends State<UploadPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        leading: Container(),
         title: _albums.isNotEmpty
-            ? DropdownButton(
-                icon: const Icon(Icons.expand_more_rounded),
-                underline: Container(),
-                value: _currentAlbum,
-                items: _albums
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(
-                            e.name,
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16),
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (value) => getPhotos(value!, albumChange: true),
+            ? SizedBox(
+                width: ScreenUtil().setWidth(85.0),
+                child: DropdownButton(
+                  isExpanded: true,
+                  icon: const Icon(Icons.expand_more_rounded),
+                  underline: Container(),
+                  value: _currentAlbum,
+                  items: _albums
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e.name,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16),
+                            ),
+                          ))
+                      .toList(),
+                  onChanged: (value) => getPhotos(value!, albumChange: true),
+                ),
               )
             : const SizedBox(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            iconSize: 24,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
       body: _paths == null
           ? const Center(child: CircularProgressIndicator())
@@ -144,8 +156,8 @@ class _UploadPageState extends State<UploadPage> {
                 )),
                 Padding(
                   padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(40.0),
-                      bottom: ScreenUtil().setHeight(120.0),
+                      top: ScreenUtil().setHeight(10.0),
+                      bottom: ScreenUtil().setHeight(44.0),
                       left: ScreenUtil().setWidth(22.0),
                       right: ScreenUtil().setWidth(22.0)),
                   child: InfinityButton(

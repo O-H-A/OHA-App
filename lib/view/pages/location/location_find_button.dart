@@ -4,16 +4,23 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:oha/view/widgets/delete_dialog.dart';
+import 'package:oha/view/widgets/check_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:oha/view_model/location_view_model.dart';
 import '../../../statics/colors.dart';
 import '../../../statics/strings.dart';
 
-class LocationFindButton extends StatelessWidget {
+class LocationFindButton extends StatefulWidget {
   final Function(Map<String, String>?) onLocationFound;
 
   const LocationFindButton({super.key, required this.onLocationFound});
 
+  @override
+  State<LocationFindButton> createState() => _LocationFindButtonState();
+}
+
+class _LocationFindButtonState extends State<LocationFindButton> {
   Future<void> _findCurrentLocation(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -23,27 +30,37 @@ class LocationFindButton extends StatelessWidget {
       print('Location services are disabled.');
       return;
     }
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
-        print('Location permissions are denied');
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        _showNotPermissionDialog(context);
         return;
       }
     }
 
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (permission == LocationPermission.deniedForever) {
+      _showNotPermissionDialog(context);
+      return;
+    }
 
-    Map<String, String>? address = await _getAddressFromCoordinates(position.latitude, position.longitude);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    Map<String, String>? address =
+        await _getAddressFromCoordinates(position.latitude, position.longitude);
 
     if (address != null) {
-      final locationViewModel = Provider.of<LocationViewModel>(context, listen: false);
-      final allLocationList = locationViewModel.getLocationData.data?.data.locations;
-    
+      final locationViewModel =
+          Provider.of<LocationViewModel>(context, listen: false);
+      final allLocationList =
+          locationViewModel.getLocationData.data?.data.locations;
+
       if (allLocationList != null) {
         List<Map<String, String>> matchedLocations = [];
-        final currentAddress = '${address['si']} ${address['gu']} ${address['dong']}';
+        final currentAddress =
+            '${address['si']} ${address['gu']} ${address['dong']}';
 
         for (final province in allLocationList.keys) {
           final cityMap = allLocationList[province];
@@ -67,22 +84,18 @@ class LocationFindButton extends StatelessWidget {
         }
 
         if (matchedLocations.isNotEmpty) {
-          onLocationFound(matchedLocations.first);
+          widget.onLocationFound(matchedLocations.first);
         } else {
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              title: Text('위치 확인'),
-              content: Text('현재 위치와 일치하는 항목이 없습니다.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('확인'),
-                ),
-              ],
-            ),
+            builder: (BuildContext context) {
+              return CheckDialog(
+                height: ScreenUtil().setHeight(196.0),
+                titleText: Strings.notification,
+                guideText: Strings.locationNotifcationGuide,
+                checkCallback: () => Navigator.of(context).pop(),
+              );
+            },
           );
         }
       }
@@ -91,10 +104,33 @@ class LocationFindButton extends StatelessWidget {
     }
   }
 
-  Future<Map<String, String>?> _getAddressFromCoordinates(double latitude, double longitude) async {
+  void _showNotPermissionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return YesNoDialog(
+          height: ScreenUtil().setHeight(196.0),
+          titleText: Strings.notification,
+          guideText: Strings.loationNotPermissionGuide,
+          yesText: Strings.moveSetting,
+          noText: Strings.calcel,
+          yesCallback: () {
+            Navigator.of(context).pop();
+            Geolocator.openAppSettings();
+          },
+          noCallback: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  Future<Map<String, String>?> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
     final String clientId = dotenv.get("NAVER_CLIENT_ID");
     final String clientSecret = dotenv.get("NAVER_CLIENT_SECRET");
-    
+
     final String url =
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$longitude,$latitude&output=json&orders=legalcode,admcode';
 
@@ -138,7 +174,7 @@ class LocationFindButton extends StatelessWidget {
             height: ScreenUtil().setHeight(50.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(8.0)),
-              color: Color(UserColors.primaryColor),
+              color: const Color(UserColors.primaryColor),
             ),
           ),
           Positioned(

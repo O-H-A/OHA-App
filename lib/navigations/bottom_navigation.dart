@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:oha/statics/colors.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../statics/images.dart';
 import '../statics/strings.dart';
@@ -41,7 +41,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
       if (!isCameraGranted || !isMicGranted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const UploadAgreementsPage()),
+          MaterialPageRoute(
+            builder: (context) => const UploadAgreementsPage(),
+          ),
+        );
+        return;
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UploadPage(),
+          ),
         );
         return;
       }
@@ -72,18 +82,16 @@ class _BottomNavigationState extends State<BottomNavigation> {
         children: _pages,
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 7,
-              offset: const Offset(0, -3),
-            ),
-          ],
+        decoration: const BoxDecoration(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10.0),
             topRight: Radius.circular(10.0),
+          ),
+          border: Border(
+            top: BorderSide(
+              color: Color(UserColors.ui10),
+              width: 1.0,
+            ),
           ),
         ),
         child: ClipRRect(

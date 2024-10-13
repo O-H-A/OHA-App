@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -19,9 +18,6 @@ import '../../../view_model/location_view_model.dart';
 import '../../widgets/complete_dialog.dart';
 import '../../widgets/infinity_button.dart';
 import '../../widgets/location_info_dialog.dart';
-
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 
 class UploadWritePage extends StatefulWidget {
@@ -519,6 +515,253 @@ class _UploadWritePageState extends State<UploadWritePage> {
     );
   }
 
+  Widget _buildPhotoArea() {
+    return GestureDetector(
+      onTap: () {
+        return;
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(46.0)),
+        child: SizedBox(
+          width: double.infinity,
+          height: ScreenUtil().setHeight(298.0),
+          child: widget.selectMedia != null
+              ? FutureBuilder<Uint8List?>(
+                  future: widget.selectMedia?.thumbnailData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data != null) {
+                      return Image.memory(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      );
+                    } else {
+                      return const Center(child: LoadingWidget());
+                    }
+                  },
+                )
+              : (widget.uploadData?.files.isNotEmpty ?? false)
+                  ? Image.network(widget.uploadData!.files[0].url,
+                      fit: BoxFit.cover)
+                  : Container(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContentsWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            Strings.write,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          SizedBox(
+            height: ScreenUtil().setHeight(136.0),
+            child: TextField(
+              maxLines: null,
+              minLines: null,
+              expands: true,
+              controller: _textController,
+              textAlign: TextAlign.start,
+              textAlignVertical: TextAlignVertical.top,
+              style: const TextStyle(
+                color: Color(UserColors.ui01),
+                fontFamily: "Pretendard",
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                decoration: TextDecoration.none,
+              ),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(UserColors.ui11),
+                hintText: Strings.uploadWriteHintText,
+                hintStyle: const TextStyle(
+                  color: Color(UserColors.ui06),
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  decoration: TextDecoration.none,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            Strings.category,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "Pretendard",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: ScreenUtil().setHeight(24.0)),
+          SizedBox(
+            height: ScreenUtil().setHeight(35.0),
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: Strings.categoryMap.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildCategoryWidget(index);
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKeywordArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                Strings.keyword,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                _keywordList.length.toString() + Strings.keywordCount,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          (_keywordList.isEmpty)
+              ? _buildKeywordDefaultWidget()
+              : SizedBox(
+                  height: ScreenUtil().setHeight(35.0),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _keywordList.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return SizedBox(width: ScreenUtil().setWidth(8.0));
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      String keyword = _keywordList[index];
+                      return _buildKeywordWidget(keyword, index);
+                    },
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                Strings.location,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.black),
+            ],
+          ),
+          SizedBox(height: ScreenUtil().setHeight(12.0)),
+          (_uploadViewModel.getUploadLocation.isEmpty)
+              ? _buildLocationDefaultWidget("ex) 면목동")
+              : _buildLocationWidget(widget.uploadData?.locationDetail ??
+                  _uploadViewModel.getUploadLocation),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomButtonArea() {
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
+    return Container(
+      width: double.infinity,
+      height: isKeyboardOpen
+          ? ScreenUtil().setHeight(70.0)
+          : ScreenUtil().setHeight(104.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: const Color(UserColors.ui10),
+          width: 1.0,
+        ),
+      ),
+      child: Align(
+        alignment: isKeyboardOpen ? Alignment.center : Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: isKeyboardOpen ? 0.0 : ScreenUtil().setHeight(10.0),
+            left: ScreenUtil().setWidth(22.0),
+            right: ScreenUtil().setWidth(22.0),
+          ),
+          child: InfinityButton(
+            height: ScreenUtil().setHeight(50.0),
+            radius: ScreenUtil().radius(8.0),
+            backgroundColor: (_textController.text.isNotEmpty &&
+                    _uploadViewModel.getUploadLocation.isNotEmpty)
+                ? const Color(UserColors.primaryColor)
+                : const Color(UserColors.ui10),
+            text: Strings.upload,
+            textSize: 16,
+            textWeight: FontWeight.w600,
+            textColor: (_textController.text.isNotEmpty &&
+                    _uploadViewModel.getUploadLocation.isNotEmpty)
+                ? Colors.white
+                : Colors.black,
+            callback: (widget.isEdit) ? edit : upload,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -529,6 +772,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
         elevation: 0,
         titleSpacing: ScreenUtil().setWidth(22.0),
         automaticallyImplyLeading: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: const Color(UserColors.ui10),
+            height: 1.0,
+          ),
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -566,219 +816,29 @@ class _UploadWritePageState extends State<UploadWritePage> {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Stack(
+        child: Column(
           children: [
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22.0)),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: ScreenUtil().setHeight(24.0)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: ScreenUtil().setWidth(24.0)),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: ScreenUtil().setHeight(298.0),
-                              child: widget.selectMedia != null
-                                  ? FutureBuilder<Uint8List?>(
-                                      future: widget.selectMedia?.thumbnailData,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                                ConnectionState.done &&
-                                            snapshot.data != null) {
-                                          return Image.memory(
-                                            snapshot.data!,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          );
-                                        } else {
-                                          return const Center(
-                                              child: LoadingWidget());
-                                        }
-                                      },
-                                    )
-                                  : (widget.uploadData?.files.isNotEmpty ??
-                                          false)
-                                      ? Image.network(
-                                          widget.uploadData!.files[0].url,
-                                          fit: BoxFit.cover)
-                                      : Container(),
-                            ),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(22.0)),
-                          const Text(
-                            Strings.write,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(12.0)),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(136.0),
-                            child: TextField(
-                              maxLines: null,
-                              minLines: null,
-                              expands: true,
-                              controller: _textController,
-                              textAlign: TextAlign.start,
-                              textAlignVertical: TextAlignVertical.top,
-                              style: const TextStyle(
-                                color: Color(UserColors.ui01),
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                decoration: TextDecoration.none,
-                              ),
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(UserColors.ui11),
-                                hintText: Strings.uploadWriteHintText,
-                                hintStyle: const TextStyle(
-                                  color: Color(UserColors.ui06),
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.none,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(20.0)),
-                          const Text(
-                            Strings.category,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(22.0)),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(35.0),
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: Strings.categoryMap.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return _buildCategoryWidget(index);
-                                }),
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(28.0)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                Strings.keyword,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                _keywordList.length.toString() +
-                                    Strings.keywordCount,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(12.0)),
-                          (_keywordList.isEmpty)
-                              ? _buildKeywordDefaultWidget()
-                              : SizedBox(
-                                  height: ScreenUtil().setHeight(35.0),
-                                  child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _keywordList.length,
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return SizedBox(
-                                          width: ScreenUtil().setWidth(8.0));
-                                    },
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      String keyword = _keywordList[index];
-                                      return _buildKeywordWidget(
-                                          keyword, index);
-                                    },
-                                  ),
-                                ),
-                          SizedBox(height: ScreenUtil().setHeight(22.0)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                Strings.location,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Icon(Icons.arrow_forward_ios,
-                                  color: Colors.black),
-                            ],
-                          ),
-                          SizedBox(height: ScreenUtil().setHeight(12.0)),
-                          (_uploadViewModel.getUploadLocation.isEmpty)
-                              ? _buildLocationDefaultWidget("ex) 면목동")
-                              : _buildLocationWidget(
-                                  widget.uploadData?.locationDetail ??
-                                      _uploadViewModel.getUploadLocation),
-                          SizedBox(height: ScreenUtil().setHeight(49.0)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: ScreenUtil().setHeight(23.0),
-                    ),
-                    child: InfinityButton(
-                      height: ScreenUtil().setHeight(50.0),
-                      radius: ScreenUtil().radius(8.0),
-                      backgroundColor: (_textController.text.isNotEmpty &&
-                              _uploadViewModel.getUploadLocation.isNotEmpty)
-                          ? const Color(UserColors.primaryColor)
-                          : const Color(UserColors.ui10),
-                      text: Strings.upload,
-                      textSize: 16,
-                      textWeight: FontWeight.w600,
-                      textColor: (_textController.text.isNotEmpty &&
-                              _uploadViewModel.getUploadLocation.isNotEmpty)
-                          ? Colors.white
-                          : Colors.black,
-                      callback: (widget.isEdit) ? edit : upload,
-                    ),
-                  ),
-                ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: ScreenUtil().setHeight(24.0)),
+                    _buildPhotoArea(),
+                    SizedBox(height: ScreenUtil().setHeight(22.0)),
+                    _buildContentsWidget(),
+                    SizedBox(height: ScreenUtil().setHeight(15.0)),
+                    _buildCategoryArea(),
+                    SizedBox(height: ScreenUtil().setHeight(28.0)),
+                    _buildKeywordArea(),
+                    SizedBox(height: ScreenUtil().setHeight(22.0)),
+                    _buildLocationArea(),
+                    SizedBox(height: ScreenUtil().setHeight(25.0)),
+                  ],
+                ),
               ),
             ),
-            if (_isLoading)
-              const Center(
-                child: LoadingWidget(),
-              ),
+            _bottomButtonArea(),
           ],
         ),
       ),

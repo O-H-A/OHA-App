@@ -148,40 +148,42 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
   }
 
   Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
-    return GestureDetector(
-      onTap: () => _onDaySelected(day),
-      child: Column(
-        children: [
-          recorded
-              ? SvgPicture.asset(Images.recordEnable)
-              : SvgPicture.asset(Images.recordDisable),
-          SizedBox(
-            height: ScreenUtil().setHeight(4.0),
-          ),
-          Container(
-            width: ScreenUtil().setWidth(20.0),
-            height: ScreenUtil().setHeight(20.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isSelected ? Colors.black : Colors.transparent,
-            ),
-            child: Center(
-              child: Text(
-                day.toString(),
-                style: TextStyle(
-                  color:
-                      isSelected ? Colors.white : const Color(UserColors.ui01),
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13,
+    return Padding(
+      padding: EdgeInsets.only(top: ScreenUtil().setHeight(18.0)),
+      child: GestureDetector(
+        onTap: () => _onDaySelected(day),
+        child: Column(
+          children: [
+            recorded
+                ? SvgPicture.asset(Images.recordEnable)
+                : SvgPicture.asset(Images.recordDisable),
+            SizedBox(height: ScreenUtil().setHeight(12.0)),
+            Container(
+              width: ScreenUtil().setWidth(20.0),
+              height: ScreenUtil().setHeight(20.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? Colors.black : Colors.transparent,
+              ),
+              child: Center(
+                child: Text(
+                  day.toString(),
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : const Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: ScreenUtil().setHeight(5.0),
-          ),
-        ],
+            SizedBox(
+              height: ScreenUtil().setHeight(5.0),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -221,7 +223,7 @@ class _WeekCalendarWidgetState extends State<WeekCalendarWidget> {
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7, childAspectRatio: 0.9),
+                    crossAxisCount: 7, childAspectRatio: 0.6),
                 itemCount: 7,
                 itemBuilder: (context, index) {
                   int day = daysList![index];

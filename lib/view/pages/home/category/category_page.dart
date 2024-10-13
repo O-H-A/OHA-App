@@ -14,7 +14,7 @@ import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/feed_widget.dart';
 import '../../../widgets/four_more_dialog.dart';
 import '../../../widgets/loading_widget.dart';
-import '../../mypage/delete_dialog.dart';
+import '../../../widgets/delete_dialog.dart';
 import '../../error_page.dart';
 import 'category_grid_widget.dart';
 
@@ -143,7 +143,6 @@ class _CategoryPageState extends State<CategoryPage>
             EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(7.0)),
         controller: tabController,
         isScrollable: true,
-        dividerColor: Colors.transparent,
         tabAlignment: TabAlignment.start,
         onTap: (index) {
           setState(() {
@@ -174,7 +173,9 @@ class _CategoryPageState extends State<CategoryPage>
         ),
         overlayColor: const WidgetStatePropertyAll(Colors.white),
         indicatorColor: Colors.black,
-        indicatorWeight: 2,
+        indicatorWeight: 1,
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
       ),
     );
   }
@@ -223,7 +224,8 @@ class _CategoryPageState extends State<CategoryPage>
               context,
               (action) => _onMorePressed(data.postId, action),
               data.isOwn,
-              data.files.isNotEmpty ? data.files[0].url : '', data.postId),
+              data.files.isNotEmpty ? data.files[0].url : '',
+              data.postId),
         );
       },
     );
@@ -285,18 +287,18 @@ class _CategoryPageState extends State<CategoryPage>
         break;
       case Strings.delete:
         print('Post ID to delete: $postId');
-        showDeleteDialog(postId);
+        showYesNoDialog(postId);
         break;
       default:
         break;
     }
   }
 
-  void showDeleteDialog(int postId) {
+  void showYesNoDialog(int postId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: ScreenUtil().setHeight(178.0),
           titleText: Strings.postDeleteTitle,
           guideText: Strings.postDeleteContent,

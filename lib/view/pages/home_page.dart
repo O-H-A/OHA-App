@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage>
               pinned: true,
               floating: true,
               expandedHeight: ScreenUtil().setHeight(200.0),
+              scrolledUnderElevation: 0,
               flexibleSpace: const FlexibleSpaceBar(
                 background: Column(
                   children: [
@@ -170,7 +171,7 @@ class _HomePageState extends State<HomePage>
                       indicatorColor: Colors.black,
                       indicatorWeight: 1,
                       dividerColor: Colors.transparent,
-                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorSize: TabBarIndicatorSize.tab,
                       indicatorPadding: EdgeInsets.only(
                         left: tabController.index == 3
                             ? ScreenUtil().setWidth(25)

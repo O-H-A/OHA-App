@@ -14,7 +14,7 @@ import '../../../view/pages/mypage/profile_edit_page.dart';
 import '../../../view/pages/mypage/terms_and_Policies.dart';
 import '../../../view/widgets/complete_dialog.dart';
 import '../../../view/widgets/notification_app_bar.dart';
-import 'delete_dialog.dart';
+import '../../widgets/delete_dialog.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -73,12 +73,12 @@ class _MyPageState extends State<MyPage> {
     } catch (e) {}
   }
 
-  void _showDeleteDialog(
+  void _showYesNoDialog(
       String title, String guide, VoidCallback yesCallback, double height) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: height,
           titleText: title,
           guideText: guide,
@@ -181,7 +181,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   void _showLogoutDialog() {
-    _showDeleteDialog(
+    _showYesNoDialog(
       Strings.logout,
       Strings.logoutGuide,
       _onLogout,
@@ -190,7 +190,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   void _showWithDrawDialog() {
-    _showDeleteDialog(
+    _showYesNoDialog(
       Strings.withDraw,
       Strings.withDrawGiude,
       _onWithDraw,

@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oha/app.dart';
-import 'package:oha/view/pages/mypage/delete_dialog.dart';
+import 'package:oha/view/widgets/delete_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../../statics/Colors.dart';
@@ -244,11 +244,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     ).then((_) => Navigator.pop(context, true));
   }
 
-  void showDeleteDialog() {
+  void showYesNoDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: ScreenUtil().setHeight(198.0),
           titleText: Strings.deleteChangeHistory,
           guideText: Strings.deleteChangeHistoryGuide,
@@ -277,7 +277,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       appBar: BackCompleteAppBar(
         title: Strings.profile,
         doneCallback: _userInfoChange,
-        backCallback: showDeleteDialog,
+        backCallback: showYesNoDialog,
       ),
       backgroundColor: Colors.white,
       body: Padding(

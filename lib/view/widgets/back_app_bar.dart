@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oha/statics/colors.dart';
 import 'package:oha/view/widgets/button_icon.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -45,7 +46,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? PreferredSize(
               preferredSize: const Size.fromHeight(1.0),
               child: Container(
-                color: const Color(0xFFE0E0E0),
+                color: const Color(UserColors.ui10),
                 height: 1.0,
               ),
             )
@@ -54,6 +55,5 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      Size.fromHeight(kToolbarHeight + (isUnderLine ? 1.0 : 0.0));
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
