@@ -143,7 +143,6 @@ class _CategoryPageState extends State<CategoryPage>
             EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(7.0)),
         controller: tabController,
         isScrollable: true,
-        dividerColor: Colors.transparent,
         tabAlignment: TabAlignment.start,
         onTap: (index) {
           setState(() {
@@ -174,7 +173,9 @@ class _CategoryPageState extends State<CategoryPage>
         ),
         overlayColor: const WidgetStatePropertyAll(Colors.white),
         indicatorColor: Colors.black,
-        indicatorWeight: 2,
+        indicatorWeight: 1,
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
       ),
     );
   }
@@ -223,7 +224,8 @@ class _CategoryPageState extends State<CategoryPage>
               context,
               (action) => _onMorePressed(data.postId, action),
               data.isOwn,
-              data.files.isNotEmpty ? data.files[0].url : '', data.postId),
+              data.files.isNotEmpty ? data.files[0].url : '',
+              data.postId),
         );
       },
     );
