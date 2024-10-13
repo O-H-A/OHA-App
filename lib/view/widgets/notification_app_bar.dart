@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:oha/statics/colors.dart';
 import 'package:oha/statics/images.dart';
 
 class NotificationAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
+  final bool isUnderLine;
 
-  const NotificationAppBar({Key? key, required this.title}) : super(key: key);
+  const NotificationAppBar({
+    Key? key,
+    required this.title,
+    this.isUnderLine = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class NotificationAppBar extends StatelessWidget
                 color: Colors.black,
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w600,
-                fontSize: 16),
+                fontSize: 20),
           ),
         ],
       ),
@@ -34,6 +40,15 @@ class NotificationAppBar extends StatelessWidget
           child: SvgPicture.asset(Images.notification),
         ),
       ],
+      bottom: isUnderLine
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(1.0),
+              child: Container(
+                color: const Color(UserColors.ui10),
+                height: 1.0,
+              ),
+            )
+          : null,
     );
   }
 

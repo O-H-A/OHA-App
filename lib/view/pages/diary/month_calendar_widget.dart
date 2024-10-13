@@ -145,40 +145,39 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   }
 
   Widget _buildDayWidget(int day, bool recorded, bool isSelected) {
-    return GestureDetector(
-      onTap: () => _onDaySelected(day),
-      child: Column(
-        children: [
-          recorded
-              ? SvgPicture.asset(Images.recordEnable)
-              : SvgPicture.asset(Images.recordDisable),
-          SizedBox(
-            height: ScreenUtil().setHeight(4.0),
-          ),
-          Container(
-            width: ScreenUtil().setWidth(20.0),
-            height: ScreenUtil().setHeight(20.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isSelected ? Colors.black : Colors.transparent,
-            ),
-            child: Center(
-              child: Text(
-                day.toString(),
-                style: TextStyle(
-                  color:
-                      isSelected ? Colors.white : const Color(UserColors.ui01),
-                  fontFamily: "Pretendard",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13,
+    return Padding(
+      padding: EdgeInsets.only(top: ScreenUtil().setHeight(18.0)),
+      child: GestureDetector(
+        onTap: () => _onDaySelected(day),
+        child: Column(
+          children: [
+            recorded
+                ? SvgPicture.asset(Images.recordEnable)
+                : SvgPicture.asset(Images.recordDisable),
+            SizedBox(height: ScreenUtil().setHeight(10.0)),
+            Container(
+              width: ScreenUtil().setWidth(18.0),
+              height: ScreenUtil().setHeight(18.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? Colors.black : Colors.transparent,
+              ),
+              child: Center(
+                child: Text(
+                  day.toString(),
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : const Color(UserColors.ui01),
+                    fontFamily: "Pretendard",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: ScreenUtil().setHeight(5.0),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -187,14 +186,21 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: ScreenUtil().setHeight(389.0),
+      height: ScreenUtil().setHeight(397.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ScreenUtil().radius(10.0)),
         color: Colors.white,
         border: Border.all(color: const Color(UserColors.ui11)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.05),
+            offset: const Offset(0, 0),
+            blurRadius: 5,
+          ),
+        ],
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: ScreenUtil().setHeight(20.0)),
+        padding: EdgeInsets.only(top: ScreenUtil().setHeight(12.0)),
         child: Column(
           children: [
             Row(
@@ -220,9 +226,7 @@ class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: 0.9,
-                ),
+                    crossAxisCount: 7, childAspectRatio: 0.7),
                 itemCount: daysList!.length + firstWeekday! - 1,
                 itemBuilder: (context, index) {
                   if (index < firstWeekday! - 1) {
