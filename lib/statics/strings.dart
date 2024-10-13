@@ -215,6 +215,7 @@ class Strings {
   static const String diaryDeleteComplete = "다이어리를 삭제하시겠습니까?";
   static const String requiredIcon = " *";
   static const String registerWeatherInfo = "등록한 날씨 정보";
+  static const String locationNotifcationGuide = "현재 위치와 일치하는 항목이 없습니다.\n한번 더 확인해 주세요.";
 
   /*
     구름 	CTGR_CLOUD
