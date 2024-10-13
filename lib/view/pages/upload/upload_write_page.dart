@@ -516,32 +516,37 @@ class _UploadWritePageState extends State<UploadWritePage> {
   }
 
   Widget _buildPhotoArea() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(46.0)),
-      child: SizedBox(
-        width: double.infinity,
-        height: ScreenUtil().setHeight(298.0),
-        child: widget.selectMedia != null
-            ? FutureBuilder<Uint8List?>(
-                future: widget.selectMedia?.thumbnailData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.data != null) {
-                    return Image.memory(
-                      snapshot.data!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    );
-                  } else {
-                    return const Center(child: LoadingWidget());
-                  }
-                },
-              )
-            : (widget.uploadData?.files.isNotEmpty ?? false)
-                ? Image.network(widget.uploadData!.files[0].url,
-                    fit: BoxFit.cover)
-                : Container(),
+    return GestureDetector(
+      onTap: () {
+        return;
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(46.0)),
+        child: SizedBox(
+          width: double.infinity,
+          height: ScreenUtil().setHeight(298.0),
+          child: widget.selectMedia != null
+              ? FutureBuilder<Uint8List?>(
+                  future: widget.selectMedia?.thumbnailData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data != null) {
+                      return Image.memory(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      );
+                    } else {
+                      return const Center(child: LoadingWidget());
+                    }
+                  },
+                )
+              : (widget.uploadData?.files.isNotEmpty ?? false)
+                  ? Image.network(widget.uploadData!.files[0].url,
+                      fit: BoxFit.cover)
+                  : Container(),
+        ),
       ),
     );
   }
@@ -714,9 +719,13 @@ class _UploadWritePageState extends State<UploadWritePage> {
   }
 
   Widget _bottomButtonArea() {
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Container(
       width: double.infinity,
-      height: ScreenUtil().setHeight(104.0),
+      height: isKeyboardOpen
+          ? ScreenUtil().setHeight(70.0)
+          : ScreenUtil().setHeight(104.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
@@ -725,10 +734,10 @@ class _UploadWritePageState extends State<UploadWritePage> {
         ),
       ),
       child: Align(
-        alignment: Alignment.topCenter,
+        alignment: isKeyboardOpen ? Alignment.center : Alignment.topCenter,
         child: Padding(
           padding: EdgeInsets.only(
-            top: ScreenUtil().setHeight(10.0),
+            top: isKeyboardOpen ? 0.0 : ScreenUtil().setHeight(10.0),
             left: ScreenUtil().setWidth(22.0),
             right: ScreenUtil().setWidth(22.0),
           ),
