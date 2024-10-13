@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oha/statics/colors.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../statics/images.dart';
 import '../statics/strings.dart';
@@ -42,7 +41,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
       if (!isCameraGranted || !isMicGranted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const UploadAgreementsPage()),
+          MaterialPageRoute(
+            builder: (context) => const UploadAgreementsPage(),
+          ),
+        );
+        return;
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UploadPage(),
+          ),
         );
         return;
       }
