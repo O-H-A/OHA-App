@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oha/view/pages/diary/diary_register_page.dart';
-import 'package:oha/view/pages/mypage/delete_dialog.dart';
+import 'package:oha/view/widgets/delete_dialog.dart';
 import 'package:oha/view/pages/upload/upload_write_page.dart';
 import 'package:oha/view/widgets/complete_dialog.dart';
 import 'package:oha/view/widgets/diary_feed_widget.dart';
@@ -133,19 +133,19 @@ class DiaryBottomSheet {
         );
         break;
       case Strings.delete:
-        _showDeleteDialog(context, diaryId, diaryViewModel);
+        _showYesNoDialog(context, diaryId, diaryViewModel);
         break;
       default:
         break;
     }
   }
 
-  static void _showDeleteDialog(
+  static void _showYesNoDialog(
       BuildContext context, int diaryId, DiaryViewModel diaryViewModel) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: ScreenUtil().setHeight(178.0),
           titleText: Strings.diaryDeleteTitle,
           guideText: Strings.diaryDeleteContent,

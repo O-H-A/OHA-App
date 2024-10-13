@@ -21,7 +21,7 @@ import '../../widgets/complete_dialog.dart';
 import '../../widgets/feed_widget.dart';
 import '../../widgets/four_more_dialog.dart';
 import '../../widgets/loading_widget.dart';
-import '../mypage/delete_dialog.dart';
+import '../../widgets/delete_dialog.dart';
 import 'diary_register_page.dart';
 
 class DiaryPage extends StatefulWidget {
@@ -860,7 +860,7 @@ class _DiaryPageState extends State<DiaryPage> {
         } else {
           result = false;
         }
-        showDeleteDialog(id, result);
+        showYesNoDialog(id, result);
         break;
       default:
         break;
@@ -875,11 +875,11 @@ class _DiaryPageState extends State<DiaryPage> {
     print("Profile Pressed");
   }
 
-  void showDeleteDialog(int postId, bool isUpload) {
+  void showYesNoDialog(int postId, bool isUpload) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: ScreenUtil().setHeight(178.0),
           titleText: Strings.postDeleteTitle,
           guideText: Strings.postDeleteContent,

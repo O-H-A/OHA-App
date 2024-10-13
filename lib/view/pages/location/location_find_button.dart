@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:oha/view/widgets/delete_dialog.dart';
 import 'package:oha/view/widgets/check_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:oha/view_model/location_view_model.dart';
@@ -29,15 +30,19 @@ class _LocationFindButtonState extends State<LocationFindButton> {
       print('Location services are disabled.');
       return;
     }
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        print('Location permissions are denied');
+        _showNotPermissionDialog(context);
         return;
       }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showNotPermissionDialog(context);
+      return;
     }
 
     Position position = await Geolocator.getCurrentPosition(
@@ -97,6 +102,28 @@ class _LocationFindButtonState extends State<LocationFindButton> {
     } else {
       print('Failed to get address from coordinates.');
     }
+  }
+
+  void _showNotPermissionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return YesNoDialog(
+          height: ScreenUtil().setHeight(196.0),
+          titleText: Strings.notification,
+          guideText: Strings.loationNotPermissionGuide,
+          yesText: Strings.moveSetting,
+          noText: Strings.calcel,
+          yesCallback: () {
+            Navigator.of(context).pop();
+            Geolocator.openAppSettings();
+          },
+          noCallback: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   Future<Map<String, String>?> _getAddressFromCoordinates(

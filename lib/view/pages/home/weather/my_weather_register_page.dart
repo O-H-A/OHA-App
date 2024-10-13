@@ -14,7 +14,7 @@ import '../../../widgets/back_app_bar.dart';
 import '../../../widgets/button_icon.dart';
 import '../../../widgets/complete_dialog.dart';
 import '../../../widgets/loading_widget.dart';
-import '../../mypage/delete_dialog.dart';
+import '../../../widgets/delete_dialog.dart';
 
 class MyWeatherRegisterPage extends StatefulWidget {
   const MyWeatherRegisterPage({Key? key}) : super(key: key);
@@ -35,11 +35,11 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
     _weatherViewModel.fetchWeatherPostingMy();
   }
 
-  void showDeleteDialog(String address, int weatherId) {
+  void showYesNoDialog(String address, int weatherId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DeleteDialog(
+        return YesNoDialog(
           height: ScreenUtil().setHeight(228.0),
           titleText: Strings.deleteWeatherTitleText,
           guideText: Strings.deleteWeatherGuideText(address),
@@ -169,7 +169,7 @@ class _MyWeatherRegisterPageState extends State<MyWeatherRegisterPage> {
                             icon: Icons.close,
                             iconColor: Colors.black,
                             callback: () {
-                              showDeleteDialog(
+                              showYesNoDialog(
                                   _locationViewModel
                                       .getThirdAddressByRegionCode(
                                           weather.regionCode.toString()),

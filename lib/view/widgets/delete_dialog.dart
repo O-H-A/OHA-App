@@ -1,34 +1,37 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../statics/Colors.dart';
-import '../../../statics/strings.dart';
+import '../../statics/Colors.dart';
+import '../../statics/strings.dart';
 
-class DeleteDialog extends StatelessWidget {
+class YesNoDialog extends StatelessWidget {
   final double height;
   final String titleText;
   final String guideText;
   final VoidCallback yesCallback;
   final VoidCallback noCallback;
+  final String yesText;
+  final String noText;
 
-  const DeleteDialog({
+  const YesNoDialog({
     Key? key,
     required this.height,
     required this.titleText,
     required this.guideText,
     this.yesCallback = _yesCallback,
     this.noCallback = _noCallback,
+    this.yesText = "예", // 기본값으로 "예"
+    this.noText = "아니오", // 기본값으로 "아니오"
   }) : super(key: key);
 
   static void _yesCallback() {}
 
   static void _noCallback() {}
 
-  Widget _buildButtonWidget(String title) {
+  Widget _buildButtonWidget(String title, bool isYesButton) {
     return GestureDetector(
       onTap: () {
-        (title == Strings.yes) ? yesCallback() : noCallback();
+        isYesButton ? yesCallback() : noCallback();
       },
       child: Stack(
         alignment: Alignment.center,
@@ -38,7 +41,7 @@ class DeleteDialog extends StatelessWidget {
             height: ScreenUtil().setHeight(41.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(ScreenUtil().radius(5.0)),
-              color: (title == Strings.yes)
+              color: isYesButton
                   ? const Color(UserColors.primaryColor)
                   : const Color(UserColors.ui10),
             ),
@@ -46,9 +49,7 @@ class DeleteDialog extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: (title == Strings.yes)
-                  ? Colors.white
-                  : const Color(UserColors.ui06),
+              color: isYesButton ? Colors.white : const Color(UserColors.ui06),
               fontFamily: "Pretendard",
               fontWeight: FontWeight.w600,
               fontSize: 16,
@@ -109,8 +110,8 @@ class DeleteDialog extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildButtonWidget(Strings.no),
-                  _buildButtonWidget(Strings.yes),
+                  _buildButtonWidget(noText, false),
+                  _buildButtonWidget(yesText, true),
                 ],
               ),
             ],

@@ -216,6 +216,9 @@ class Strings {
   static const String requiredIcon = " *";
   static const String registerWeatherInfo = "등록한 날씨 정보";
   static const String locationNotifcationGuide = "현재 위치와 일치하는 항목이 없습니다.\n한번 더 확인해 주세요.";
+  static const String loationNotPermissionGuide = "위치 정보 권한이 거부되었습니다.\n설정에서 권한을 허용해 주세요.";
+  static const String moveSetting = "설정으로 이동";
+  static const String calcel = "취소";
 
   /*
     구름 	CTGR_CLOUD
