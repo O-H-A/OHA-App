@@ -66,6 +66,9 @@ class _LocationSettingBottomSheetContentState
         },
       );
     } else {
+      getFrequentLocation();
+      getFrequentRegionCode();
+
       Map<String, dynamic> sendData = {"code": _frequentRegionCode[index]};
       _locationViewModel.deleteFrequentDistricts(sendData);
 
