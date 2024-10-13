@@ -12,40 +12,40 @@ class WeatherSelectDialog extends StatelessWidget {
   }) : super(key: key);
 
   final List<String> weatherTitleList = [
-    Strings.cloudy,
-    Strings.manyCloud,
     Strings.sunny,
+    Strings.manyCloud,
+    Strings.cloudy,
     Strings.rain,
     Strings.thunder,
     Strings.snow,
-    Strings.thunderSnow,
     Strings.veryHot,
+    Strings.thunderSnow,
     Strings.wind,
     Strings.veryCold,
   ];
 
   final List<String> weatherImageList = [
-    Images.cloudyDisable,
-    Images.manyCloudDisable,
     Images.sunnyDisable,
+    Images.manyCloudDisable,
+    Images.cloudyDisable,
     Images.rainDisable,
     Images.thunderDisable,
     Images.snowDisable,
-    Images.thunderRainDisable,
     Images.veryHotDisable,
+    Images.thunderRainDisable,
     Images.windDisable,
     Images.veryColdDisable,
   ];
 
   final List<String> weatherEnableImageList = [
-    Images.cloudyEnable,
-    Images.manyCloudEnable,
     Images.sunnyEnable,
+    Images.manyCloudEnable,
+    Images.cloudyEnable,
     Images.rainEnable,
     Images.thunderEnable,
     Images.snowEnable,
-    Images.thunderRainEnable,
     Images.veryHotEnable,
+    Images.thunderRainEnable,
     Images.windEnable,
     Images.veryColdEnable,
   ];
